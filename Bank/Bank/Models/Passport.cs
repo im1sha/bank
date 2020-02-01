@@ -21,7 +21,10 @@ namespace Bank.Models
         /// </summary>
         public string IdentifyingNumber { get; set; }
 
+
+        public int IssuingAuthorityId { get; set; }
         public IssuingAuthority IssuingAuthority { get; set; }
+
 
         public DateTime IssuingDate { get; set; }
     }

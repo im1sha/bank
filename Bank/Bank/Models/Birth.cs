@@ -11,6 +11,9 @@ namespace Bank.Models
 
         public DateTime Date { get; set; }
 
+
+        public int LocationId { get; set; }
         public Location Location { get; set; }
+
     }
 }
