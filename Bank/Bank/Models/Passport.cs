@@ -27,5 +27,7 @@ namespace Bank.Models
 
 
         public DateTime IssuingDate { get; set; }
+
+        public Person Person { get; set; }
     }
 }

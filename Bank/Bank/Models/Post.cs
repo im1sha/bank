@@ -12,6 +12,9 @@ namespace Bank.Models
         public string Name { get; set; }
 
         public int CompanyId { get; set; }
+
         public Company Company { get; set; }
+
+        public List<Person> People { get; set; }
     }
 }

@@ -69,12 +69,12 @@ namespace Bank.Models
             {   
                 new MaritalStatus
                 {
-                    Name = "в браке"
+                    Name = "не в браке"
                 },
                 new MaritalStatus
                 {
-                    Name = "не в браке"
-                }
+                    Name = "в браке"
+                },               
             };
             if (!context.MaritalStatuses.Any())
             {
@@ -197,7 +197,7 @@ namespace Bank.Models
                 new Birth
                 {
                     Date = new DateTime(1991, 1, 2),
-                    Location = locations[2],
+                    Location = locations[3],
                 },
             };
             if (!context.Births.Any())
@@ -205,18 +205,361 @@ namespace Bank.Models
                 context.Births.AddRange(births);
                 context.SaveChanges();
             }
+            var companies = new[]
+            {
+                new Company
+                {
+                   Name = "Company 1" ,
+                   Location = locations[0]
+                },
+                new Company
+                {
+                   Name = "Company 2" ,
+                   Location = locations[1]
+                },
+                new Company
+                {
+                   Name = "Company 3" ,
+                   Location = locations[2]
+                },
+                new Company
+                {
+                   Name = "Company 4" ,
+                   Location = locations[3]
+                },
+            };
+            if (!context.Companies.Any())
+            {
+                context.Companies.AddRange(companies);
+                context.SaveChanges();
+            }
+            var posts = new[]
+            {
+                new Post
+                {
+                    Company = companies[0],
+                    Name = "CEO"
+                },
+                new Post
+                {
+                    Company = companies[1],
+                    Name = "HR"
+                },
+                new Post
+                {
+                    Company = companies[1],
+                    Name = "JS developer"
+                },
+                new Post
+                {
+                    Company = companies[2],
+                    Name = "Full-stack developer"
+                },
+            };
+            if (!context.Posts.Any())
+            {
+                context.Posts.AddRange(posts);
+                context.SaveChanges();
+            }
+            var issuingAuthorithies = new[]
+            {
+                new IssuingAuthority
+                {
+                    Name = "РОВД Заводского района",
+                    Location = locations[0],
+                },
+                new IssuingAuthority
+                {
+                    Name = "РОВД Фрунзенского района",
+                    Location = locations[1],
+                },
+                new IssuingAuthority
+                {
+                    Name = "РОВД Центрального района",
+                    Location = locations[2],
+                },
+            };
+            if (!context.IssuingAuthorities.Any())
+            {
+                context.IssuingAuthorities.AddRange(issuingAuthorithies);
+                context.SaveChanges();
+            }
+            var passports = new[]
+            {
+                new Passport
+                {
+                    IdentifyingNumber = "11111111111111111",
+                    Series = "AA",
+                    Number = "1111",
+                    IssuingDate = new DateTime(2016, 1, 1),
+                    IssuingAuthority = issuingAuthorithies[0],
+                },
+                new Passport
+                {
+                    IdentifyingNumber = "22222222222222222",
+                    Series = "AA",
+                    Number = "2222",
+                    IssuingDate = new DateTime(2016, 1, 1),
+                    IssuingAuthority = issuingAuthorithies[1],
+                },
+                new Passport
+                {
+                    IdentifyingNumber = "33333333333333333",
+                    Series = "AA",
+                    Number = "3333",
+                    IssuingDate = new DateTime(2016, 1, 1),
+                    IssuingAuthority = issuingAuthorithies[0],
+                },
+                new Passport
+                {
+                    IdentifyingNumber = "44444444444444444",
+                    Series = "AA",
+                    Number = "4444",
+                    IssuingDate = new DateTime(2016, 1, 1),
+                    IssuingAuthority = issuingAuthorithies[1],
+                },
+                new Passport
+                {
+                    IdentifyingNumber = "5555555555555555",
+                    Series = "AA",
+                    Number = "5555",
+                    IssuingDate = new DateTime(2016, 1, 1),
+                    IssuingAuthority = issuingAuthorithies[0],
+                },
+                new Passport
+                {
+                    IdentifyingNumber = "666666666666666",
+                    Series = "AA",
+                    Number = "6666",
+                    IssuingDate = new DateTime(2016, 1, 1),
+                    IssuingAuthority = issuingAuthorithies[2],
+                },
+                new Passport
+                {
+                    IdentifyingNumber = "7777777777777777",
+                    Series = "AA",
+                    Number = "7777",
+                    IssuingDate = new DateTime(2016, 1, 1),
+                    IssuingAuthority = issuingAuthorithies[2],
+                },
+                new Passport
+                {
+                    IdentifyingNumber = "88888888888888888",
+                    Series = "AA",
+                    Number = "8888",
+                    IssuingDate = new DateTime(2016, 1, 1),
+                    IssuingAuthority = issuingAuthorithies[0],
+                },
+                new Passport
+                {
+                    IdentifyingNumber = "99999999999999999",
+                    Series = "AA",
+                    Number = "9999",
+                    IssuingDate = new DateTime(2016, 1, 1),
+                    IssuingAuthority = issuingAuthorithies[1],
+                },
+                new Passport
+                {
+                    IdentifyingNumber = "111111122222222222",
+                    Series = "AA",
+                    Number = "1122",
+                    IssuingDate = new DateTime(2016, 1, 1),
+                    IssuingAuthority = issuingAuthorithies[0],
+                },
+                new Passport
+                {
+                    IdentifyingNumber = "11111111333333333333",
+                    Series = "AA",
+                    Number = "1133",
+                    IssuingDate = new DateTime(2016, 1, 1),
+                    IssuingAuthority = issuingAuthorithies[1],
+                },
+            };
+            if (!context.Passports.Any())
+            {
+                context.Passports.AddRange(passports);
+                context.SaveChanges();
+            }
+            var people = new[]
+            {
+                new Person
+                {
+                    Birth = births[0],
+                    Disability = disabilities[0],
+                    Email = "email0@mail.com",
+                    FirstName = "Иван",
+                    LastName = "Иванов",
+                    MiddleName = "Иванович",
+                    HomePhone = "1111111",
+                    MobilePhone = "2111111",
+                    IsPensioner = false,
+                    MaritalStatus = maritalStatuses[0],
+                    Nationality = nationalities[0],
+                    Passport = passports[0],
+                    Post = posts[0],
+                    Revenue = 2000000,
+                },
+                new Person
+                {
+                    Birth = births[1],
+                    Disability = disabilities[0],
+                    Email = "email111111111@mail.com",
+                    FirstName = "Петр",
+                    LastName = "Петров",
+                    MiddleName = "Иванович",
+                    HomePhone = "1222222",
+                    MobilePhone = "2222222",
+                    IsPensioner = false,
+                    MaritalStatus = maritalStatuses[0],
+                    Nationality = nationalities[1],
+                    Passport = passports[1],
+                    Post = posts[1],
+                    Revenue = 100000,
+                },
+                new Person
+                {
+                    Birth = births[2],
+                    Disability = disabilities[0],
+                    Email = "email2@mail.com",
+                    FirstName = "Валентин",
+                    LastName = "Михайлов",
+                    MiddleName = "Михайлович",
+                    HomePhone = "133333333",
+                    MobilePhone = "23333333",
+                    IsPensioner = false,
+                    MaritalStatus = maritalStatuses[0],
+                    Nationality = nationalities[0],
+                    Passport = passports[2],
+                    Post = posts[1],
+                    Revenue = 150000,
+                },
+                new Person
+                {
+                    Birth = births[3],
+                    Disability = disabilities[1],
+                    Email = "email3@mail.com",
+                    FirstName = "Анна",
+                    LastName = "Петрова",
+                    MiddleName = "Юрьевна",
+                    HomePhone = "1444444",
+                    MobilePhone = "2444444",
+                    IsPensioner = false,
+                    MaritalStatus = maritalStatuses[0],
+                    Nationality = nationalities[3],
+                    Passport = passports[3],
+                    Post = posts[2],
+                    Revenue = 350000,
+                },
+                new Person
+                {
+                    Birth = births[4],
+                    Disability = disabilities[0],
+                    Email = "email4@mail.com",
+                    FirstName = "Сидорова",
+                    LastName = "Маргарита",
+                    MiddleName = "Семеновна",
+                    HomePhone = "155555",
+                    MobilePhone = "2555555",
+                    IsPensioner = false,
+                    MaritalStatus = maritalStatuses[0],
+                    Nationality = nationalities[0],
+                    Passport = passports[4],
+                    Post = posts[3],
+                    Revenue = 700000,
+                },        
+            };
+            if (!context.People.Any())
+            {
+                context.People.AddRange(people);
+                context.SaveChanges();
+            }
 
-            // public DbSet<Post> Posts { get; set; }    
+            var peopleToLocations = new[]
+            {
+                new PersonToLocation
+                { 
+                    IsActual = true,
+                    Location = locations[0],
+                    Person = people[0]
+                },
+                new PersonToLocation
+                {
+                    IsActual = false,
+                    Location = locations[0],
+                    Person = people[0]
+                },
+                new PersonToLocation
+                {
+                    IsActual = true,
+                    Location = locations[0],
+                    Person = people[1]
+                },
+                new PersonToLocation
+                {
+                    IsActual = false,
+                    Location = locations[1],
+                    Person = people[1]
+                },
+                new PersonToLocation
+                {
+                    IsActual = true,
+                    Location = locations[2],
+                    Person = people[2]
+                },
+                new PersonToLocation
+                {
+                    IsActual = false,
+                    Location = locations[2],
+                    Person = people[2]
+                },
+                new PersonToLocation
+                {
+                    IsActual = true,
+                    Location = locations[0],
+                    Person = people[3]
+                },
+                new PersonToLocation
+                {
+                    IsActual = false,
+                    Location = locations[2],
+                    Person = people[3]
+                }, 
+                new PersonToLocation
+                {
+                    IsActual = true,
+                    Location = locations[1],
+                    Person = people[4]
+                },
+                new PersonToLocation
+                {
+                    IsActual = false,
+                    Location = locations[0],
+                    Person = people[4]
+                },
+            };
+            if (!context.PersonToLocations.Any())
+            {
+                for (int i = 0; i < peopleToLocations.Length; i++)
+                {
+                    try
+                    {
+                        context.PersonToLocations.Add(peopleToLocations[i]);
+                    }
+                    catch (Exception e)
+                    {
+                        var ex = e;
+                        throw;
+                    }
+                }              
+                context.SaveChanges();
+            }
 
-            // public DbSet<IssuingAuthority> IssuingAuthorities { get; set; }
 
-            // public DbSet<Passport> Passports { get; set; }
-
-
-            // public DbSet<Person> People { get; set; }
-
-            //  public DbSet<Client> Clients { get; set; }
-
+            //if (!context.Clients.Any())
+            //{
+            //    context.Clients.AddRange(people.Select(i => new Client { Person = i, }));
+            //    context.SaveChanges();
+            //}
         }
     }
 }

@@ -9,11 +9,11 @@ namespace Bank.Models
     {
         public int Id { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateTime? Date { get; set; }
 
-
-        public int LocationId { get; set; }
+        public int? LocationId { get; set; }
         public Location Location { get; set; }
 
+        public List<Person> People { get; set; }
     }
 }
