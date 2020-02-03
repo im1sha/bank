@@ -6,7 +6,7 @@ namespace Bank.Models
     {
         public DbSet<City> Cities { get; set; }
         public DbSet<Disability> Disabilities { get; set; }
-        public DbSet<MaritalStatus> MaritalStatuses { get; set; }
+        //public DbSet<MaritalStatus> MaritalStatuses { get; set; }
         public DbSet<Nationality> Nationalities { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<Birth> Births { get; set; }
@@ -21,7 +21,7 @@ namespace Bank.Models
         public TestBankAppContext(DbContextOptions<TestBankAppContext> options)
             : base(options)
         {
-            //  Database.EnsureDeleted();
+            //Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
@@ -102,15 +102,15 @@ namespace Bank.Models
                 .HasOne(p => p.Nationality)
                 .WithMany(t => t.People)
                 .OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Person>()
-                .HasOne(p => p.MaritalStatus)
-                .WithMany(t => t.People)
-                .OnDelete(DeleteBehavior.Restrict);
+            //modelBuilder.Entity<Person>()
+            //    .HasOne(p => p.MaritalStatus)
+            //    .WithMany(t => t.People)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Person>()
-                .HasOne(p => p.MaritalStatus)
-                .WithMany(t => t.People)
-                .OnDelete(DeleteBehavior.Restrict);
+            //modelBuilder.Entity<Person>()
+            //    .HasOne(p => p.MaritalStatus)
+            //    .WithMany(t => t.People)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
             //modelBuilder.Entity<Client>()
             //    .HasOne(p => p.Person)

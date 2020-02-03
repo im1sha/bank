@@ -65,22 +65,22 @@ namespace Bank.Models
                 context.Disabilities.AddRange(disabilities);
                 context.SaveChanges();
             }
-            var maritalStatuses = new[]
-            {   
-                new MaritalStatus
-                {
-                    Name = "не в браке"
-                },
-                new MaritalStatus
-                {
-                    Name = "в браке"
-                },               
-            };
-            if (!context.MaritalStatuses.Any())
-            {
-                context.MaritalStatuses.AddRange(maritalStatuses);
-                context.SaveChanges();
-            }
+            //var maritalStatuses = new[]
+            //{   
+            //    new MaritalStatus
+            //    {
+            //        Name = "не в браке"
+            //    },
+            //    new MaritalStatus
+            //    {
+            //        Name = "в браке"
+            //    },               
+            //};
+            //if (!context.MaritalStatuses.Any())
+            //{
+            //    context.MaritalStatuses.AddRange(maritalStatuses);
+            //    context.SaveChanges();
+            //}
             var nationalities = new[]
             {
                 new Nationality
@@ -393,7 +393,7 @@ namespace Bank.Models
                     HomePhone = "1111111",
                     MobilePhone = "2111111",
                     IsPensioner = false,
-                    MaritalStatus = maritalStatuses[0],
+                    MaritalStatus = false,
                     Nationality = nationalities[0],
                     Passport = passports[0],
                     Post = posts[0],
@@ -410,8 +410,8 @@ namespace Bank.Models
                     HomePhone = "1222222",
                     MobilePhone = "2222222",
                     IsPensioner = false,
-                    MaritalStatus = maritalStatuses[0],
-                    Nationality = nationalities[1],
+                    MaritalStatus = false,
+                    Nationality = nationalities[0],
                     Passport = passports[1],
                     Post = posts[1],
                     Revenue = 100000,
@@ -427,7 +427,7 @@ namespace Bank.Models
                     HomePhone = "133333333",
                     MobilePhone = "23333333",
                     IsPensioner = false,
-                    MaritalStatus = maritalStatuses[0],
+                    MaritalStatus = true,
                     Nationality = nationalities[0],
                     Passport = passports[2],
                     Post = posts[1],
@@ -444,7 +444,7 @@ namespace Bank.Models
                     HomePhone = "1444444",
                     MobilePhone = "2444444",
                     IsPensioner = false,
-                    MaritalStatus = maritalStatuses[0],
+                    MaritalStatus = false,
                     Nationality = nationalities[3],
                     Passport = passports[3],
                     Post = posts[2],
@@ -461,7 +461,7 @@ namespace Bank.Models
                     HomePhone = "155555",
                     MobilePhone = "2555555",
                     IsPensioner = false,
-                    MaritalStatus = maritalStatuses[0],
+                    MaritalStatus = false,
                     Nationality = nationalities[0],
                     Passport = passports[4],
                     Post = posts[3],
@@ -547,7 +547,6 @@ namespace Bank.Models
                     }
                     catch (Exception e)
                     {
-                        var ex = e;
                         throw;
                     }
                 }              

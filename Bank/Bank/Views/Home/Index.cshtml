@@ -8,6 +8,7 @@
     </div>*@
 
 @model IEnumerable<Bank.Models.Person>
+
 @{
     //ViewData["Title"] = "Bank";
     Layout = null;
@@ -30,41 +31,41 @@
             <td>Электронная почта</td>
             <td>Домашний телефон</td>
             <td>Пенсионер</td>
-            <td>В браке</td>
+            <td>Состоит в браке</td>
             <td>Мобильный телефон</td>
             <td>Национальность</td>
             <td>Илентификационный номер</td>
             <td>Серия</td>
             <td>Номер</td>
             <td>Дата выдачи</td>
-            <td>выдавшая организация</td>
-            <td>Место работы</td>
+            <td>Выдавшая организация</td>
+            <td>Должность</td>
             <td>Компания</td>
             <td>Доход</td>
         </tr>
-       @foreach (var person in Model)
+        @foreach (var person in Model)
         {
-        <tr>
-            <td>@person.LastName</td>
-            <td>@person.FirstName</td>
-            <td>@person.MiddleName</td>
-            <td>@person.Birth</td>
-            <td>@person.Disability</td>
-            <td>@person.Email</td>
-            <td>@person.HomePhone</td>
-            <td>@person.IsPensioner</td>
-            <td>@person.MaritalStatus</td>
-            <td>@person.MobilePhone</td>
-            <td>@person.Nationality</td>
-            <td>@person.Passport.IdentifyingNumber</td>
-            <td>@person.Passport.Series</td>
-            <td>@person.Passport.Number</td>
-            <td>@person.Passport.IssuingDate</td>
-            <td>@person.Passport.IssuingAuthority.Name</td>
-            <td>@person.Post.Name</td>
-            <td>@person.Post.Company.Name</td>
-            <td>@person.Revenue</td>
-        </tr>
+            <tr>
+                <td>@person.LastName</td>
+                <td>@person.FirstName</td>
+                <td>@person.MiddleName</td>
+                <td>@person.Birth.Date</td>
+                <td>@person.Disability.Name</td>
+                <td>@person.Email</td>
+                <td>@person.HomePhone</td>
+                <td>@person.IsPensioner</td>
+                <td>@person.MaritalStatus</td>
+                <td>@person.MobilePhone</td>
+                <td>@person.Nationality.Name</td>
+                <td>@person.Passport.IdentifyingNumber</td>
+                <td>@person.Passport.Series</td>
+                <td>@person.Passport.Number</td>
+                <td>@person.Passport.IssuingDate</td>
+                <td>@person.Passport.IssuingAuthority.Name</td>
+                <td>@person.Post.Name</td>
+                <td>@person.Post.Company.Name</td>
+                <td>@person.Revenue</td>
+            </tr>
         }
     </table>
 </body>

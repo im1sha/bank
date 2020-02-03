@@ -38,8 +38,8 @@ namespace Bank.Models
         public int? PostId { get; set; }
         public Post Post { get; set; }
 
-        public int? MaritalStatusId { get; set; }
-        public MaritalStatus MaritalStatus { get; set; }
+       // public int? MaritalStatusId { get; set; }
+        public bool MaritalStatus { get; set; }
 
         public int? NationalityId { get; set; }
         public Nationality Nationality { get; set; }
