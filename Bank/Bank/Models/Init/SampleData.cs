@@ -238,22 +238,22 @@ namespace Bank.Models
                 new Post
                 {
                     Company = companies[0],
-                    Name = "CEO"
+                    Name = "Директор"
                 },
                 new Post
                 {
                     Company = companies[1],
-                    Name = "HR"
+                    Name = "Специалист по кадрам"
                 },
                 new Post
                 {
                     Company = companies[1],
-                    Name = "JS developer"
+                    Name = "JS-разработчик"
                 },
                 new Post
                 {
                     Company = companies[2],
-                    Name = "Full-stack developer"
+                    Name = ".NET-разработчик"
                 },
             };
             if (!context.Posts.Any())
@@ -397,7 +397,7 @@ namespace Bank.Models
                     Nationality = nationalities[0],
                     Passport = passports[0],
                     Post = posts[0],
-                    Revenue = 2000000,
+                    Revenue = 2000000,                   
                 },
                 new Person
                 {
@@ -455,8 +455,8 @@ namespace Bank.Models
                     Birth = births[4],
                     Disability = disabilities[0],
                     Email = "email4@mail.com",
-                    FirstName = "Сидорова",
-                    LastName = "Маргарита",
+                    FirstName = "Маргарита",
+                    LastName = "Сидорова",
                     MiddleName = "Семеновна",
                     HomePhone = "155555",
                     MobilePhone = "2555555",

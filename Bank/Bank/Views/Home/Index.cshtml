@@ -26,47 +26,76 @@
             <td>Фамилия</td>
             <td>Имя</td>
             <td>Отчество</td>
-            <td>Дата рождения</td>
-            <td>Инвалидность</td>
+
             <td>Электронная почта</td>
             <td>Домашний телефон</td>
-            <td>Пенсионер</td>
-            <td>Состоит в браке</td>
             <td>Мобильный телефон</td>
-            <td>Национальность</td>
+
+            <td>Дата рождения</td>
+            <td>Место рождения</td>
+
             <td>Илентификационный номер</td>
             <td>Серия</td>
             <td>Номер</td>
             <td>Дата выдачи</td>
             <td>Выдавшая организация</td>
+
             <td>Должность</td>
             <td>Компания</td>
             <td>Доход</td>
+
+            <td>Город проживания</td>
+            <td>Адрес проживания</td>
+
+            <td>Город прописки</td>
+            <td>Адрес прописки</td>
+
+            <td>Пенсионер</td>
+            <td>Инвалидность</td>
+            <td>Состоит в браке</td>
+            <td>Гражданство</td>
         </tr>
-        @foreach (var person in Model)
+       @{  IEnumerable<Person> result = Model.OrderBy(i => i.LastName).ToList(); }
+       @foreach (var person in result)
         {
-            <tr>
-                <td>@person.LastName</td>
-                <td>@person.FirstName</td>
-                <td>@person.MiddleName</td>
-                <td>@person.Birth.Date</td>
-                <td>@person.Disability.Name</td>
-                <td>@person.Email</td>
-                <td>@person.HomePhone</td>
-                <td>@person.IsPensioner</td>
-                <td>@person.MaritalStatus</td>
-                <td>@person.MobilePhone</td>
-                <td>@person.Nationality.Name</td>
-                <td>@person.Passport.IdentifyingNumber</td>
-                <td>@person.Passport.Series</td>
-                <td>@person.Passport.Number</td>
-                <td>@person.Passport.IssuingDate</td>
-                <td>@person.Passport.IssuingAuthority.Name</td>
-                <td>@person.Post.Name</td>
-                <td>@person.Post.Company.Name</td>
-                <td>@person.Revenue</td>
-            </tr>
+
+           var actualLocation = person.PersonToLocations.First().IsActual ? person.PersonToLocations.First()?.Location : person.PersonToLocations.Last()?.Location;
+           var residenceLocation = person.PersonToLocations.Last().IsActual ? person.PersonToLocations.First()?.Location : person.PersonToLocations.Last()?.Location;
+           var a = "";
+        <tr>
+            <td>@person.LastName</td>
+            <td>@person.FirstName</td>
+            <td>@person.MiddleName</td>
+
+            <td>@person.Email</td>
+            <td>@person.HomePhone</td>
+            <td>@person.MobilePhone</td>
+
+            <td>@person.Birth.Date</td>
+            <td>@person.Birth.Location.City.Name</td>
+
+            <td>@person.Passport.IdentifyingNumber</td>
+            <td>@person.Passport.Series</td>
+            <td>@person.Passport.Number</td>
+            <td>@person.Passport.IssuingDate</td>
+            <td>@person.Passport.IssuingAuthority.Name</td>
+
+            <td>@person.Post.Name</td>
+            <td>@person.Post.Company.Name</td>
+            <td>@person.Revenue</td>
+
+            <td>@actualLocation.City.Name</td>
+            <td>@($"{actualLocation.Street} , {actualLocation.BuildingNumber}")</td>
+            <td>@residenceLocation.City.Name</td>
+            <td>@($"{residenceLocation.Street}, {actualLocation.BuildingNumber}")</td>
+
+            <td>@person.IsPensioner</td>
+            <td>@person.Disability.Name</td>
+            <td>@person.MaritalStatus</td>
+            <td>@person.Nationality.Name</td>
+        </tr>
         }
+
     </table>
 </body>
 </html>

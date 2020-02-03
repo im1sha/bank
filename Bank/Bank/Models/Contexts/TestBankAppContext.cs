@@ -21,7 +21,7 @@ namespace Bank.Models
         public TestBankAppContext(DbContextOptions<TestBankAppContext> options)
             : base(options)
         {
-            //Database.EnsureDeleted();
+            // Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 

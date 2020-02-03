@@ -22,13 +22,13 @@ namespace Bank.Controllers
 
         public IActionResult Index()
         {
-            return View(_db.People.Include(u => u.Birth)
+            return View(_db.People
+                .Include(u => u.Birth).ThenInclude(u => u.Location).ThenInclude(u => u.City)           
                 .Include(u => u.Disability)
                 .Include(u => u.Nationality)
-                .Include(u => u.Passport)
-                .Include(u => u.Post)
-                .Include(u => u.Passport.IssuingAuthority)
-                .Include(u => u.Post.Company)
+                .Include(u => u.Passport).ThenInclude(u => u.IssuingAuthority)
+                .Include(u => u.PersonToLocations).ThenInclude(u => u.Location).ThenInclude(u => u.City)
+                .Include(u => u.Post).ThenInclude(u => u.Company)
                 .ToList());
         }
 
