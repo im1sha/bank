@@ -15,13 +15,13 @@ namespace Bank.Models
         public DbSet<IssuingAuthority> IssuingAuthorities { get; set; }
         public DbSet<Passport> Passports { get; set; }
         public DbSet<Person> People { get; set; }
-      //  public DbSet<Client> Clients { get; set; }
+        //  public DbSet<Client> Clients { get; set; }
         public DbSet<PersonToLocation> PersonToLocations { get; set; }
 
         public TestBankAppContext(DbContextOptions<TestBankAppContext> options)
             : base(options)
         {
-            Database.EnsureDeleted();
+            //  Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 

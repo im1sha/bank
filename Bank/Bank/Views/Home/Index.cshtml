@@ -1,8 +1,71 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@*@{
+        ViewData["Title"] = "Home Page";
+    }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+    <div class="text-center">
+        <h1 class="display-4">Welcome</h1>
+        <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    </div>*@
+
+@model IEnumerable<Bank.Models.Person>
+@{
+    //ViewData["Title"] = "Bank";
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Клиенты</title>
+</head>
+<body>
+    <h3>Клиенты</h3>
+    <table>
+        <tr>
+            <td>Фамилия</td>
+            <td>Имя</td>
+            <td>Отчество</td>
+            <td>Дата рождения</td>
+            <td>Инвалидность</td>
+            <td>Электронная почта</td>
+            <td>Домашний телефон</td>
+            <td>Пенсионер</td>
+            <td>В браке</td>
+            <td>Мобильный телефон</td>
+            <td>Национальность</td>
+            <td>Илентификационный номер</td>
+            <td>Серия</td>
+            <td>Номер</td>
+            <td>Дата выдачи</td>
+            <td>выдавшая организация</td>
+            <td>Место работы</td>
+            <td>Компания</td>
+            <td>Доход</td>
+        </tr>
+       @foreach (var person in Model)
+        {
+        <tr>
+            <td>@person.LastName</td>
+            <td>@person.FirstName</td>
+            <td>@person.MiddleName</td>
+            <td>@person.Birth</td>
+            <td>@person.Disability</td>
+            <td>@person.Email</td>
+            <td>@person.HomePhone</td>
+            <td>@person.IsPensioner</td>
+            <td>@person.MaritalStatus</td>
+            <td>@person.MobilePhone</td>
+            <td>@person.Nationality</td>
+            <td>@person.Passport.IdentifyingNumber</td>
+            <td>@person.Passport.Series</td>
+            <td>@person.Passport.Number</td>
+            <td>@person.Passport.IssuingDate</td>
+            <td>@person.Passport.IssuingAuthority.Name</td>
+            <td>@person.Post.Name</td>
+            <td>@person.Post.Company.Name</td>
+            <td>@person.Revenue</td>
+        </tr>
+        }
+    </table>
+</body>
+</html>
