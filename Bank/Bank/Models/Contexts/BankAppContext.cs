@@ -2,7 +2,7 @@
 
 namespace Bank.Models
 {
-    public class TestBankAppContext : DbContext
+    public class BankAppContext : DbContext
     {
         public DbSet<City> Cities { get; set; }
         public DbSet<Disability> Disabilities { get; set; }
@@ -18,7 +18,7 @@ namespace Bank.Models
         //  public DbSet<Client> Clients { get; set; }
         public DbSet<PersonToLocation> PersonToLocations { get; set; }
 
-        public TestBankAppContext(DbContextOptions<TestBankAppContext> options)
+        public BankAppContext(DbContextOptions<BankAppContext> options)
             : base(options)
         {
             // Database.EnsureDeleted();
@@ -27,8 +27,6 @@ namespace Bank.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-         
-
             modelBuilder.Entity<Location>()
                 .HasOne(p => p.City)
                 .WithMany(t => t.Locations)
