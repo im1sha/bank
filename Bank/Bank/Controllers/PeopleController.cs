@@ -22,6 +22,18 @@ namespace Bank.Controllers
             _logger = logger;
         }
 
+        private List<Person> RetreivePeople()
+        {
+            return _db.People
+                .Include(u => u.Birth).ThenInclude(u => u.Location).ThenInclude(u => u.City)
+                .Include(u => u.Disability)
+                .Include(u => u.Nationality)
+                .Include(u => u.Passport).ThenInclude(u => u.IssuingAuthority)
+                .Include(u => u.PersonToLocations).ThenInclude(u => u.Location).ThenInclude(u => u.City)
+                .Include(u => u.Post).ThenInclude(u => u.Company)
+                .ToList();
+        }
+
         // GET: People
         public ActionResult Index()
         {
@@ -31,7 +43,7 @@ namespace Bank.Controllers
         // GET: People/Details/5
         public ActionResult Details(int id)
         {
-            return View(_db.People.FirstOrDefault(i => i.Id == id));
+            return View(RetreivePeople().FirstOrDefault(i => i.Id == id));
         }
 
         // GET: People/Create
@@ -104,18 +116,6 @@ namespace Bank.Controllers
             {
                 return RedirectToAction(nameof(Index));
             }
-        }
-
-        private List<Person> RetreivePeople()
-        {
-            return _db.People
-                .Include(u => u.Birth).ThenInclude(u => u.Location).ThenInclude(u => u.City)
-                .Include(u => u.Disability)
-                .Include(u => u.Nationality)
-                .Include(u => u.Passport).ThenInclude(u => u.IssuingAuthority)
-                .Include(u => u.PersonToLocations).ThenInclude(u => u.Location).ThenInclude(u => u.City)
-                .Include(u => u.Post).ThenInclude(u => u.Company)
-                .ToList();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
