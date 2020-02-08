@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -25,7 +26,7 @@ namespace Bank.Models
         public int IssuingAuthorityId { get; set; }
         public IssuingAuthority IssuingAuthority { get; set; }
 
-
+        [DataType(DataType.Date)]
         public DateTime IssuingDate { get; set; }
 
         public Person Person { get; set; }

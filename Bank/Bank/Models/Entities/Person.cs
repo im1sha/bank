@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -38,7 +39,7 @@ namespace Bank.Models
         public int? PostId { get; set; }
         public Post Post { get; set; }
 
-       // public int? MaritalStatusId { get; set; }
+        // public int? MaritalStatusId { get; set; }
         public bool MaritalStatus { get; set; }
 
         public int? NationalityId { get; set; }
@@ -49,7 +50,8 @@ namespace Bank.Models
 
         public bool? IsPensioner { get; set; }
 
-        public double Revenue { get; set; }
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal Revenue { get; set; }
 
         //public int ClientId { get; set; }
         //public Client Client { get; set; }
