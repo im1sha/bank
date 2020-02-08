@@ -7,7 +7,7 @@ namespace Bank.Models
 {
     public static class SampleData
     {
-        public static void Initialize(TestBankAppContext context)
+        public static void Initialize(BankAppContext context)
         {
             var cities = new[] 
             {

@@ -21,7 +21,7 @@ namespace Bank
         public void ConfigureServices(IServiceCollection services)
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<TestBankAppContext>(options => options.UseSqlServer(connection));
+            services.AddDbContext<BankAppContext>(options => options.UseSqlServer(connection));
             services.AddControllersWithViews();
         }
 
@@ -49,7 +49,7 @@ namespace Bank
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=People}/{action=Index}/{id?}");
             });
         }
     }

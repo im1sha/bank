@@ -23,7 +23,7 @@ namespace Bank
 
                 try
                 {
-                    var context = services.GetRequiredService<TestBankAppContext>();
+                    var context = services.GetRequiredService<BankAppContext>();
                     SampleData.Initialize(context);
                 }
                 catch (Exception ex)
