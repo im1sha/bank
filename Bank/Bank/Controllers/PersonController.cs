@@ -57,6 +57,9 @@ namespace Bank.Controllers
 
             foreach (var item in people)
             {
+                var actualLocation = item.PersonToLocations.FirstOrDefault(i => i.PersonId == item.Id && i.IsActual);
+                var residenceLocation = item.PersonToLocations.FirstOrDefault(i => i.PersonId == item.Id && !i.IsActual);
+
                 result.Add(new PersonFullViewModel
                 {
                     Id = item.Id,
@@ -89,6 +92,16 @@ namespace Bank.Controllers
                     NationalityId = item.NationalityId,
                     NationalityName = item.Nationality.Name,
                     Revenue = item.Revenue,
+                    ActualLocationBuildingNumber = actualLocation.Location.BuildingNumber,
+                    ActualLocationCity = actualLocation.Location.City.Name,
+                    ActualLocationCityId = actualLocation.Location.CityId,
+                    ActualLocationId = actualLocation.LocationId,
+                    ActualLocationStreet = actualLocation.Location.Street,
+                    ResidenceLocationBuildingNumber = residenceLocation.Location.BuildingNumber,
+                    ResidenceLocationCity = residenceLocation.Location.City.Name,
+                    ResidenceLocationCityId =residenceLocation.Location.CityId,
+                    ResidenceLocationId = residenceLocation.LocationId,
+                    ResidenceLocationStreet = residenceLocation.Location.Street,
                 });
             }
             return result;

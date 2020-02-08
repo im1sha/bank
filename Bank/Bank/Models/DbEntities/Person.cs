@@ -40,7 +40,7 @@ namespace Bank.Models
         public Post Post { get; set; }
 
         // public int? MaritalStatusId { get; set; }
-        public bool MaritalStatus { get; set; }
+        public bool? MaritalStatus { get; set; }
 
         public int? NationalityId { get; set; }
         public Nationality Nationality { get; set; }
@@ -48,7 +48,7 @@ namespace Bank.Models
         public int? DisabilityId { get; set; }
         public Disability Disability { get; set; }
 
-        public bool? IsPensioner { get; set; }
+        public bool IsPensioner { get; set; }
 
         [Column(TypeName = "decimal(18, 2)")]
         public decimal Revenue { get; set; }

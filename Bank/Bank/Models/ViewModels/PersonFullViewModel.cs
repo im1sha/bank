@@ -61,6 +61,28 @@ namespace Bank.Models
 
         #endregion
 
+        #region locations
+
+        public int ResidenceLocationId { get; set; }
+        public int ResidenceLocationCityId { get; set; }       
+        [DisplayName("Registration city")]
+        public string ResidenceLocationCity { get; set; }
+        [DisplayName("Registration street")]
+        public string ResidenceLocationStreet { get; set; }
+        [DisplayName("Registration building")]
+        public string ResidenceLocationBuildingNumber { get; set; }
+
+        public int ActualLocationId { get; set; }
+        public int ActualLocationCityId { get; set; }
+        [DisplayName("Actual city")]
+        public string ActualLocationCity { get; set; }
+        [DisplayName("Actual street")]
+        public string ActualLocationStreet { get; set; }
+        [DisplayName("Actual building")]
+        public string ActualLocationBuildingNumber { get; set; }
+
+        #endregion
+
         [DisplayName("Home phone")]
         public string HomePhone { get; set; }
 
@@ -73,18 +95,18 @@ namespace Bank.Models
 
         public int? PostId { get; set; }
 
-        [DisplayName("Post")]
+        [DisplayName("Position")]
         public string PostName { get; set; }
 
         public int? CompanyId { get; set; }
 
-        [DisplayName("Company")]
+        [DisplayName("Job")]
         public string CompanyName { get; set; }
 
         #endregion
 
         [DisplayName("Married")]
-        public bool MaritalStatus { get; set; }
+        public bool? MaritalStatus { get; set; }
 
         #region nationality
 
@@ -104,7 +126,7 @@ namespace Bank.Models
         #endregion
 
         [DisplayName("Pensioner")]
-        public bool? IsPensioner { get; set; }
+        public bool IsPensioner { get; set; }
 
         public decimal Revenue { get; set; }
 
