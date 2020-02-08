@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace Bank.Models
 {
-    public static class SampleData
+    public static class DbInitializer
     {
-        public static void Initialize(BankAppContext context)
+        public static void Initialize(BankAppDbContext context)
         {
             var cities = new[] 
             {

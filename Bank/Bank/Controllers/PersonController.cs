@@ -11,12 +11,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Bank.Controllers
 {
-    public class PeopleController : Controller
+    public class PersonController : Controller
     {
-        private readonly ILogger<PeopleController> _logger;
-        private readonly BankAppContext _db;
+        private readonly ILogger<PersonController> _logger;
+        private readonly BankAppDbContext _db;
 
-        public PeopleController(BankAppContext context, ILogger<PeopleController> logger)
+        public PersonController(BankAppDbContext context, ILogger<PersonController> logger)
         {
             _db = context;
             _logger = logger;

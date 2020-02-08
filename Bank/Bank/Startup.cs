@@ -21,7 +21,7 @@ namespace Bank
         public void ConfigureServices(IServiceCollection services)
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<BankAppContext>(options => options.UseSqlServer(connection));
+            services.AddDbContext<BankAppDbContext>(options => options.UseSqlServer(connection));
             services.AddControllersWithViews();
         }
 
