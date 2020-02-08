@@ -11,11 +11,5 @@ namespace Bank.Models
                   DateTime.Now.ToString("d"))
         {
         }
-
-        //public override string FormatErrorMessage(string name)
-        //{
-        //    return $"The field {name} must be between {Minimum as} and {}.";
-        //}
-
     }
 }
