@@ -140,7 +140,7 @@ namespace Bank.Models
 
         [Required]
         [DisplayName("Married")]
-        public int? MaritalStatusId { get; }
+        public int? MaritalStatusId { get; set; }
 
         [DisplayName("Married status")]
         public List<MaritalStatusLocal> MaritalStatus { get; set; }

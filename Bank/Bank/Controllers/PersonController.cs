@@ -181,21 +181,11 @@ namespace Bank.Controllers
 
         // GET: Person/Create
         public ActionResult Create()
-        {
-            var instance = new PersonFullViewModel
-            {
-                BirthLocationCityName = GetCities(),
-                DisabilityName = GetDisabilities(),
-                MaritalStatus = GetMarriegeStatuses(),
-                NationalityName = GetNationalities(),
-                ActualLocationCity = GetCities(),
-                RegistrationLocationCity = GetCities(),
-            };
-
-            return View(instance);
+        {        
+            return View(RestoreSelectLists(new PersonFullViewModel()));
         }
 
-        private PersonFullViewModel RestoreLists(PersonFullViewModel model)
+        private PersonFullViewModel RestoreSelectLists(PersonFullViewModel model)
         {
             model.BirthLocationCityName = GetCities();
             model.DisabilityName = GetDisabilities();
@@ -219,7 +209,7 @@ namespace Bank.Controllers
                 }
                 else
                 {
-                    return View(RestoreLists(model));
+                    return View(RestoreSelectLists(model));
                 }
             }
             catch
