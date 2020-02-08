@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Bank.Models;
+﻿using Bank.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Bank.Controllers
 {
@@ -34,25 +32,44 @@ namespace Bank.Controllers
                 .ToList();
         }
 
-        // GET: People
-        public ActionResult Index()
+        private List<PersonShortViewModel> CreatePersonShortViewModels(List<Person> people) 
         {
-            return View(RetreivePeople());
+            List<PersonShortViewModel> result = new List<PersonShortViewModel>();
+            foreach (var item in people)
+            {
+                result.Add(new PersonShortViewModel
+                {
+                    Id = item.Id,
+                    FirstName = item.FirstName,
+                    LastName = item.LastName,
+                    MiddleName = item.MiddleName,
+                    PassportId = item.Passport.Id,
+                    PassportSeries =item.Passport.Series,
+                    PassportNumber = item.Passport.Number,
+                });
+            }
+            return result;
         }
 
-        // GET: People/Details/5
+        // GET: Person
+        public ActionResult Index()
+        {
+            return View(CreatePersonShortViewModels(RetreivePeople()));
+        }
+
+        // GET: Person/Details/5
         public ActionResult Details(int id)
         {
             return View(RetreivePeople().FirstOrDefault(i => i.Id == id));
         }
 
-        // GET: People/Create
+        // GET: Person/Create
         public ActionResult Create()
         {
             return View(new Person());
         }
 
-        // POST: People/Create
+        // POST: Person/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
@@ -69,13 +86,13 @@ namespace Bank.Controllers
             }
         }
 
-        // GET: People/Edit/5
+        // GET: Person/Edit/5
         public ActionResult Edit(int id)
         {
             return View(_db.People.FirstOrDefault(i => i.Id == id));
         }
 
-        // POST: People/Edit/5
+        // POST: Person/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, Person person)
@@ -94,13 +111,13 @@ namespace Bank.Controllers
             }
         }
 
-        // GET: People/Delete/5
+        // GET: Person/Delete/5
         public ActionResult Delete(int id)
-        {            
+        {
             return View(_db.People.Find(id));
         }
 
-        // POST: People/Delete/5
+        // POST: Person/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)

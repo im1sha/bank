@@ -49,7 +49,7 @@ namespace Bank
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=People}/{action=Index}/{id?}");
+                    pattern: "{controller=Person}/{action=Index}/{id?}");
             });
         }
     }
