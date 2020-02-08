@@ -32,7 +32,7 @@ namespace Bank.Controllers
                 .ToList();
         }
 
-        private List<PersonMinViewModel> ConvertToPersonMinViewModels(List<Person> people) 
+        private List<PersonMinViewModel> ConvertToPersonMinViewModels(List<Person> people)
         {
             List<PersonMinViewModel> result = new List<PersonMinViewModel>();
             foreach (var item in people)
@@ -44,7 +44,7 @@ namespace Bank.Controllers
                     LastName = item.LastName,
                     MiddleName = item.MiddleName,
                     PassportId = item.Passport.Id,
-                    PassportSeries =item.Passport.Series,
+                    PassportSeries = item.Passport.Series,
                     PassportNumber = item.Passport.Number,
                 });
             }
@@ -76,12 +76,12 @@ namespace Bank.Controllers
                     BirthLocationCityName = item.Birth.Location.City.Name,
                     BirthLocationCityId = item.Birth.Location.CityId,
                     CompanyId = item.Post.CompanyId,
-                    CompanyName  = item.Post.Company.Name,
+                    CompanyName = item.Post.Company.Name,
                     PostId = item.PostId,
                     PostName = item.Post.Name,
                     DisabilityId = item.DisabilityId,
                     DisabilityName = item.Disability.Name,
-                    Email =item.Email,
+                    Email = item.Email,
                     HomePhone = item.HomePhone,
                     MobilePhone = item.MobilePhone,
                     IsPensioner = item.IsPensioner,
@@ -103,7 +103,7 @@ namespace Bank.Controllers
         // GET: Person/Details/5
         public ActionResult Details(int id)
         {
-            return View(RetreivePeople().FirstOrDefault(i => i.Id == id));
+            return View(ConvertToPersonFullViewModels(RetreivePeople()).FirstOrDefault(i => i.Id == id));
         }
 
         // GET: Person/Create
