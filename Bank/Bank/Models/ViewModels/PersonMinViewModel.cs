@@ -4,9 +4,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Bank.Models
 {
-    public class PersonShortViewModel
+    public class PersonMinViewModel
     {
         public int Id { get; set; }
+
         [DisplayName("First name")]
         public string FirstName { get; set; }
 
@@ -21,6 +22,7 @@ namespace Bank.Models
         [DisplayName("Passport number")]
         public string PassportNumber { get; set; }
 
+        [DisplayName("Passport series")]
         public string PassportSeries { get; set; }
     }
 }

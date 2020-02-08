@@ -32,12 +32,12 @@ namespace Bank.Controllers
                 .ToList();
         }
 
-        private List<PersonShortViewModel> CreatePersonShortViewModels(List<Person> people) 
+        private List<PersonMinViewModel> ConvertToPersonMinViewModels(List<Person> people) 
         {
-            List<PersonShortViewModel> result = new List<PersonShortViewModel>();
+            List<PersonMinViewModel> result = new List<PersonMinViewModel>();
             foreach (var item in people)
             {
-                result.Add(new PersonShortViewModel
+                result.Add(new PersonMinViewModel
                 {
                     Id = item.Id,
                     FirstName = item.FirstName,
@@ -51,10 +51,53 @@ namespace Bank.Controllers
             return result;
         }
 
+        private List<PersonFullViewModel> ConvertToPersonFullViewModels(List<Person> people)
+        {
+            List<PersonFullViewModel> result = new List<PersonFullViewModel>();
+
+            foreach (var item in people)
+            {
+                result.Add(new PersonFullViewModel
+                {
+                    Id = item.Id,
+                    FirstName = item.FirstName,
+                    LastName = item.LastName,
+                    MiddleName = item.MiddleName,
+                    PassportId = item.PassportId,
+                    PassportSeries = item.Passport.Series,
+                    PassportNumber = item.Passport.Number,
+                    PassportIdentifyingNumber = item.Passport.IdentifyingNumber,
+                    PassportIssuingAuthorityId = item.Passport.IssuingAuthorityId,
+                    PassportIssuingAuthorityName = item.Passport.IssuingAuthority.Name,
+                    PassportIssuingDate = item.Passport.IssuingDate,
+                    BirthDate = item.Birth.Date,
+                    BirthId = item.BirthId,
+                    BirthLocationId = item.Birth.LocationId,
+                    BirthLocationCityName = item.Birth.Location.City.Name,
+                    BirthLocationCityId = item.Birth.Location.CityId,
+                    CompanyId = item.Post.CompanyId,
+                    CompanyName  = item.Post.Company.Name,
+                    PostId = item.PostId,
+                    PostName = item.Post.Name,
+                    DisabilityId = item.DisabilityId,
+                    DisabilityName = item.Disability.Name,
+                    Email =item.Email,
+                    HomePhone = item.HomePhone,
+                    MobilePhone = item.MobilePhone,
+                    IsPensioner = item.IsPensioner,
+                    MaritalStatus = item.MaritalStatus,
+                    NationalityId = item.NationalityId,
+                    NationalityName = item.Nationality.Name,
+                    Revenue = item.Revenue,
+                });
+            }
+            return result;
+        }
+
         // GET: Person
         public ActionResult Index()
         {
-            return View(CreatePersonShortViewModels(RetreivePeople()));
+            return View(ConvertToPersonMinViewModels(RetreivePeople()));
         }
 
         // GET: Person/Details/5
