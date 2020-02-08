@@ -19,7 +19,6 @@ namespace Bank.Models
         public int BirthId { get; set; }
         public Birth Birth { get; set; }
 
-        public int PassportId { get; set; }
         public Passport Passport { get; set; }
 
         public List<PersonToLocation> PersonToLocations { get; set; }
@@ -42,10 +41,10 @@ namespace Bank.Models
         // public int? MaritalStatusId { get; set; }
         public bool? MaritalStatus { get; set; }
 
-        public int? NationalityId { get; set; }
+        public int NationalityId { get; set; }
         public Nationality Nationality { get; set; }
 
-        public int? DisabilityId { get; set; }
+        public int DisabilityId { get; set; }
         public Disability Disability { get; set; }
 
         public bool IsPensioner { get; set; }

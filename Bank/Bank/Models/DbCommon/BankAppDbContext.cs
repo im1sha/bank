@@ -68,7 +68,7 @@ namespace Bank.Models
                 .HasOne(p => p.Person)
                 .WithMany(t => t.PersonToLocations)
                 .HasForeignKey(p => p.PersonId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
                 
             modelBuilder.Entity<PersonToLocation>()
                 .HasOne(p => p.Location)
@@ -84,10 +84,11 @@ namespace Bank.Models
                 .OnDelete(DeleteBehavior.Restrict);
 
             // 1 to 1
-            modelBuilder.Entity<Person>()
-                .HasOne(p => p.Passport)
-                .WithOne(t => t.Person)
-                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Passport>()
+                .HasOne(p => p.Person)
+                .WithOne(t => t.Passport)
+                //.HasForeignKey(a => a.);
+                .OnDelete(DeleteBehavior.Cascade);                //.HasForeignKey<Passport>(b => b.PersonId)
 
             modelBuilder.Entity<Person>()
                 .HasOne(p => p.Birth)
@@ -108,10 +109,12 @@ namespace Bank.Models
                 .HasOne(p => p.Disability)
                 .WithMany(t => t.People)
                 .OnDelete(DeleteBehavior.SetNull);
+
             modelBuilder.Entity<Person>()
                 .HasOne(p => p.Nationality)
                 .WithMany(t => t.People)
                 .OnDelete(DeleteBehavior.Restrict);
+
             //modelBuilder.Entity<Person>()
             //    .HasOne(p => p.MaritalStatus)
             //    .WithMany(t => t.People)

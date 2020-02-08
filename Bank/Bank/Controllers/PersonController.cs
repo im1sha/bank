@@ -51,6 +51,33 @@ namespace Bank.Controllers
             return result;
         }
 
+        private List<City> GetCities()
+        {
+            return _db.Cities.OrderBy(i => i.Id).ToList();
+        }
+
+        private List<Nationality> GetNationalities()
+        {
+            return _db.Nationalities.OrderBy(i => i.Id).ToList();
+        }
+
+        private static readonly List<MaritalStatusLocal> _maritalStatusLocals =
+            new List<MaritalStatusLocal>()
+            {
+                new MaritalStatusLocal { Id = 1, Name = "Yes" },
+                new MaritalStatusLocal { Id = 2, Name = "No" }
+            };
+
+        private List<MaritalStatusLocal> GetMarriegeStatuses()
+        {
+            return _maritalStatusLocals;
+        }
+
+        private List<Disability> GetDisabilities()
+        {
+            return _db.Disabilities.OrderBy(i => i.Id).ToList();
+        }
+
         private List<PersonFullViewModel> ConvertToPersonFullViewModels(List<Person> people)
         {
             List<PersonFullViewModel> result = new List<PersonFullViewModel>();
@@ -66,7 +93,6 @@ namespace Bank.Controllers
                     FirstName = item.FirstName,
                     LastName = item.LastName,
                     MiddleName = item.MiddleName,
-                    PassportId = item.PassportId,
                     PassportSeries = item.Passport.Series,
                     PassportNumber = item.Passport.Number,
                     PassportIdentifyingNumber = item.Passport.IdentifyingNumber,
@@ -76,32 +102,32 @@ namespace Bank.Controllers
                     BirthDate = item.Birth.Date,
                     BirthId = item.BirthId,
                     BirthLocationId = item.Birth.LocationId,
-                    BirthLocationCityName = item.Birth.Location.City.Name,
+                    BirthLocationCityName = GetCities(),
                     BirthLocationCityId = item.Birth.Location.CityId,
                     CompanyId = item.Post.CompanyId,
                     CompanyName = item.Post.Company.Name,
                     PostId = item.PostId,
                     PostName = item.Post.Name,
                     DisabilityId = item.DisabilityId,
-                    DisabilityName = item.Disability.Name,
+                    DisabilityName = GetDisabilities(),
                     Email = item.Email,
                     HomePhone = item.HomePhone,
                     MobilePhone = item.MobilePhone,
                     IsPensioner = item.IsPensioner,
-                    MaritalStatus = item.MaritalStatus,
+                    MaritalStatus = GetMarriegeStatuses(),
                     NationalityId = item.NationalityId,
-                    NationalityName = item.Nationality.Name,
+                    NationalityName = GetNationalities(),
                     Revenue = item.Revenue,
                     ActualLocationBuildingNumber = actualLocation.Location.BuildingNumber,
-                    ActualLocationCity = actualLocation.Location.City.Name,
+                    ActualLocationCity = GetCities(),
                     ActualLocationCityId = actualLocation.Location.CityId,
                     ActualLocationId = actualLocation.LocationId,
                     ActualLocationStreet = actualLocation.Location.Street,
-                    ResidenceLocationBuildingNumber = residenceLocation.Location.BuildingNumber,
-                    ResidenceLocationCity = residenceLocation.Location.City.Name,
-                    ResidenceLocationCityId =residenceLocation.Location.CityId,
-                    ResidenceLocationId = residenceLocation.LocationId,
-                    ResidenceLocationStreet = residenceLocation.Location.Street,
+                    RegistationLocationBuildingNumber = residenceLocation.Location.BuildingNumber,
+                    RegistrationLocationCity = GetCities(),
+                    RegistrationLocationCityId = residenceLocation.Location.CityId,
+                    RegistrationLocationId = residenceLocation.LocationId,
+                    RegistrationLocationStreet = residenceLocation.Location.Street,
                 });
             }
             return result;
@@ -119,26 +145,86 @@ namespace Bank.Controllers
             return View(ConvertToPersonFullViewModels(RetreivePeople()).FirstOrDefault(i => i.Id == id));
         }
 
+        // GET: Person/Delete/5
+        public ActionResult Delete(int id)
+        {
+            return View(ConvertToPersonFullViewModels(RetreivePeople()).FirstOrDefault(i => i.Id == id));
+        }
+
+        // POST: Person/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, IFormCollection collection)
+        {
+            try
+            {
+                var requiredOne = _db.People.FirstOrDefault(i => i.Id == id);
+                _db.People.Remove(requiredOne);
+                _db.SaveChanges();
+                return RedirectToAction(nameof(StatusSuccess));
+            }
+            catch
+            {
+                return RedirectToAction(nameof(StatusFailed));
+            }
+        }
+
+        public ActionResult StatusSuccess()
+        {
+            return View();
+        }
+
+        public ActionResult StatusFailed()
+        {
+            return View();
+        }
+
         // GET: Person/Create
         public ActionResult Create()
         {
-            return View(new Person());
+            var instance = new PersonFullViewModel
+            {
+                BirthLocationCityName = GetCities(),
+                DisabilityName = GetDisabilities(),
+                MaritalStatus = GetMarriegeStatuses(),
+                NationalityName = GetNationalities(),
+                ActualLocationCity = GetCities(),
+                RegistrationLocationCity = GetCities(),
+            };
+
+            return View(instance);
+        }
+
+        private PersonFullViewModel RestoreLists(PersonFullViewModel model)
+        {
+            model.BirthLocationCityName = GetCities();
+            model.DisabilityName = GetDisabilities();
+            model.MaritalStatus = GetMarriegeStatuses();
+            model.NationalityName = GetNationalities();
+            model.ActualLocationCity = GetCities();
+            model.RegistrationLocationCity = GetCities();
+            return model;
         }
 
         // POST: Person/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(PersonFullViewModel model)
         {
             try
             {
-                // TODO: Add insert logic here
-
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    return RedirectToAction(nameof(StatusSuccess));
+                }
+                else
+                {
+                    return View(RestoreLists(model));
+                }
             }
             catch
             {
-                return View(RetreivePeople());
+                return RedirectToAction(nameof(StatusFailed));
             }
         }
 
@@ -159,30 +245,6 @@ namespace Bank.Controllers
                 _db.SaveChanges();
                 // TODO: Add update logic here
 
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return RedirectToAction(nameof(Index));
-            }
-        }
-
-        // GET: Person/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View(_db.People.Find(id));
-        }
-
-        // POST: Person/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                var movie = _db.People.Find(id);
-                _db.People.Remove(movie);
-                _db.SaveChanges();
                 return RedirectToAction(nameof(Index));
             }
             catch

@@ -1,0 +1,172 @@
+﻿@model Bank.Models.PersonFullViewModel
+
+@{
+    //var instance = Model.Last();
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>PersonFullViewModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MiddleName" class="control-label"></label>
+                <input asp-for="MiddleName" class="form-control" />
+                <span asp-validation-for="MiddleName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BirthDate" class="control-label"></label>
+                <input asp-for="BirthDate" class="form-control" />
+                <span asp-validation-for="BirthDate" class="text-danger"></span>
+            </div>
+          
+            <div class="form-group">
+                <label asp-for="BirthLocationCityName" class="control-label"></label>
+                <select asp-for="BirthLocationCityId" asp-items="@(new SelectList(Model.BirthLocationCityName, "Id", "Name"))" class="form-control">
+                    <option>Please select one</option>
+                </select>
+                <span asp-validation-for="BirthLocationCityId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="PassportNumber" class="control-label"></label>
+                <input asp-for="PassportNumber" class="form-control" />
+                <span asp-validation-for="PassportNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PassportSeries" class="control-label"></label>
+                <input asp-for="PassportSeries" class="form-control" />
+                <span asp-validation-for="PassportSeries" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PassportIdentifyingNumber" class="control-label"></label>
+                <input asp-for="PassportIdentifyingNumber" class="form-control" />
+                <span asp-validation-for="PassportIdentifyingNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PassportIssuingAuthorityName" class="control-label"></label>
+                <input asp-for="PassportIssuingAuthorityName" class="form-control" />
+                <span asp-validation-for="PassportIssuingAuthorityName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PassportIssuingDate" class="control-label"></label>
+                <input asp-for="PassportIssuingDate" class="form-control" />
+                <span asp-validation-for="PassportIssuingDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="RegistrationLocationCity" class="control-label"></label>
+                <select asp-for="RegistrationLocationCityId" asp-items="@(new SelectList(Model.RegistrationLocationCity, "Id", "Name"))" class="form-control">
+                    <option>Please select one</option>
+                </select>
+                <span asp-validation-for="RegistrationLocationCityId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RegistrationLocationStreet" class="control-label"></label>
+                <input asp-for="RegistrationLocationStreet" class="form-control" />
+                <span asp-validation-for="RegistrationLocationStreet" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RegistationLocationBuildingNumber" class="control-label"></label>
+                <input asp-for="RegistationLocationBuildingNumber" class="form-control" />
+                <span asp-validation-for="RegistationLocationBuildingNumber" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ActualLocationCity" class="control-label"></label>
+                <select asp-for="ActualLocationCityId" asp-items="@(new SelectList(Model.ActualLocationCity, "Id", "Name"))" class="form-control">
+                    <option>Please select one</option>
+                </select>
+                <span asp-validation-for="ActualLocationCityId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ActualLocationStreet" class="control-label"></label>
+                <input asp-for="ActualLocationStreet" class="form-control" />
+                <span asp-validation-for="ActualLocationStreet" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ActualLocationBuildingNumber" class="control-label"></label>
+                <input asp-for="ActualLocationBuildingNumber" class="form-control" />
+                <span asp-validation-for="ActualLocationBuildingNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="HomePhone" class="control-label"></label>
+                <input asp-for="HomePhone" class="form-control" />
+                <span asp-validation-for="HomePhone" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MobilePhone" class="control-label"></label>
+                <input asp-for="MobilePhone" class="form-control" />
+                <span asp-validation-for="MobilePhone" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CompanyName" class="control-label"></label>
+                <input asp-for="CompanyName" class="form-control" />
+                <span asp-validation-for="CompanyName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PostName" class="control-label"></label>
+                <input asp-for="PostName" class="form-control" />
+                <span asp-validation-for="PostName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaritalStatus" class="control-label"></label>
+                <select asp-for="MaritalStatusId" asp-items="@(new SelectList(Model.MaritalStatus, "Id", "Name"))" class="form-control">
+                    <option >Please select one</option>
+                </select>
+                <span asp-validation-for="MaritalStatusId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NationalityName" class="control-label"></label>
+                <select asp-for="NationalityId" asp-items="@(new SelectList(Model.NationalityName, "Id", "Name"))" class="form-control">
+                    <option>Please select one</option>
+                </select>
+                <span asp-validation-for="NationalityId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DisabilityName" class="control-label"></label>
+                <select asp-for="DisabilityId" asp-items="@(new SelectList(Model.DisabilityName, "Id", "Name"))" class="form-control">
+                    <option>Please select one</option>
+                </select>
+                <span asp-validation-for="DisabilityId" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsPensioner" /> @Html.DisplayNameFor(model => model.IsPensioner)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Revenue" class="control-label"></label>
+                <input asp-for="Revenue" class="form-control">
+                <span asp-validation-for="Revenue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

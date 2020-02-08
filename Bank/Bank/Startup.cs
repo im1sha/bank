@@ -1,10 +1,12 @@
 using Bank.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Globalization;
 
 namespace Bank
 {
@@ -22,12 +24,31 @@ namespace Bank
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<BankAppDbContext>(options => options.UseSqlServer(connection));
-            services.AddControllersWithViews();
+            services.AddControllersWithViews();        
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            var culture = CultureInfo.CreateSpecificCulture("en-US");
+            var dateFormat = new DateTimeFormatInfo
+            {
+                ShortDatePattern = "MM/dd/yyyy",
+                LongDatePattern = "MM/dd/yyyy hh:mm:ss tt"
+            };
+            culture.DateTimeFormat = dateFormat;
+
+            var supportedCultures = new[]
+            {
+                culture
+            };
+
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture(culture),
+                SupportedCultures = supportedCultures,
+                SupportedUICultures = supportedCultures
+            });
 
             if (env.IsDevelopment())
             {
@@ -45,6 +66,7 @@ namespace Bank
 
             app.UseAuthorization();
 
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

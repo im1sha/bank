@@ -29,6 +29,7 @@ namespace Bank.Models
         [DataType(DataType.Date)]
         public DateTime IssuingDate { get; set; }
 
+        public int PersonId { get; set; }
         public Person Person { get; set; }
     }
 }
