@@ -112,10 +112,10 @@ namespace Bank.Controllers
                     BirthLocationId = item.Birth.LocationId,
                     BirthLocationCityList = GetCities(),
                     BirthLocationCityId = item.Birth.Location.CityId,
-                    CompanyId = item.Post.CompanyId,
-                    CompanyName = item.Post.Company.Name,
+                    CompanyId = item.Post?.CompanyId,
+                    CompanyName = item.Post?.Company?.Name,
                     PostId = item.PostId,
-                    PostName = item.Post.Name,
+                    PostName = item.Post?.Name,
                     DisabilityId = item.DisabilityId,
                     DisabilityList = GetDisabilities(),
                     Email = item.Email,
@@ -388,6 +388,7 @@ namespace Bank.Controllers
                         Nationality = GetNationalities().FirstOrDefault(i => i.Id == model.NationalityId),
                         Post = post,
                     };
+                    _db.People.Add(person);
                     _db.SaveChanges();
 
                     Passport passport = new Passport
@@ -400,6 +401,7 @@ namespace Bank.Controllers
                         Person = person,
                         Series = model.PassportSeries,
                     };
+                    _db.Passports.Add(passport);
                     _db.SaveChanges();
 
                     var city = GetCities().FirstOrDefault(i => i.Id == model.BirthLocationCityId);
@@ -410,6 +412,7 @@ namespace Bank.Controllers
                         Location = _db.Locations.FirstOrDefault(j => j.City == city),
                         Person = person,
                     };
+                    _db.Births.Add(birth);
                     _db.SaveChanges();
 
                     Location registrationLcoation = _db.Locations.FirstOrDefault(i => i.BuildingNumber == model.RegistationLocationBuildingNumber
