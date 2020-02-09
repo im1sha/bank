@@ -39,7 +39,7 @@ namespace Bank.Models
         public Post Post { get; set; }
 
         // public int? MaritalStatusId { get; set; }
-        public bool? MaritalStatus { get; set; }
+        public bool MaritalStatus { get; set; }
 
         public int NationalityId { get; set; }
         public Nationality Nationality { get; set; }

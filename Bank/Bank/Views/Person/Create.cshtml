@@ -35,8 +35,8 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="BirthLocationCityName" class="control-label"></label>
-                <select asp-for="BirthLocationCityId" asp-items="@(new SelectList(Model.BirthLocationCityName, "Id", "Name"))" class="form-control">
+                <label asp-for="BirthLocationCityList" class="control-label"></label>
+                <select asp-for="BirthLocationCityId" asp-items="@(new SelectList(Model.BirthLocationCityList, "Id", "Name"))" class="form-control">
                     <option value="">Please select one</option>
                 </select>
                 <span asp-validation-for="BirthLocationCityId" class="text-danger"></span>
@@ -69,8 +69,8 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="RegistrationLocationCity" class="control-label"></label>
-                <select asp-for="RegistrationLocationCityId" asp-items="@(new SelectList(Model.RegistrationLocationCity, "Id", "Name"))" class="form-control">
+                <label asp-for="RegistrationLocationCityList" class="control-label"></label>
+                <select asp-for="RegistrationLocationCityId" asp-items="@(new SelectList(Model.RegistrationLocationCityList, "Id", "Name"))" class="form-control">
                     <option value="">Please select one</option>
                 </select>
                 <span asp-validation-for="RegistrationLocationCityId" class="text-danger"></span>
@@ -87,8 +87,8 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="ActualLocationCity" class="control-label"></label>
-                <select asp-for="ActualLocationCityId" asp-items="@(new SelectList(Model.ActualLocationCity, "Id", "Name"))" class="form-control">
+                <label asp-for="ActualLocationCityList" class="control-label"></label>
+                <select asp-for="ActualLocationCityId" asp-items="@(new SelectList(Model.ActualLocationCityList, "Id", "Name"))" class="form-control">
                     <option value="">Please select one</option>
                 </select>
                 <span asp-validation-for="ActualLocationCityId" class="text-danger"></span>
@@ -129,22 +129,22 @@
                 <span asp-validation-for="PostName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="MaritalStatus" class="control-label"></label>
-                <select asp-for="MaritalStatusId" asp-items="@(new SelectList(Model.MaritalStatus, "Id", "Name"))" class="form-control">
+                <label asp-for="MaritalStatusList" class="control-label"></label>
+                <select asp-for="MaritalStatusId" asp-items="@(new SelectList(Model.MaritalStatusList, "Id", "Name"))" class="form-control">
                     <option value="">Please select one</option>
                 </select>
                 <span asp-validation-for="MaritalStatusId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="NationalityName" class="control-label"></label>
-                <select asp-for="NationalityId" asp-items="@(new SelectList(Model.NationalityName, "Id", "Name"))" class="form-control">
+                <label asp-for="NationalityList" class="control-label"></label>
+                <select asp-for="NationalityId" asp-items="@(new SelectList(Model.NationalityList, "Id", "Name"))" class="form-control">
                     <option value="">Please select one</option>
                 </select>
                 <span asp-validation-for="NationalityId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="DisabilityName" class="control-label"></label>
-                <select asp-for="DisabilityId" asp-items="@(new SelectList(Model.DisabilityName, "Id", "Name"))" class="form-control">
+                <label asp-for="DisabilityList" class="control-label"></label>
+                <select asp-for="DisabilityId" asp-items="@(new SelectList(Model.DisabilityList, "Id", "Name"))" class="form-control">
                     <option value="">Please select one</option>
                 </select>
                 <span asp-validation-for="DisabilityId" class="text-danger"></span>

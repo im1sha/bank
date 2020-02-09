@@ -87,13 +87,18 @@ namespace Bank.Controllers
         private static readonly List<MaritalStatusLocal> _maritalStatusLocals =
             new List<MaritalStatusLocal>()
             {
-                new MaritalStatusLocal { Id = 1, Name = "Yes" },
-                new MaritalStatusLocal { Id = 2, Name = "No" }
+                new MaritalStatusLocal { Id = 1, Name = "Yes", BoolValue = true },
+                new MaritalStatusLocal { Id = 2, Name = "No", BoolValue = false }
             };
 
         private List<MaritalStatusLocal> GetMarriegeStatuses()
         {
             return _maritalStatusLocals;
+        }
+
+        private MaritalStatusLocal GetMaritalStatus(bool status) 
+        {
+            return GetMarriegeStatuses().First(i => i.BoolValue == status);
         }
 
         private List<Disability> GetDisabilities()
@@ -125,32 +130,40 @@ namespace Bank.Controllers
                     BirthDate = item.Birth.Date,
                     BirthId = item.BirthId,
                     BirthLocationId = item.Birth.LocationId,
-                    BirthLocationCityName = GetCities(),
+                    BirthLocationCityList = GetCities(),
                     BirthLocationCityId = item.Birth.Location.CityId,
                     CompanyId = item.Post.CompanyId,
                     CompanyName = item.Post.Company.Name,
                     PostId = item.PostId,
                     PostName = item.Post.Name,
                     DisabilityId = item.DisabilityId,
-                    DisabilityName = GetDisabilities(),
+                    DisabilityList = GetDisabilities(),
                     Email = item.Email,
                     HomePhone = item.HomePhone,
                     MobilePhone = item.MobilePhone,
                     IsPensioner = item.IsPensioner,
-                    MaritalStatus = GetMarriegeStatuses(),
+                    MaritalStatusList = GetMarriegeStatuses(),
                     NationalityId = item.NationalityId,
-                    NationalityName = GetNationalities(),
+                    NationalityList = GetNationalities(),
                     Revenue = item.Revenue.ToString(),
                     ActualLocationBuildingNumber = actualLocation.Location.BuildingNumber,
-                    ActualLocationCity = GetCities(),
+                    ActualLocationCityList = GetCities(),
                     ActualLocationCityId = actualLocation.Location.CityId,
                     ActualLocationId = actualLocation.LocationId,
                     ActualLocationStreet = actualLocation.Location.Street,
                     RegistationLocationBuildingNumber = residenceLocation.Location.BuildingNumber,
-                    RegistrationLocationCity = GetCities(),
+                    RegistrationLocationCityList = GetCities(),
                     RegistrationLocationCityId = residenceLocation.Location.CityId,
                     RegistrationLocationId = residenceLocation.LocationId,
                     RegistrationLocationStreet = residenceLocation.Location.Street,
+                    ActualLocationCityName = actualLocation.Location.City.Name,
+                    BirthLocationCityName = item.Birth.Location.City.Name,
+                    DisabilityName = item.Disability.Name,
+                    MaritalStatusName = GetMaritalStatus(item.MaritalStatus).Name,
+                    NationalityName = item.Nationality.Name,
+                    RegistrationLocationCityName = residenceLocation.Location.City.Name,
+                    MaritalStatusId = GetMaritalStatus(item.MaritalStatus).Id,
+                    PassportId = item.Passport.Id,                  
                 });
             }
             return result;
@@ -210,12 +223,12 @@ namespace Bank.Controllers
 
         private PersonFullViewModel RestoreSelectLists(PersonFullViewModel model)
         {
-            model.BirthLocationCityName = GetCities();
-            model.DisabilityName = GetDisabilities();
-            model.MaritalStatus = GetMarriegeStatuses();
-            model.NationalityName = GetNationalities();
-            model.ActualLocationCity = GetCities();
-            model.RegistrationLocationCity = GetCities();
+            model.BirthLocationCityList = GetCities();
+            model.DisabilityList = GetDisabilities();
+            model.MaritalStatusList = GetMarriegeStatuses();
+            model.NationalityList = GetNationalities();
+            model.ActualLocationCityList = GetCities();
+            model.RegistrationLocationCityList = GetCities();
             return model;
         }
 
