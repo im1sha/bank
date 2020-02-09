@@ -13,27 +13,27 @@ namespace Bank.Models
             {
                 new City
                 {
-                    Name = "Минск"
+                    Name = "Minsk"
                 },
                 new City
                 {
-                    Name = "Гродно"
+                    Name = "Grodno"
                 },
                 new City
                 {
-                    Name = "Гомель"
+                    Name = "Gomel"
                 },
                 new City
                 {
-                    Name = "Витебск"
+                    Name = "Vitebsk"
                 },
                 new City
                 {
-                    Name = "Брест"
+                    Name = "Brest"
                 },
                 new City
                 {
-                    Name = "Могилев"
+                    Name = "Mogilev"
                 }
             };
             if (!context.Cities.Any())
@@ -45,19 +45,19 @@ namespace Bank.Models
             {
                 new Disability
                 {
-                    Name = "нет",
+                    Name = "No",
                 },
                 new Disability
                 {
-                    Name = "I группа",
+                    Name = "I group",
                 },
                 new Disability
                 {
-                    Name = "II группа"
+                    Name = "II group"
                 },
                 new Disability
                 {
-                    Name = "III группа"
+                    Name = "III group"
                 } 
             };
             if (!context.Disabilities.Any())
@@ -85,23 +85,23 @@ namespace Bank.Models
             {
                 new Nationality
                 {
-                    Name = "белорус"
+                    Name = "Belarus"
                 },
                 new Nationality
                 {
-                    Name = "англичанин"
+                    Name = "UK"
                 },
                 new Nationality
                 {
-                    Name = "поляк"
+                    Name = "Poland"
                 },
                 new Nationality
                 {
-                    Name = "украинец"
+                    Name = "Ukrain"
                 },
                 new Nationality
                 {
-                    Name = "немец"
+                    Name = "Germany"
                 }
             };
             if (!context.Nationalities.Any())
@@ -115,31 +115,31 @@ namespace Bank.Models
                 {
                     City = cities[0],
                     BuildingNumber = "1",
-                    Street = "Центральная",
+                    Street = "A",
                 },
                 new Location
                 {
                     City = cities[1],
                     BuildingNumber = "22",
-                    Street = "Советская",
+                    Street = "B",
                 },
                 new Location
                 {
                     City = cities[2],
                     BuildingNumber = "33",
-                    Street = "Победителей",
+                    Street = "C",
                 },
                 new Location
                 {
                     City = cities[3],
                     BuildingNumber = "51",
-                    Street = "Народная",
+                    Street = "D",
                 },
                 new Location
                 {
                     City = cities[4],
                     BuildingNumber = "12",
-                    Street = "Мира",
+                    Street = "E",
                 },
             };
             if (!context.Locations.Any())
@@ -238,22 +238,22 @@ namespace Bank.Models
                 new Post
                 {
                     Company = companies[0],
-                    Name = "Директор"
+                    Name = "CEO"
                 },
                 new Post
                 {
                     Company = companies[1],
-                    Name = "Специалист по кадрам"
+                    Name = "HR"
                 },
                 new Post
                 {
                     Company = companies[1],
-                    Name = "JS-разработчик"
+                    Name = "JS developer"
                 },
                 new Post
                 {
                     Company = companies[2],
-                    Name = ".NET-разработчик"
+                    Name = ".NET developer"
                 },
             };
             if (!context.Posts.Any())
@@ -265,17 +265,17 @@ namespace Bank.Models
             {
                 new IssuingAuthority
                 {
-                    Name = "РОВД Заводского района",
+                    Name = "Issuing Authority 1",
                     Location = locations[0],
                 },
                 new IssuingAuthority
                 {
-                    Name = "РОВД Фрунзенского района",
+                    Name = "Issuing Authority 2",
                     Location = locations[1],
                 },
                 new IssuingAuthority
                 {
-                    Name = "РОВД Центрального района",
+                    Name = "Issuing Authority 3",
                     Location = locations[2],
                 },
             };
@@ -292,11 +292,11 @@ namespace Bank.Models
                     Birth = births[0],
                     Disability = disabilities[0],
                     Email = "email0@mail.com",
-                    FirstName = "Иван",
-                    LastName = "Иванов",
-                    MiddleName = "Иванович",
-                    HomePhone = "1111111",
-                    MobilePhone = "2111111",
+                    FirstName = "Ivan",
+                    LastName = "Ivanov",
+                    MiddleName = "Ivanovich",
+                    HomePhone = "375171234567",
+                    MobilePhone = "375291234567",
                     IsPensioner = false,
                     MaritalStatus = false,
                     Nationality = nationalities[0],
@@ -307,12 +307,12 @@ namespace Bank.Models
                 {
                     Birth = births[1],
                     Disability = disabilities[0],
-                    Email = "email111111111@mail.com",
-                    FirstName = "Петр",
-                    LastName = "Петров",
-                    MiddleName = "Иванович",
-                    HomePhone = "1222222",
-                    MobilePhone = "2222222",
+                    Email = "abcd@mail.com",
+                    FirstName = "Peter",
+                    LastName = "Petrov",
+                    MiddleName = "Ivanovich",
+                    HomePhone = "375171234566",
+                    MobilePhone = "375291234566",
                     IsPensioner = false,
                     MaritalStatus = false,
                     Nationality = nationalities[0],
@@ -323,12 +323,12 @@ namespace Bank.Models
                 {
                     Birth = births[2],
                     Disability = disabilities[0],
-                    Email = "email2@mail.com",
-                    FirstName = "Валентин",
-                    LastName = "Михайлов",
-                    MiddleName = "Михайлович",
-                    HomePhone = "133333333",
-                    MobilePhone = "23333333",
+                    Email = "ui@aaa.com",
+                    FirstName = "Valentin",
+                    LastName = "Mikhailov",
+                    MiddleName = "Mikhailovich",
+                    HomePhone = "375171234565",
+                    MobilePhone = "375291234565",
                     IsPensioner = false,
                     MaritalStatus = true,
                     Nationality = nationalities[0],
@@ -340,11 +340,11 @@ namespace Bank.Models
                     Birth = births[3],
                     Disability = disabilities[1],
                     Email = "email3@mail.com",
-                    FirstName = "Анна",
-                    LastName = "Петрова",
-                    MiddleName = "Юрьевна",
-                    HomePhone = "1444444",
-                    MobilePhone = "2444444",
+                    FirstName = "Ann",
+                    LastName = "Petrova",
+                    MiddleName = "Anatolyevna",
+                    HomePhone = "375171234564",
+                    MobilePhone = "375291234564",
                     IsPensioner = false,
                     MaritalStatus = false,
                     Nationality = nationalities[3],
@@ -356,11 +356,11 @@ namespace Bank.Models
                     Birth = births[4],
                     Disability = disabilities[0],
                     Email = "email4@mail.com",
-                    FirstName = "Маргарита",
-                    LastName = "Сидорова",
-                    MiddleName = "Семеновна",
-                    HomePhone = "155555",
-                    MobilePhone = "2555555",
+                    FirstName = "Margarita",
+                    LastName = "Sidorova",
+                    MiddleName = "Semyonovna",
+                    HomePhone = "375171234563",
+                    MobilePhone = "375291234563",
                     IsPensioner = false,
                     MaritalStatus = false,
                     Nationality = nationalities[0],
@@ -378,45 +378,45 @@ namespace Bank.Models
            {
                 new Passport
                 {
-                    IdentifyingNumber = "11111111111111111",
+                    IdentifyingNumber = "1111111U123AS1",
                     Series = "AA",
-                    Number = "1111",
+                    Number = "1111111",
                     IssuingDate = new DateTime(2016, 1, 1),
                     IssuingAuthority = issuingAuthorithies[0],
                     Person = people[0]
                 },
                 new Passport
                 {
-                    IdentifyingNumber = "22222222222222222",
+                    IdentifyingNumber = "1111111A123AA2",
                     Series = "AA",
-                    Number = "2222",
+                    Number = "2222222",
                     IssuingDate = new DateTime(2016, 1, 1),
                     IssuingAuthority = issuingAuthorithies[1],
                     Person = people[1]
                 },
                 new Passport
                 {
-                    IdentifyingNumber = "33333333333333333",
+                    IdentifyingNumber = "1111111A123AA3",
                     Series = "AA",
-                    Number = "3333",
+                    Number = "3333333",
                     IssuingDate = new DateTime(2016, 1, 1),
                     IssuingAuthority = issuingAuthorithies[0],
                     Person = people[2]
                 },
                 new Passport
                 {
-                    IdentifyingNumber = "44444444444444444",
+                    IdentifyingNumber = "1111111A123AA4",
                     Series = "AA",
-                    Number = "4444",
+                    Number = "4444444",
                     IssuingDate = new DateTime(2016, 1, 1),
                     IssuingAuthority = issuingAuthorithies[1],
                     Person = people[3]
                 },
                 new Passport
                 {
-                    IdentifyingNumber = "5555555555555555",
+                    IdentifyingNumber = "1111111A123AA5",
                     Series = "AA",
-                    Number = "5555",
+                    Number = "5555555",
                     IssuingDate = new DateTime(2016, 1, 1),
                     IssuingAuthority = issuingAuthorithies[0],
                     Person = people[4]
@@ -495,14 +495,7 @@ namespace Bank.Models
             {
                 for (int i = 0; i < peopleToLocations.Length; i++)
                 {
-                    try
-                    {
-                        context.PersonToLocations.Add(peopleToLocations[i]);
-                    }
-                    catch (Exception e)
-                    {
-                        throw;
-                    }
+                    context.PersonToLocations.Add(peopleToLocations[i]);                    
                 }              
                 context.SaveChanges();
             }

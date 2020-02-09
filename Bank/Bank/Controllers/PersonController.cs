@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -54,6 +55,28 @@ namespace Bank.Controllers
         private List<City> GetCities()
         {
             return _db.Cities.OrderBy(i => i.Id).ToList();
+        }
+
+        private List<(string Series, string Number, string IdentifyingNumber, int PersonId)> GetPassports() 
+        {
+            var series = _db.Passports.OrderBy(i => i.IdentifyingNumber).Select(i => i.Series).ToList();
+            var numbers = _db.Passports.OrderBy(i => i.IdentifyingNumber).Select(i => i.Number).ToList();
+            var ids = _db.Passports.OrderBy(i => i.IdentifyingNumber).Select(i => i.IdentifyingNumber).ToList();
+            var personIds = _db.Passports.OrderBy(i => i.IdentifyingNumber).Select(i => i.PersonId).ToList();
+
+            if (series.Count() != numbers.Count() || numbers.Count() != ids.Count() || numbers.Count() != personIds.Count())
+            {
+                throw new ApplicationException();
+            }
+            List<(string Series, string Number, string IdentifyingNumber, int PersonId)> result 
+                = new List<(string Series, string Number, string IdentifyingNumber, int PersonId)>();
+
+            foreach ((((string ser, string num), string id), int pers) in series.Zip(numbers).Zip(ids).Zip(personIds))
+            {
+                result.Add((ser, num, id, pers));
+            }
+
+            return result;
         }
 
         private List<Nationality> GetNationalities()
@@ -196,6 +219,40 @@ namespace Bank.Controllers
             return model;
         }
 
+        private bool CheckPassportSeriesAndNumber(string Series, string Number, int? PersonId)
+        {
+            var passports = GetPassports();
+
+            // if new passport : check if unique 
+            // if editing passport : check if unique but self
+            if (PersonId != null)
+            {
+                passports = passports.Where(i => i.PersonId != PersonId).ToList();
+            }
+            if (passports.Any(i => i.Number == Number && i.Series == Series))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private bool CheckPassportIdentifyingNumber(string IdentifyingNumber, int? PersonId)
+        {
+            var passports = GetPassports();
+
+            // if new passport : check if unique 
+            // if editing passport : check if unique but self
+            if (PersonId != null)
+            {
+                passports = passports.Where(i => i.PersonId != PersonId).ToList();
+            }
+            if (passports.Any(i => i.IdentifyingNumber == IdentifyingNumber))
+            {
+                return false;
+            }
+            return true;
+        }
+       
         // POST: Person/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -203,10 +260,17 @@ namespace Bank.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
+                if (!CheckPassportSeriesAndNumber(model.PassportSeries, model.PassportNumber, model.Id))
                 {
+                    ModelState.TryAddModelError("Passport number and series", "Pair of passport series and number already exists");
+                }
+                if (!CheckPassportIdentifyingNumber(model.PassportIdentifyingNumber, model.Id))
+                {
+                    ModelState.TryAddModelError("Passport identifying number", "Passport identifying number already exists");
+                }
 
-
+                if (ModelState.IsValid)
+                { 
                     return RedirectToAction(nameof(StatusSuccess));
                 }
                 else

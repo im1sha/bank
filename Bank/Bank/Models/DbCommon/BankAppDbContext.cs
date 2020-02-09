@@ -108,7 +108,7 @@ namespace Bank.Models
             modelBuilder.Entity<Person>()
                 .HasOne(p => p.Disability)
                 .WithMany(t => t.People)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Person>()
                 .HasOne(p => p.Nationality)
