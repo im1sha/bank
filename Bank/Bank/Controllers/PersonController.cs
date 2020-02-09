@@ -33,31 +33,12 @@ namespace Bank.Controllers
                 .ToList();
         }
 
-        private List<PersonMinViewModel> ConvertToPersonMinViewModels(List<Person> people)
-        {
-            List<PersonMinViewModel> result = new List<PersonMinViewModel>();
-            foreach (var item in people)
-            {
-                result.Add(new PersonMinViewModel
-                {
-                    Id = item.Id,
-                    FirstName = item.FirstName,
-                    LastName = item.LastName,
-                    MiddleName = item.MiddleName,
-                    PassportId = item.Passport.Id,
-                    PassportSeries = item.Passport.Series,
-                    PassportNumber = item.Passport.Number,
-                });
-            }
-            return result;
-        }
-
         private List<City> GetCities()
         {
             return _db.Cities.OrderBy(i => i.Id).ToList();
         }
 
-        private List<(string Series, string Number, string IdentifyingNumber, int PersonId)> GetPassports() 
+        private List<(string Series, string Number, string IdentifyingNumber, int PersonId)> GetPassports()
         {
             var series = _db.Passports.OrderBy(i => i.IdentifyingNumber).Select(i => i.Series).ToList();
             var numbers = _db.Passports.OrderBy(i => i.IdentifyingNumber).Select(i => i.Number).ToList();
@@ -68,7 +49,7 @@ namespace Bank.Controllers
             {
                 throw new ApplicationException();
             }
-            List<(string Series, string Number, string IdentifyingNumber, int PersonId)> result 
+            List<(string Series, string Number, string IdentifyingNumber, int PersonId)> result
                 = new List<(string Series, string Number, string IdentifyingNumber, int PersonId)>();
 
             foreach ((((string ser, string num), string id), int pers) in series.Zip(numbers).Zip(ids).Zip(personIds))
@@ -91,14 +72,14 @@ namespace Bank.Controllers
                 new MaritalStatusLocal { Id = 2, Name = "No", BoolValue = false }
             };
 
-        private List<MaritalStatusLocal> GetMarriegeStatuses()
+        private List<MaritalStatusLocal> GetMaritalStatuses()
         {
             return _maritalStatusLocals;
         }
 
-        private MaritalStatusLocal GetMaritalStatus(bool status) 
+        private MaritalStatusLocal GetMaritalStatus(bool status)
         {
-            return GetMarriegeStatuses().First(i => i.BoolValue == status);
+            return GetMaritalStatuses().First(i => i.BoolValue == status);
         }
 
         private List<Disability> GetDisabilities()
@@ -106,7 +87,7 @@ namespace Bank.Controllers
             return _db.Disabilities.OrderBy(i => i.Id).ToList();
         }
 
-        private List<PersonFullViewModel> ConvertToPersonFullViewModels(List<Person> people)
+        private List<PersonFullViewModel> ConvertPeopleToPersonFullViewModels(List<Person> people)
         {
             List<PersonFullViewModel> result = new List<PersonFullViewModel>();
 
@@ -128,7 +109,6 @@ namespace Bank.Controllers
                     PassportIssuingAuthorityName = item.Passport.IssuingAuthority.Name,
                     PassportIssuingDate = item.Passport.IssuingDate,
                     BirthDate = item.Birth.Date,
-                    BirthId = item.BirthId,
                     BirthLocationId = item.Birth.LocationId,
                     BirthLocationCityList = GetCities(),
                     BirthLocationCityId = item.Birth.Location.CityId,
@@ -142,7 +122,7 @@ namespace Bank.Controllers
                     HomePhone = item.HomePhone,
                     MobilePhone = item.MobilePhone,
                     IsPensioner = item.IsPensioner,
-                    MaritalStatusList = GetMarriegeStatuses(),
+                    MaritalStatusList = GetMaritalStatuses(),
                     NationalityId = item.NationalityId,
                     NationalityList = GetNationalities(),
                     Revenue = item.Revenue.ToString(),
@@ -163,73 +143,29 @@ namespace Bank.Controllers
                     NationalityName = item.Nationality.Name,
                     RegistrationLocationCityName = residenceLocation.Location.City.Name,
                     MaritalStatusId = GetMaritalStatus(item.MaritalStatus).Id,
-                    PassportId = item.Passport.Id,                  
+                    PassportId = item.Passport.Id,
                 });
             }
             return result;
         }
 
-        // GET: Person
-        public ActionResult Index()
+        private List<PersonMinViewModel> ConvertPeopleToPersonMinViewModels(List<Person> people)
         {
-            return View(ConvertToPersonMinViewModels(RetreivePeople()));
-        }
-
-        // GET: Person/Details/5
-        public ActionResult Details(int id)
-        {
-            return View(ConvertToPersonFullViewModels(RetreivePeople()).FirstOrDefault(i => i.Id == id));
-        }
-
-        // GET: Person/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View(ConvertToPersonFullViewModels(RetreivePeople()).FirstOrDefault(i => i.Id == id));
-        }
-
-        // POST: Person/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
+            List<PersonMinViewModel> result = new List<PersonMinViewModel>();
+            foreach (var item in people)
             {
-                var requiredOne = _db.People.FirstOrDefault(i => i.Id == id);
-                _db.People.Remove(requiredOne);
-                _db.SaveChanges();
-                return RedirectToAction(nameof(StatusSuccess));
+                result.Add(new PersonMinViewModel
+                {
+                    Id = item.Id,
+                    FirstName = item.FirstName,
+                    LastName = item.LastName,
+                    MiddleName = item.MiddleName,
+                    PassportId = item.Passport.Id,
+                    PassportSeries = item.Passport.Series,
+                    PassportNumber = item.Passport.Number,
+                });
             }
-            catch
-            {
-                return RedirectToAction(nameof(StatusFailed));
-            }
-        }
-
-        public ActionResult StatusSuccess()
-        {
-            return View();
-        }
-
-        public ActionResult StatusFailed()
-        {
-            return View();
-        }
-
-        // GET: Person/Create
-        public ActionResult Create()
-        {        
-            return View(RestoreSelectLists(new PersonFullViewModel()));
-        }
-
-        private PersonFullViewModel RestoreSelectLists(PersonFullViewModel model)
-        {
-            model.BirthLocationCityList = GetCities();
-            model.DisabilityList = GetDisabilities();
-            model.MaritalStatusList = GetMarriegeStatuses();
-            model.NationalityList = GetNationalities();
-            model.ActualLocationCityList = GetCities();
-            model.RegistrationLocationCityList = GetCities();
-            return model;
+            return result;
         }
 
         private bool CheckPassportSeriesAndNumber(string Series, string Number, int? PersonId)
@@ -265,7 +201,153 @@ namespace Bank.Controllers
             }
             return true;
         }
-       
+
+        private Company GetCompany(string companyName, bool getUnknownCompanyIfNullPassed)
+        {
+            companyName = string.IsNullOrEmpty(companyName) ? null : companyName;
+
+            if (companyName == null && !getUnknownCompanyIfNullPassed)
+            {
+                throw new ArgumentNullException();
+            }
+
+            var company = _db.Companies.FirstOrDefault(i => i.Name == companyName);
+            if (company == null)
+            {
+                company = new Company { Name = companyName ?? "Unknown company", };
+                _db.Companies.Add(company);
+                _db.SaveChanges();
+            }
+            return company;
+        }
+
+        private Post GetPost(string postName, Company company, bool getUnknownPostIfNullPassed, bool getUnknownCompanyIfNullPassed)
+        {
+            postName = string.IsNullOrEmpty(postName) ? null : postName;
+            if (postName == null && !getUnknownPostIfNullPassed)
+            {
+                throw new ArgumentNullException();
+            }
+
+            if (company == null && getUnknownCompanyIfNullPassed)
+            {
+                company = GetCompany(null, getUnknownCompanyIfNullPassed);
+            }
+
+            var post = _db.Posts.FirstOrDefault(i => i.Company == company && i.Name == postName);
+            if (post == null)
+            {
+                post = new Post { Company = company, Name = postName ?? "Unknown post", };
+                _db.Posts.Add(post);
+                _db.SaveChanges();
+            }
+            return post;
+        }
+
+        private IssuingAuthority CreateIssuingAuthority(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentNullException();
+            }
+            var auth = new IssuingAuthority { Name = name, };
+            _db.IssuingAuthorities.Add(auth);
+            _db.SaveChanges();
+            return auth;
+        }
+
+        private Location CreateLocation(City city, string street, string building)
+        {
+            if (city == null)
+            {
+                throw new ArgumentNullException();
+            }
+            var loc = new Location { City = city, Street = street, BuildingNumber = building, };
+            _db.Locations.Add(loc);
+            _db.SaveChanges();
+            return loc;
+        }
+
+        // GET: Person
+        public ActionResult Index()
+        {
+            return View(ConvertPeopleToPersonMinViewModels(RetreivePeople()));
+        }
+
+        // GET: Person/Details/5
+        public ActionResult Details(int id)
+        {
+            var person = ConvertPeopleToPersonFullViewModels(RetreivePeople()).FirstOrDefault(i => i.Id == id);
+            if (person == null)
+            {
+                return RedirectToAction(nameof(StatusDoesNotExist));
+            }
+
+            return View(person);
+        }
+
+        // GET: Person/Delete/5
+        public ActionResult Delete(int id)
+        {
+            var person = ConvertPeopleToPersonFullViewModels(RetreivePeople()).FirstOrDefault(i => i.Id == id);
+            if (person == null)
+            {
+                return RedirectToAction(nameof(StatusDoesNotExist));
+            }
+
+            return View(person);
+        }
+
+        // POST: Person/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, IFormCollection collection)
+        {
+            try
+            {
+                var requiredOne = _db.People.FirstOrDefault(i => i.Id == id);
+                _db.People.Remove(requiredOne);
+                _db.SaveChanges();
+                return RedirectToAction(nameof(StatusSuccess));
+            }
+            catch
+            {
+                return RedirectToAction(nameof(StatusFailed));
+            }
+        }
+
+        public ActionResult StatusSuccess()
+        {
+            return View();
+        }
+
+        public ActionResult StatusFailed()
+        {
+            return View();
+        }
+
+        public ActionResult StatusDoesNotExist()
+        {
+            return View();
+        }
+
+        private PersonFullViewModel RestoreSelectLists(PersonFullViewModel model)
+        {
+            model.BirthLocationCityList = GetCities();
+            model.DisabilityList = GetDisabilities();
+            model.MaritalStatusList = GetMaritalStatuses();
+            model.NationalityList = GetNationalities();
+            model.ActualLocationCityList = GetCities();
+            model.RegistrationLocationCityList = GetCities();
+            return model;
+        }
+
+        // GET: Person/Create
+        public ActionResult Create()
+        {
+            return View(RestoreSelectLists(new PersonFullViewModel()));
+        }
+
         // POST: Person/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -281,9 +363,79 @@ namespace Bank.Controllers
                 {
                     ModelState.TryAddModelError("Passport identifying number", "Passport identifying number already exists");
                 }
-
                 if (ModelState.IsValid)
-                { 
+                {
+                    Company company = model.CompanyName == null 
+                        ? null 
+                        : GetCompany(model.CompanyName, false);
+
+                    Post post = model.PostName == null && model.CompanyName == null
+                        ? null 
+                        : GetPost(model.PostName, company, false, false);
+
+                    Person person = new Person
+                    {
+                        Revenue = decimal.TryParse(model.Revenue, out _) ? decimal.Parse(model.Revenue) : new decimal?(),
+                        Email = string.IsNullOrEmpty(model.Email) ? null : model.Email,
+                        HomePhone = string.IsNullOrEmpty(model.HomePhone) ? null : model.HomePhone,
+                        MobilePhone = string.IsNullOrEmpty(model.MobilePhone) ? null : model.MobilePhone,
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        MiddleName = model.MiddleName,
+                        IsPensioner = model.IsPensioner,
+                        Disability = GetDisabilities().FirstOrDefault(i => i.Id == model.DisabilityId),
+                        MaritalStatus = GetMaritalStatuses().FirstOrDefault(i => i.Id == model.MaritalStatusId)?.BoolValue ?? false,
+                        Nationality = GetNationalities().FirstOrDefault(i => i.Id == model.NationalityId),
+                        Post = post,
+                    };
+                    _db.SaveChanges();
+
+                    Passport passport = new Passport
+                    {
+                        IdentifyingNumber = model.PassportIdentifyingNumber,
+                        IssuingAuthority = _db.IssuingAuthorities.FirstOrDefault(i => model.PassportIssuingAuthorityName == i.Name) 
+                            ?? CreateIssuingAuthority(model.PassportIssuingAuthorityName),
+                        IssuingDate = model.PassportIssuingDate ?? new DateTime(),
+                        Number = model.PassportNumber,
+                        Person = person,
+                        Series = model.PassportSeries,
+                    };
+                    _db.SaveChanges();
+
+                    var city = GetCities().FirstOrDefault(i => i.Id == model.BirthLocationCityId);
+
+                    Birth birth = new Birth
+                    {
+                        Date = model.BirthDate,
+                        Location = _db.Locations.FirstOrDefault(j => j.City == city),
+                        Person = person,
+                    };
+                    _db.SaveChanges();
+
+                    Location registrationLcoation = _db.Locations.FirstOrDefault(i => i.BuildingNumber == model.RegistationLocationBuildingNumber
+                        && i.Street == model.RegistrationLocationStreet
+                        && i.CityId == model.RegistrationLocationCityId)
+                        ?? CreateLocation(
+                            GetCities().FirstOrDefault(i => i.Id == model.RegistrationLocationCityId),
+                            model.RegistrationLocationStreet,
+                            model.RegistationLocationBuildingNumber);
+
+                    Location actualLocation = _db.Locations.FirstOrDefault(i => i.BuildingNumber == model.ActualLocationBuildingNumber
+                        && i.Street == model.ActualLocationStreet
+                        && i.CityId == model.ActualLocationCityId) 
+                        ?? CreateLocation(
+                            GetCities().FirstOrDefault(i => i.Id == model.ActualLocationCityId),
+                            model.ActualLocationStreet,
+                            model.ActualLocationBuildingNumber);
+
+                    _db.PersonToLocations.AddRange(
+                        new [] 
+                        { 
+                            new PersonToLocation { IsActual = true, Person = person, Location = actualLocation } ,
+                            new PersonToLocation { IsActual = false, Person = person, Location = registrationLcoation } ,
+                        });
+                    _db.SaveChanges();
+
                     return RedirectToAction(nameof(StatusSuccess));
                 }
                 else
@@ -291,7 +443,7 @@ namespace Bank.Controllers
                     return View(RestoreSelectLists(model));
                 }
             }
-            catch
+            catch (Exception e)
             {
                 return RedirectToAction(nameof(StatusFailed));
             }

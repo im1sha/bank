@@ -147,64 +147,7 @@ namespace Bank.Models
                 context.Locations.AddRange(locations);
                 context.SaveChanges();
             }
-            var births = new[]
-            {
-                new Birth
-                {
-                    Date = new DateTime(2000, 1, 2),
-                    Location = locations[0],
-                },
-                new Birth
-                {
-                    Date = new DateTime(1999, 1, 2),
-                    Location = locations[0],
-                },
-                new Birth
-                {
-                    Date = new DateTime(1998, 1, 2),
-                    Location = locations[0],
-                },
-                new Birth
-                {
-                    Date = new DateTime(1997, 1, 2),
-                    Location = locations[1],
-                },
-                new Birth
-                {
-                    Date = new DateTime(1996, 1, 2),
-                    Location = locations[1],
-                },
-                new Birth
-                {
-                    Date = new DateTime(1995, 1, 2),
-                    Location = locations[1],
-                },
-                new Birth
-                {
-                    Date = new DateTime(1994, 1, 2),
-                    Location = locations[1],
-                },
-                new Birth
-                {
-                    Date = new DateTime(1993, 1, 2),
-                    Location = locations[1],
-                },
-                new Birth
-                {
-                    Date = new DateTime(1992, 1, 2),
-                    Location = locations[2],
-                },
-                new Birth
-                {
-                    Date = new DateTime(1991, 1, 2),
-                    Location = locations[3],
-                },
-            };
-            if (!context.Births.Any())
-            {
-                context.Births.AddRange(births);
-                context.SaveChanges();
-            }
+           
             var companies = new[]
             {
                 new Company
@@ -289,7 +232,6 @@ namespace Bank.Models
             {
                 new Person
                 {
-                    Birth = births[0],
                     Disability = disabilities[0],
                     Email = "email0@mail.com",
                     FirstName = "Ivan",
@@ -305,7 +247,6 @@ namespace Bank.Models
                 },
                 new Person
                 {
-                    Birth = births[1],
                     Disability = disabilities[0],
                     Email = "abcd@mail.com",
                     FirstName = "Peter",
@@ -321,7 +262,6 @@ namespace Bank.Models
                 },
                 new Person
                 {
-                    Birth = births[2],
                     Disability = disabilities[0],
                     Email = "ui@aaa.com",
                     FirstName = "Valentin",
@@ -337,7 +277,6 @@ namespace Bank.Models
                 },
                 new Person
                 {
-                    Birth = births[3],
                     Disability = disabilities[1],
                     Email = "email3@mail.com",
                     FirstName = "Ann",
@@ -353,7 +292,6 @@ namespace Bank.Models
                 },
                 new Person
                 {
-                    Birth = births[4],
                     Disability = disabilities[0],
                     Email = "email4@mail.com",
                     FirstName = "Margarita",
@@ -374,8 +312,47 @@ namespace Bank.Models
                 context.SaveChanges();
             }
 
-            var passports = new[]
+            var births = new[]
            {
+                new Birth
+                {
+                    Person = people[0],
+                    Date = new DateTime(2000, 1, 2),
+                    Location = locations[0],
+                },
+                new Birth
+                {
+                    Person = people[1],
+                    Date = new DateTime(1999, 1, 2),
+                    Location = locations[0],
+                },
+                new Birth
+                {
+                    Person = people[2],
+                    Date = new DateTime(1998, 1, 2),
+                    Location = locations[0],
+                },
+                new Birth
+                {
+                    Person = people[3],
+                    Date = new DateTime(1997, 1, 2),
+                    Location = locations[1],
+                },
+                new Birth
+                {
+                    Person = people[4],
+                    Date = new DateTime(1996, 1, 2),
+                    Location = locations[1],
+                },               
+            };
+            if (!context.Births.Any())
+            {
+                context.Births.AddRange(births);
+                context.SaveChanges();
+            }
+
+            var passports = new[]
+            {
                 new Passport
                 {
                     IdentifyingNumber = "1111111A123AA1",

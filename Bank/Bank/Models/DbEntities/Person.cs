@@ -16,21 +16,14 @@ namespace Bank.Models
 
         public string MiddleName { get; set; }
 
-        public int BirthId { get; set; }
         public Birth Birth { get; set; }
 
         public Passport Passport { get; set; }
 
         public List<PersonToLocation> PersonToLocations { get; set; }
 
-        /// <summary>
-        /// mask
-        /// </summary>
         public string HomePhone { get; set; }
 
-        /// <summary>
-        /// mask
-        /// </summary>
         public string MobilePhone { get; set; }
 
         public string Email { get; set; }
@@ -50,7 +43,7 @@ namespace Bank.Models
         public bool IsPensioner { get; set; }
 
         [Column(TypeName = "decimal(18, 2)")]
-        public decimal Revenue { get; set; }
+        public decimal? Revenue { get; set; }
 
         //public int ClientId { get; set; }
         //public Client Client { get; set; }

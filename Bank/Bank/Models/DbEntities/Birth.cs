@@ -16,6 +16,7 @@ namespace Bank.Models
         public int? LocationId { get; set; }
         public Location Location { get; set; }
 
-        public List<Person> People { get; set; }
+        public int PersonId { get; set; }
+        public Person Person { get; set; }
     }
 }

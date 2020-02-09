@@ -33,7 +33,7 @@ namespace Bank.Models
         public BankAppDbContext(DbContextOptions<BankAppDbContext> options)
             : base(options)
         {
-            // Database.EnsureDeleted();
+           // Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
@@ -88,12 +88,12 @@ namespace Bank.Models
                 .HasOne(p => p.Person)
                 .WithOne(t => t.Passport)
                 //.HasForeignKey(a => a.);
-                .OnDelete(DeleteBehavior.Cascade);                //.HasForeignKey<Passport>(b => b.PersonId)
+                .OnDelete(DeleteBehavior.Cascade);            
 
-            modelBuilder.Entity<Person>()
-                .HasOne(p => p.Birth)
-                .WithMany(t => t.People)
-                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Birth>()
+                .HasOne(p => p.Person)
+                .WithOne(t => t.Birth)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Post>()
                 .HasOne(p => p.Company)
