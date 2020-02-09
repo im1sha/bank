@@ -40,10 +40,10 @@ namespace Bank.Models
         [DisplayName("Birth city")]
         public int? BirthLocationCityId { get; set; } = 1;
 
-        [DisplayName("Birth city name")]
+        [DisplayName("Birth city")]
         public List<City> BirthLocationCityList { get; set; }
 
-        [DisplayName("Birth city name")]
+        [DisplayName("Birth city")]
         public string BirthLocationCityName { get; set; }
 
         #endregion
@@ -98,10 +98,10 @@ namespace Bank.Models
         [DisplayName("Registration city")]
         public int? RegistrationLocationCityId { get; set; } = 1;
 
-        [DisplayName("Registration city name")]
+        [DisplayName("Registration city")]
         public List<City> RegistrationLocationCityList { get; set; }
 
-        [DisplayName("Registration city name")]
+        [DisplayName("Registration city")]
         public string RegistrationLocationCityName { get; set; }
 
         [Required]
@@ -115,12 +115,12 @@ namespace Bank.Models
         public int? ActualLocationId { get; set; }
 
         [Required]
-        [DisplayName("Registration city")]
+        [DisplayName("Actual city")]
         public int? ActualLocationCityId { get; set; } = 1;
 
-        [DisplayName("Registration city name")]
+        [DisplayName("Actual city")]
         public List<City> ActualLocationCityList { get; set; }
-        [DisplayName("Registration city name")]
+        [DisplayName("Actual city")]
         public string ActualLocationCityName { get; set; }
 
         [Required]
@@ -164,10 +164,10 @@ namespace Bank.Models
         [DisplayName("Married")]
         public int? MaritalStatusId { get; set; } = 1;
 
-        [DisplayName("Married status")]
+        [DisplayName("Married")]
         public List<MaritalStatusLocal> MaritalStatusList { get; set; }
 
-        [DisplayName("Married status")]
+        [DisplayName("Married")]
         public string MaritalStatusName { get; set; }
 
         #region nationality
@@ -176,10 +176,10 @@ namespace Bank.Models
         [DisplayName("Nationality")]
         public int? NationalityId { get; set; } = 1;
 
-        [DisplayName("Nationality name")]
+        [DisplayName("Nationality")]
         public List<Nationality> NationalityList { get; set; }
 
-        [DisplayName("Nationality name")]
+        [DisplayName("Nationality")]
         public string NationalityName { get; set; }
 
         #endregion
@@ -190,10 +190,10 @@ namespace Bank.Models
         [DisplayName("Disability")]
         public int? DisabilityId { get; set; } = 1;
 
-        [DisplayName("Disability name")]
+        [DisplayName("Disability")]
         public List<Disability> DisabilityList { get; set; }
 
-        [DisplayName("Disability name")]
+        [DisplayName("Disability")]
         public string DisabilityName { get; set; }
 
         #endregion

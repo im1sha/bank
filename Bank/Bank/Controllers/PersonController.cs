@@ -350,7 +350,7 @@ namespace Bank.Controllers
 
         private enum AnalyzeResult { ReturnFormBack, Failed, Succeed };
 
-        private (PersonFullViewModel Model, AnalyzeResult Result) Change(PersonFullViewModel model, bool isCreate) 
+        private (PersonFullViewModel Model, AnalyzeResult Result) Change(PersonFullViewModel model, bool isCreate)
         {
             try
             {
@@ -408,7 +408,7 @@ namespace Bank.Controllers
                     passport.Series = model.PassportSeries;
 
                     if (isCreate)
-                    {               
+                    {
                         _db.Passports.Add(passport);
                     }
                     else
@@ -426,7 +426,7 @@ namespace Bank.Controllers
                     birth.Person = person;
 
                     if (isCreate)
-                    {                 
+                    {
                         _db.Births.Add(birth);
                     }
                     else
@@ -454,16 +454,19 @@ namespace Bank.Controllers
                     if (isCreate)
                     {
                         _db.PersonToLocations.AddRange(
-                        new[]
-                        {
-                            new PersonToLocation { IsActual = true, Person = person, Location = actualLocation } ,
-                            new PersonToLocation { IsActual = false, Person = person, Location = registrationLcoation } ,
-                        });
+                            new[]
+                            {
+                                new PersonToLocation { IsActual = true, Person = person, Location = actualLocation } ,
+                                new PersonToLocation { IsActual = false, Person = person, Location = registrationLcoation } ,
+                            });
                     }
                     else
                     {
-                        _db.UpdateRange(new[] { actualLocation, registrationLcoation });
-                    }                 
+                        _db.PersonToLocations.First(i => i.IsActual && i.Person == person).Location = actualLocation;
+                        _db.PersonToLocations.First(i => !i.IsActual && i.Person == person).Location = registrationLcoation;
+                        _db.PersonToLocations.UpdateRange(_db.PersonToLocations.Where(i => i.Person == person).ToArray());
+                    }
+
                     _db.SaveChanges();
 
                     return (RestoreSelectLists(model), AnalyzeResult.Succeed);
@@ -473,7 +476,7 @@ namespace Bank.Controllers
                     return (RestoreSelectLists(model), AnalyzeResult.ReturnFormBack);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return (RestoreSelectLists(model), AnalyzeResult.Failed);
             }
