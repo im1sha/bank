@@ -20,9 +20,9 @@ namespace Bank.Models
                 // Format :
                 // 1234567 A 123 AB 1
                 return (inputValue.Length == 14
-                    && int.TryParse(inputValue.Take(7).ToString(), out _)
-                    && int.TryParse(inputValue.Skip(8).Take(3).ToString(), out _)
-                    && int.TryParse(inputValue.Skip(13).Take(1).ToString(), out _)
+                    && int.TryParse(string.Concat(inputValue.Take(7)), out _)
+                    && int.TryParse(string.Concat(inputValue.Skip(8).Take(3)), out _)
+                    && int.TryParse(string.Concat(inputValue.Skip(13).Take(1)), out _)
                     && IsLetter(inputValue[7])
                     && IsLetter(inputValue[11])
                     && IsLetter(inputValue[12]));

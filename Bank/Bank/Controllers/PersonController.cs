@@ -117,7 +117,7 @@ namespace Bank.Controllers
                     MaritalStatus = GetMarriegeStatuses(),
                     NationalityId = item.NationalityId,
                     NationalityName = GetNationalities(),
-                    Revenue = item.Revenue,
+                    Revenue = item.Revenue.ToString(),
                     ActualLocationBuildingNumber = actualLocation.Location.BuildingNumber,
                     ActualLocationCity = GetCities(),
                     ActualLocationCityId = actualLocation.Location.CityId,
@@ -205,6 +205,8 @@ namespace Bank.Controllers
             {
                 if (ModelState.IsValid)
                 {
+
+
                     return RedirectToAction(nameof(StatusSuccess));
                 }
                 else

@@ -55,12 +55,12 @@ namespace Bank.Models
         [Required]
         [DisplayName("Passport number")]
         [StringLength(7)]
-        [RegularExpression(@"^(0-9])+$", ErrorMessage = "Number should contain digits only")]
+        [RegularExpression(@"^([0-9])+$", ErrorMessage = "Number should contain digits only")]
         public string PassportNumber { get; set; }
 
         [Required]
         [StringLength(2)]
-        [RegularExpression(@"^(A-Z])+$", ErrorMessage = "Series should contain capital latin letters only")]
+        [RegularExpression(@"^([A-Z])+$", ErrorMessage = "Series should contain capital latin letters only")]
         [DisplayName("Passport series")]
         public string PassportSeries { get; set; }
 
@@ -124,12 +124,12 @@ namespace Bank.Models
 
         [DisplayName("Home phone")]
         [StringLength(12)]
-        [RegularExpression(@"^(0-9])+$", ErrorMessage = "Phone should contain digits only")]
+        [RegularExpression(@"^([0-9])+$", ErrorMessage = "Phone should contain digits only")]
         public string HomePhone { get; set; }
 
         [DisplayName("Mobile phone")]
         [StringLength(12)]
-        [RegularExpression(@"^(0-9])+$", ErrorMessage = "Phone should contain digits only")]
+        [RegularExpression(@"^([0-9])+$", ErrorMessage = "Phone should contain digits only")]
         public string MobilePhone { get; set; }
 
         [EmailAddress]
@@ -164,6 +164,7 @@ namespace Bank.Models
 
         [DisplayName("Nationality name")]
         public List<Nationality> NationalityName { get; set; }
+
         #endregion
 
         #region disability
@@ -181,8 +182,8 @@ namespace Bank.Models
         [DisplayName("Pensioner")]
         public bool IsPensioner { get; set; }
 
-        [Currency]
-        public decimal? Revenue { get; set; }
+        [Currency(false)]
+        public string Revenue { get; set; }
 
     }
 }
