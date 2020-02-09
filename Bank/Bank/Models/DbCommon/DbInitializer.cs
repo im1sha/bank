@@ -378,7 +378,7 @@ namespace Bank.Models
            {
                 new Passport
                 {
-                    IdentifyingNumber = "1111111U123AS1",
+                    IdentifyingNumber = "1111111A123AA1",
                     Series = "AA",
                     Number = "1111111",
                     IssuingDate = new DateTime(2016, 1, 1),
