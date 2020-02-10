@@ -13,6 +13,17 @@ namespace Bank.Controllers
 {
     public class PersonController : Controller
     {
+        private const string MESSAGE_KEY = "OUTPUT_MESSAGE";
+        private const string MESSAGE_DELETE_SUCCEEDED = "Delete succeeded.";
+        private const string MESSAGE_DELETE_FAILED = "Delete failed.";
+        private const string MESSAGE_EDIT_SUCCEEDED = "Edit succeeded.";
+        private const string MESSAGE_EDIT_FAILED = "Edit failed.";
+        private const string MESSAGE_CREATE_SUCCEEDED = "Create succeeded.";
+        private const string MESSAGE_CREATE_FAILED = "Create failed.";
+        private const string VIEW_STATUS_SUCCEEDED = "StatusSucceeded";
+        private const string VIEW_STATUS_FAILED = "StatusFailed";
+        private const string VIEW_STATUS_NOT_FOUND = "StatusNotFound";
+
         private readonly ILogger<PersonController> _logger;
         private readonly BankAppDbContext _db;
 
@@ -281,7 +292,7 @@ namespace Bank.Controllers
             var person = ConvertPeopleToPersonFullViewModels(RetreivePeople()).FirstOrDefault(i => i.Id == id);
             if (person == null)
             {
-                return NotFound();// RedirectToAction(nameof(StatusDoesNotExist));
+                return View(VIEW_STATUS_NOT_FOUND);
             }
 
             return View(person);
@@ -293,7 +304,7 @@ namespace Bank.Controllers
             var person = ConvertPeopleToPersonFullViewModels(RetreivePeople()).FirstOrDefault(i => i.Id == id);
             if (person == null)
             {
-                return NotFound();// RedirectToAction(nameof(StatusDoesNotExist));
+                return View(VIEW_STATUS_NOT_FOUND);
             }
 
             return View(person);
@@ -309,27 +320,12 @@ namespace Bank.Controllers
                 var requiredOne = _db.People.FirstOrDefault(i => i.Id == id);
                 _db.People.Remove(requiredOne);
                 _db.SaveChanges();
-                return RedirectToAction(nameof(StatusSuccess), new RouteValueDictionary(new
-                {
-                    controller = "Person",
-                    action = nameof(StatusSuccess),
-                    status = "Item was created."
-                }));
+                return View(VIEW_STATUS_SUCCEEDED, MESSAGE_DELETE_SUCCEEDED);
             }
             catch
             {
-                return RedirectToAction(nameof(StatusFailed));
+                return View(VIEW_STATUS_FAILED, MESSAGE_DELETE_FAILED);
             }
-        }
-
-        public ActionResult StatusSuccess(string status)
-        {
-            return View(status);
-        }
-
-        public ActionResult StatusFailed()
-        {
-            return View();
         }
 
         //public ActionResult StatusDoesNotExist()
@@ -354,7 +350,7 @@ namespace Bank.Controllers
             return View(RestoreSelectLists(new PersonFullViewModel()));
         }
 
-        private enum AnalyzeResult { ReturnFormBack, Failed, Succeed };
+        private enum AnalyzeResult { ReturnFormBack, Failed, Succeeded };
 
         private (PersonFullViewModel Model, AnalyzeResult Result) Change(PersonFullViewModel model, bool isCreate)
         {
@@ -475,7 +471,7 @@ namespace Bank.Controllers
 
                     _db.SaveChanges();
 
-                    return (RestoreSelectLists(model), AnalyzeResult.Succeed);
+                    return (RestoreSelectLists(model), AnalyzeResult.Succeeded);
                 }
                 else
                 {
@@ -500,12 +496,9 @@ namespace Bank.Controllers
                 case AnalyzeResult.ReturnFormBack:
                     return View(result.Model);
                 case AnalyzeResult.Failed:
-                    return RedirectToAction(nameof(StatusFailed));
-                case AnalyzeResult.Succeed:
-                    return RedirectToAction(nameof(StatusSuccess), new RouteValueDictionary(new { 
-                        controller = "Person",
-                        action = nameof(StatusSuccess), 
-                        status = "Item was created." }));
+                    return View(VIEW_STATUS_FAILED, MESSAGE_CREATE_FAILED);
+                case AnalyzeResult.Succeeded:
+                    return View(VIEW_STATUS_SUCCEEDED, MESSAGE_CREATE_SUCCEEDED);
             }
             throw new ApplicationException();
         }
@@ -516,7 +509,7 @@ namespace Bank.Controllers
             var person = ConvertPeopleToPersonFullViewModels(RetreivePeople()).FirstOrDefault(i => i.Id == id);
             if (person == null)
             {
-                return NotFound();// RedirectToAction(nameof(StatusDoesNotExist));
+                return View(VIEW_STATUS_NOT_FOUND);
             }
 
             return View(person);
@@ -534,14 +527,9 @@ namespace Bank.Controllers
                 case AnalyzeResult.ReturnFormBack:
                     return View(result.Model);
                 case AnalyzeResult.Failed:
-                    return RedirectToAction(nameof(StatusFailed));
-                case AnalyzeResult.Succeed:
-                    return RedirectToAction(nameof(StatusSuccess), new
-                    {
-                        //controller = "Person",
-                        //action = nameof(StatusSuccess),
-                        status = "Item was changed."
-                    });
+                    return View(VIEW_STATUS_FAILED, MESSAGE_EDIT_FAILED);
+                case AnalyzeResult.Succeeded:
+                    return View(VIEW_STATUS_SUCCEEDED, MESSAGE_EDIT_SUCCEEDED);
             }
             throw new ApplicationException();
         }
