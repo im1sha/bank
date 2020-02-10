@@ -1,6 +1,7 @@
 ﻿using Bank.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -280,7 +281,7 @@ namespace Bank.Controllers
             var person = ConvertPeopleToPersonFullViewModels(RetreivePeople()).FirstOrDefault(i => i.Id == id);
             if (person == null)
             {
-                return RedirectToAction(nameof(StatusDoesNotExist));
+                return NotFound();// RedirectToAction(nameof(StatusDoesNotExist));
             }
 
             return View(person);
@@ -292,7 +293,7 @@ namespace Bank.Controllers
             var person = ConvertPeopleToPersonFullViewModels(RetreivePeople()).FirstOrDefault(i => i.Id == id);
             if (person == null)
             {
-                return RedirectToAction(nameof(StatusDoesNotExist));
+                return NotFound();// RedirectToAction(nameof(StatusDoesNotExist));
             }
 
             return View(person);
@@ -308,7 +309,12 @@ namespace Bank.Controllers
                 var requiredOne = _db.People.FirstOrDefault(i => i.Id == id);
                 _db.People.Remove(requiredOne);
                 _db.SaveChanges();
-                return RedirectToAction(nameof(StatusSuccess));
+                return RedirectToAction(nameof(StatusSuccess), new RouteValueDictionary(new
+                {
+                    controller = "Person",
+                    action = nameof(StatusSuccess),
+                    status = "Item was created."
+                }));
             }
             catch
             {
@@ -316,9 +322,9 @@ namespace Bank.Controllers
             }
         }
 
-        public ActionResult StatusSuccess()
+        public ActionResult StatusSuccess(string status)
         {
-            return View();
+            return View(status);
         }
 
         public ActionResult StatusFailed()
@@ -326,10 +332,10 @@ namespace Bank.Controllers
             return View();
         }
 
-        public ActionResult StatusDoesNotExist()
-        {
-            return View();
-        }
+        //public ActionResult StatusDoesNotExist()
+        //{
+        //    return View();
+        //}
 
         private PersonFullViewModel RestoreSelectLists(PersonFullViewModel model)
         {
@@ -496,7 +502,10 @@ namespace Bank.Controllers
                 case AnalyzeResult.Failed:
                     return RedirectToAction(nameof(StatusFailed));
                 case AnalyzeResult.Succeed:
-                    return RedirectToAction(nameof(StatusSuccess));
+                    return RedirectToAction(nameof(StatusSuccess), new RouteValueDictionary(new { 
+                        controller = "Person",
+                        action = nameof(StatusSuccess), 
+                        status = "Item was created." }));
             }
             throw new ApplicationException();
         }
@@ -507,7 +516,7 @@ namespace Bank.Controllers
             var person = ConvertPeopleToPersonFullViewModels(RetreivePeople()).FirstOrDefault(i => i.Id == id);
             if (person == null)
             {
-                return RedirectToAction(nameof(StatusDoesNotExist));
+                return NotFound();// RedirectToAction(nameof(StatusDoesNotExist));
             }
 
             return View(person);
@@ -527,7 +536,12 @@ namespace Bank.Controllers
                 case AnalyzeResult.Failed:
                     return RedirectToAction(nameof(StatusFailed));
                 case AnalyzeResult.Succeed:
-                    return RedirectToAction(nameof(StatusSuccess));
+                    return RedirectToAction(nameof(StatusSuccess), new
+                    {
+                        //controller = "Person",
+                        //action = nameof(StatusSuccess),
+                        status = "Item was changed."
+                    });
             }
             throw new ApplicationException();
         }
