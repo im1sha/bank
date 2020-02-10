@@ -11,17 +11,17 @@ namespace Bank.Models
 
         [Required]
         [DisplayName("First name")]
-        [RegularExpression(@"^([\-'a-zA-Z])+$", ErrorMessage = "You should use letters and characters \"-\", \"'\"  only")]
+        [RegularExpression(@"^([\-'a-zA-Z])+$", ErrorMessage = "You should use letters and characters \"-\", \"'\"  only.")]
         public string FirstName { get; set; } = "Name";
 
         [Required]
         [DisplayName("Last name")]
-        [RegularExpression(@"^([\-'a-zA-Z])+$", ErrorMessage = "You should use letters and characters \"-\", \"'\"  only")]
+        [RegularExpression(@"^([\-'a-zA-Z])+$", ErrorMessage = "You should use letters and characters \"-\", \"'\"  only.")]
         public string LastName { get; set; } = "Surname";
 
         [Required]
         [DisplayName("Middle name")]
-        [RegularExpression(@"^([\-'a-zA-Z])+$", ErrorMessage = "You should use letters and characters \"-\", \"'\"  only")]
+        [RegularExpression(@"^([\-'a-zA-Z])+$", ErrorMessage = "You should use letters and characters \"-\", \"'\"  only.")]
         public string MiddleName { get; set; } = "Middlename";
 
         #region birth
@@ -55,7 +55,7 @@ namespace Bank.Models
         [Required]
         [DisplayName("Passport number")]
         [StringLength(7)]
-        [RegularExpression(@"^([0-9])+$", ErrorMessage = "Number should contain digits only")]
+        [RegularExpression(@"^([0-9])+$", ErrorMessage = "Number should contain digits only.")]
         public string PassportNumber { get; set; } = "1111111";
 
         //[Remote(action: "CheckPassportSeriesAndNumber", controller: "Person", ErrorMessage = "Passport series and number should be unique")]
@@ -63,7 +63,7 @@ namespace Bank.Models
 
         [Required]
         [StringLength(2)]
-        [RegularExpression(@"^([A-Z])+$", ErrorMessage = "Series should contain capital latin letters only")]
+        [RegularExpression(@"^([A-Z])+$", ErrorMessage = "Series should contain capital latin letters only.")]
         [DisplayName("Passport series")]
         public string PassportSeries { get; set; } = "AA";
 
@@ -135,12 +135,12 @@ namespace Bank.Models
 
         [DisplayName("Home phone")]
         [StringLength(12)]
-        [RegularExpression(@"^([0-9])+$", ErrorMessage = "Phone should contain digits only")]
+        [RegularExpression(@"^([0-9])+$", ErrorMessage = "Phone should contain digits only.")]
         public string HomePhone { get; set; } = "123456789012";
 
         [DisplayName("Mobile phone")]
         [StringLength(12)]
-        [RegularExpression(@"^([0-9])+$", ErrorMessage = "Phone should contain digits only")]
+        [RegularExpression(@"^([0-9])+$", ErrorMessage = "Phone should contain digits only.")]
         public string MobilePhone { get; set; } = "123456789013";
 
         [EmailAddress]

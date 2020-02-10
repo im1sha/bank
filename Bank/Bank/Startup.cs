@@ -33,8 +33,8 @@ namespace Bank
             var culture = CultureInfo.CreateSpecificCulture("en-US");
             var dateFormat = new DateTimeFormatInfo
             {
-                ShortDatePattern = "MM/dd/yyyy",
-                LongDatePattern = "MM/dd/yyyy hh:mm:ss tt"
+                ShortDatePattern = "dd/MM/yyyy",
+                LongDatePattern = "dd/MM/yyyy hh:mm:ss tt"
             };
             culture.DateTimeFormat = dateFormat;
 

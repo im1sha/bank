@@ -32,13 +32,14 @@ namespace Bank.Models
 
                 // Format :
                 // 123456.00 | 12345 | 0.45 | 0.0 
-                var result = (inputValue.Count(i => separators.Contains(i)) <= 1)
-                    && (inputValue.Count(i => separators.Contains(i)) + inputValue.Count(i => IsDigit(i)) == inputValue.Length)
-                    && !separators.Any(i => inputValue.StartsWith(i))
-                    && !separators.Any(i => inputValue.EndsWith(i))
-                    && (inputValue.Length <= 4 || !inputValue.Any(i => separators.Contains(i)) || separators.Any(i => inputValue.TakeLast(3).Contains(i)))
-                    && (inputValue.First() != '0' || (inputValue.Length > 1 && separators.Contains(inputValue[1])))
-                    && decimal.TryParse(inputValue, out _);
+                var result = inputValue == "0" 
+                    || ((inputValue.Count(i => separators.Contains(i)) <= 1)
+                        && (inputValue.Count(i => separators.Contains(i)) + inputValue.Count(i => IsDigit(i)) == inputValue.Length)
+                        && !separators.Any(i => inputValue.StartsWith(i))
+                        && !separators.Any(i => inputValue.EndsWith(i))
+                        && (inputValue.Length <= 4 || !inputValue.Any(i => separators.Contains(i)) || separators.Any(i => inputValue.TakeLast(3).Contains(i)))
+                        && (inputValue.First() != '0' || (inputValue.Length > 1 && separators.Contains(inputValue[1])))
+                        && decimal.TryParse(inputValue, out _));
                 return result;
             }
 

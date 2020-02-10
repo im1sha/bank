@@ -97,7 +97,7 @@ namespace Bank.Models
                 },
                 new Nationality
                 {
-                    Name = "Ukrain"
+                    Name = "Ukraine"
                 },
                 new Nationality
                 {
