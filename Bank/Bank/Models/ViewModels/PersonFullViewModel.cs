@@ -85,7 +85,7 @@ namespace Bank.Models
         [Required]
         [DataType(DataType.Date)]
         [DisplayName("Issuing date")]
-        [AgeDateRange]
+        [AgeDateRange(10)]
         public DateTime? PassportIssuingDate { get; set; } = new DateTime(2018, 5, 5);
 
         #endregion
