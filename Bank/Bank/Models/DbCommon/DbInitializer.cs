@@ -477,7 +477,7 @@ namespace Bank.Models
                 context.SaveChanges();
             }
 
-
+            
             //if (!context.Clients.Any())
             //{
             //    context.Clients.AddRange(people.Select(i => new Client { Person = i, }));
