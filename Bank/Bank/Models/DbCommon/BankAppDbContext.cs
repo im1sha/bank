@@ -40,7 +40,13 @@ namespace Bank.Models
 
         public DbSet<StandardAccount> StandardAccounts { get; set; }
 
-        public DbSet<Log> Logs { get; set; }
+        public DbSet<LegalEntity> LegalEntities { get; set; }
+
+        public DbSet<Transaction> Transactions { get; set; }
+
+        public DbSet<Money> Moneys { get; set; }
+
+        public DbSet<DepositCore> DepositCores { get; set; }
 
         public BankAppDbContext(DbContextOptions<BankAppDbContext> options)
             : base(options)
@@ -128,10 +134,22 @@ namespace Bank.Models
 
             #region deposit
 
-            modelBuilder.Entity<DepositGeneral>()
-                .HasOne(p => p.InterestAccrual)
-                .WithMany(t => t.DepositGenerals)
-                .OnDelete(DeleteBehavior.Restrict);
+            #region m2m
+
+            modelBuilder.Entity<DepositCore>()
+                .HasKey(t => new { t.DepositVariableId, t.InterestAccrualId, t.InterestRate });
+
+            modelBuilder.Entity<DepositCore>()
+                .HasOne(pt => pt.DepositVariable)
+                .WithMany(p => p.DepositCores)
+                .HasForeignKey(pt => pt.DepositVariableId);
+
+            modelBuilder.Entity<DepositCore>()
+                .HasOne(pt => pt.InterestAccrual)
+                .WithMany(t => t.DepositCores)
+                .HasForeignKey(pt => pt.InterestAccrualId);
+
+            #endregion
 
             modelBuilder.Entity<DepositVariable>()
                 .HasOne(p => p.DepositGeneral)
@@ -144,7 +162,7 @@ namespace Bank.Models
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<DepositAccount>()
-                .HasOne(p => p.DepositVariable)
+                .HasOne(p => p.DepositCore)
                 .WithMany(t => t.DepositAccounts)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -173,9 +191,25 @@ namespace Bank.Models
                 .WithOne(t => t.Account)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Log>()
+            modelBuilder.Entity<Transaction>()
                 .HasOne(p => p.Account)
-                .WithMany(t => t.Logs)
+                .WithMany(t => t.Transactions)
+                .HasForeignKey(a => a.AccountId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Money>()
+                .HasOne(p => p.Account)
+                .WithOne(t => t.Money)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Money>()
+                .HasOne(p => p.DepositVariable)
+                .WithOne(t => t.MinimalDeposit)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Money>()
+                .HasOne(p => p.Transaction)
+                .WithOne(t => t.Amount)
                 .OnDelete(DeleteBehavior.Cascade);
 
             #endregion

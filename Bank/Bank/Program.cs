@@ -21,7 +21,6 @@ namespace Bank
                 {
                     var context = services.GetRequiredService<BankAppDbContext>();
                     DbInitializer.InitializePeopleAndRelatedEntities(context);
-                    DbInitializer.InitializeDepositsAndRelatedEntities(context);
                 }
                 catch (Exception ex)
                 {

@@ -20,21 +20,12 @@ namespace Bank.Models
 
         public bool WithCapitalization { get; set; }
 
-        [Column(TypeName = "decimal(18, 2)")]
-        public decimal MinimalDeposit { get; set; }
 
         /// <summary>
         /// Can bring additional bankroll(cash) to deposit 
         /// </summary>
         public bool ReplenishmentAllowed { get; set; }
-
-        public int InterestAccrualId { get; set; }
-
-        /// <summary>
-        /// Term in which percents will been accrued
-        /// </summary>
-        public InterestAccrual InterestAccrual { get; set; }
-
+       
         public List<DepositVariable> DepositVariables { get; set; }
     }
 }

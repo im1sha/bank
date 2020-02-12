@@ -2,6 +2,9 @@
 
 namespace Bank.Models
 {
+    /// <summary>
+    /// Interest accrual term
+    /// </summary>
     public class InterestAccrual
     {
         public int Id { get; set; }
@@ -9,8 +12,11 @@ namespace Bank.Models
         /// <summary>
         /// Month, Year, 30 days, 370 days, 195 days etc.
         /// </summary>
-        public string Term { get; set; }
+        public string TermName { get; set; }
 
-        public List<DepositGeneral> DepositGenerals { get; set; }
+        public int? TermInDays { get; set; }
+
+        public List<DepositCore> DepositCores { get; set; }
     }
 }
+

@@ -455,19 +455,405 @@ namespace Bank.Models
                 }              
                 context.SaveChanges();
             }       
-        }
 
-        public static void InitializeDepositsAndRelatedEntities(BankAppDbContext context)
-        {
-            //var cities = new[]
-            //{
+
+            var interestAccruals = new[]
+            {
+                new InterestAccrual { TermInDays = 95 },
+                new InterestAccrual { TermInDays = 185 },
+                new InterestAccrual { TermInDays = 370 },
+            };
+            if (!context.InterestAccruals.Any())
+            {
+                context.InterestAccruals.AddRange(interestAccruals);
+                context.SaveChanges();
+            }
+            var currencies = new[]
+            {            
+                new Currency { Name = "EUR" },
+                new Currency { Name = "USD" },
+                new Currency { Name = "BYN" },
+            };
+            if (!context.Currencies.Any())
+            {
+                context.Currencies.AddRange(currencies);
+                context.SaveChanges();
+            }
+            var legalEntities = new[]
+            {
+                new LegalEntity { Name = "Development fund" },
+                new LegalEntity { Name = "BelAPB.by cashdesk" },
+            };
+            if (!context.LegalEntities.Any())
+            {
+                context.LegalEntities.AddRange(legalEntities);
+                context.SaveChanges();
+            }
+            var depositGenerals = new[]
+            {
+                new DepositGeneral
+                {
+                    IsRevocable = false,
+                    Name = "Growth+",
+                    ReplenishmentAllowed = true,
+                    WithCapitalization = false,
+                },
+                new DepositGeneral
+                {
+                    IsRevocable = true,
+                    Name = "Stability+",
+                    ReplenishmentAllowed = true,
+                    WithCapitalization = true,                    
+                },
                 
-            //};
-            //if (!context.Cities.Any())
-            //{
-            //    context.Cities.AddRange(cities);
-            //    context.SaveChanges();
-            //}
+            };
+            if (!context.DepositGenerals.Any())
+            {
+                context.DepositGenerals.AddRange(depositGenerals);
+                context.SaveChanges();
+            }
+            var depositVariables = new[]
+            {
+                new DepositVariable
+                {
+                   Currency = currencies[0],
+                   DepositGeneral = depositGenerals[0],                   
+                },
+                new DepositVariable
+                {
+                    Currency = currencies[0],
+                    DepositGeneral = depositGenerals[1],
+                },
+                new DepositVariable
+                {
+                   Currency = currencies[1],
+                   DepositGeneral = depositGenerals[0],
+                },
+                new DepositVariable
+                {
+                    Currency = currencies[1],
+                    DepositGeneral = depositGenerals[1],
+                },
+                new DepositVariable
+                {
+                   Currency = currencies[2],
+                   DepositGeneral = depositGenerals[0],
+                },
+                new DepositVariable
+                {
+                    Currency = currencies[2],
+                    DepositGeneral = depositGenerals[1],
+                },
+            };
+            if (!context.DepositVariables.Any())
+            {
+                context.DepositVariables.AddRange(depositVariables);
+                context.SaveChanges();
+            }
+            var depositCores = new[]
+            {
+                new DepositCore
+                {
+                    DepositVariable = depositVariables[0],
+                    InterestAccrual = interestAccruals[0],
+                    InterestRate = 0.2m
+                },
+                new DepositCore
+                {
+                    DepositVariable = depositVariables[0],
+                    InterestAccrual = interestAccruals[1],
+                    InterestRate = 0.25m
+                },
+                new DepositCore
+                {
+                    DepositVariable = depositVariables[0],
+                    InterestAccrual = interestAccruals[2],
+                    InterestRate = 0.3m
+                },
+                new DepositCore
+                {
+                    DepositVariable = depositVariables[1],
+                    InterestAccrual = interestAccruals[0],
+                    InterestRate = 0.25m
+                },
+                new DepositCore
+                {
+                    DepositVariable = depositVariables[1],
+                    InterestAccrual = interestAccruals[1],
+                    InterestRate = 0.3m
+                },
+                new DepositCore
+                {
+                    DepositVariable = depositVariables[1],
+                    InterestAccrual = interestAccruals[2],
+                    InterestRate = 0.7m
+                },
+                new DepositCore
+                {
+                    DepositVariable = depositVariables[2],
+                    InterestAccrual = interestAccruals[0],
+                    InterestRate = 0.25m
+                },
+                new DepositCore
+                {
+                    DepositVariable = depositVariables[2],
+                    InterestAccrual = interestAccruals[1],
+                    InterestRate = 0.3m
+                },
+                new DepositCore
+                {
+                    DepositVariable = depositVariables[2],
+                    InterestAccrual = interestAccruals[2],
+                    InterestRate = 0.9m
+                },
+                new DepositCore
+                {
+                    DepositVariable = depositVariables[3],
+                    InterestAccrual = interestAccruals[0],
+                    InterestRate = 0.5m
+                },
+                new DepositCore
+                {
+                    DepositVariable = depositVariables[3],
+                    InterestAccrual = interestAccruals[1],
+                    InterestRate = 0.9m
+                },
+                new DepositCore
+                {
+                    DepositVariable = depositVariables[3],
+                    InterestAccrual = interestAccruals[2],
+                    InterestRate = 1.4m
+                },
+                new DepositCore
+                {
+                    DepositVariable = depositVariables[4],
+                    InterestAccrual = interestAccruals[0],
+                    InterestRate = 5.8m
+                },
+                new DepositCore
+                {
+                    DepositVariable = depositVariables[4],
+                    InterestAccrual = interestAccruals[1],
+                    InterestRate = 5.9m
+                },
+                new DepositCore
+                {
+                    DepositVariable = depositVariables[4],
+                    InterestAccrual = interestAccruals[2],
+                    InterestRate = 6.1m
+                },
+                new DepositCore
+                {
+                    DepositVariable = depositVariables[5],
+                    InterestAccrual = interestAccruals[0],
+                    InterestRate = 9m
+                },
+                new DepositCore
+                {
+                    DepositVariable = depositVariables[5],
+                    InterestAccrual = interestAccruals[1],
+                    InterestRate = 9.5m
+                },
+                new DepositCore
+                {
+                    DepositVariable = depositVariables[5],
+                    InterestAccrual = interestAccruals[2],
+                    InterestRate = 11.75m
+                },
+            };
+            if (!context.DepositCores.Any())
+            {
+                context.DepositCores.AddRange(depositCores);
+                context.SaveChanges();
+            }
+            var depositAccounts = new[]
+            {
+                new DepositAccount
+                {
+                    DepositCore = depositCores[0],
+                    Person = people[0], 
+                },
+                new DepositAccount
+                {
+                    DepositCore = depositCores[8],
+                    Person = people[0],
+                },
+                new DepositAccount
+                {
+                    DepositCore = depositCores[7],
+                    Person = people[1],
+                },
+                new DepositAccount
+                {
+                    DepositCore = depositCores[17],
+                    Person = people[2],
+                },
+            };
+            if (!context.DepositAccounts.Any())
+            {
+                context.DepositAccounts.AddRange(depositAccounts);
+                context.SaveChanges();
+            }
+            var standardAccount = new[]
+            {
+                new StandardAccount
+                {
+                    Person = people[0],                       
+                },
+                new StandardAccount
+                {
+                    Person = people[1],
+                },
+                new StandardAccount
+                {
+                    Person = people[2],
+                },
+                new StandardAccount
+                {
+                    Person = people[3],
+                },
+                new StandardAccount
+                {
+                    Person = people[4],
+                },
+                new StandardAccount
+                {
+                    LegalEntity = legalEntities[0],
+                },
+                new StandardAccount
+                {
+                    LegalEntity = legalEntities[1],
+                },
+            };
+            if (!context.StandardAccounts.Any())
+            {
+                context.StandardAccounts.AddRange(standardAccount);
+                context.SaveChanges();
+            }
+            
+            var accounts = new[]
+            {
+                new Account
+                {
+                    DepositAccount = depositAccounts[0],
+                    Name = "dep acc#0",
+                    Number = "30141234567891",
+                    OpenDate = DateTime.Now.AddDays(-55),                   
+                },
+                new Account
+                {
+                    DepositAccount = depositAccounts[1],
+                    Name = "dep acc#1",
+                    Number = "30141234567880",
+                    OpenDate = DateTime.Now.AddDays(-20),
+                },
+                new Account
+                {
+                    DepositAccount = depositAccounts[2],
+                    Name = "dep acc#2",
+                    Number = "30141234567879",
+                    OpenDate = DateTime.Now.AddDays(-10),
+                },
+                new Account
+                {
+                    DepositAccount = depositAccounts[3],
+                    Name = "dep acc#3",
+                    Number = "30141234567868",
+                    OpenDate = DateTime.Now.AddDays(-5),
+                },
+                #region accs of person#0 
+                new Account
+                {
+                    StandardAccount = standardAccount[0],
+                    Name = "st acc#0-1",
+                    Number = "9999012345612",
+                    OpenDate = DateTime.Now.AddDays(-500),
+                },
+                new Account
+                {
+                    StandardAccount = standardAccount[0],
+                    Name = "st acc#0-2",
+                    Number = "9999012345623",
+                    OpenDate = DateTime.Now.AddDays(-600),
+                },
+                #endregion
+                new Account
+                {
+                    StandardAccount = standardAccount[1],
+                    Name = "st acc#1",
+                    Number = "9999012345645",
+                    OpenDate = DateTime.Now.AddDays(-500),
+                },
+                new Account
+                {
+                    StandardAccount = standardAccount[2],
+                    Name = "st acc#2",
+                    Number = "9999012345656",
+                    OpenDate = DateTime.Now.AddDays(-1000),
+                },
+                new Account
+                {
+                    StandardAccount = standardAccount[3],
+                    Name = "st acc#3",
+                    Number = "9999012345667",
+                    OpenDate = DateTime.Now.AddDays(-1500),
+                },
+                new Account
+                {
+                    StandardAccount = standardAccount[4],
+                    Name = "st acc#4",
+                    Number = "9999012345678",
+                    OpenDate = DateTime.Now.AddDays(-500),
+                },
+                new Account
+                {
+                    StandardAccount = standardAccount[5],
+                    Name = "st acc#5",
+                    Number = "7327012345678",
+                    OpenDate = DateTime.Now.AddDays(-500),
+                },
+                new Account
+                {
+                    StandardAccount = standardAccount[6],
+                    Name = "st acc#6",
+                    Number = "1010012345678",
+                    OpenDate = DateTime.Now.AddDays(-500),
+                },
+            };
+            if (!context.Accounts.Any())
+            {
+                context.Accounts.AddRange(accounts);
+                context.SaveChanges();
+            }
+
+            var money = new[]
+            {
+                new Money { Amount= 25m, Currency = currencies[0], DepositVariable = depositVariables[0], },
+                new Money { Amount= 25m, Currency = currencies[0], DepositVariable = depositVariables[1], },
+                new Money { Amount= 25m, Currency = currencies[1], DepositVariable = depositVariables[2], },
+                new Money { Amount= 25m, Currency = currencies[1], DepositVariable = depositVariables[3], },
+                new Money { Amount= 50m, Currency = currencies[2], DepositVariable = depositVariables[4], },
+                new Money { Amount= 50m, Currency = currencies[2], DepositVariable = depositVariables[5], },
+
+                new Money { Amount = 100m, Currency = currencies[0], Account = accounts[0], },
+                new Money { Amount = 100m, Currency = currencies[1], Account = accounts[1], },
+                new Money { Amount = 100m, Currency = currencies[1], Account = accounts[2], },
+                new Money { Amount = 100m, Currency = currencies[2], Account = accounts[3], },
+
+                new Money { Amount = 100m, Currency = currencies[0], Account = accounts[4], },
+                new Money { Amount = 50m, Currency = currencies[1], Account = accounts[5], },
+                new Money { Amount = 100m, Currency = currencies[1], Account = accounts[6], },
+                new Money { Amount = 100m, Currency = currencies[2], Account = accounts[7], },
+                new Money { Amount = 100m, Currency = currencies[2], Account = accounts[8], },
+                new Money { Amount = 100m, Currency = currencies[2], Account = accounts[9], },
+                new Money { Amount = 100m, Currency = currencies[2], Account = accounts[10], },
+                new Money { Amount = 10m, Currency = currencies[2], Account = accounts[11], },
+            };
+            if (!context.Moneys.Any())
+            {
+                context.Moneys.AddRange(money);
+                context.SaveChanges();
+            }
         }
     }
 }

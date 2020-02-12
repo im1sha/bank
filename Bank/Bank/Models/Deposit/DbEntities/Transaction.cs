@@ -5,7 +5,7 @@ namespace Bank.Models
     /// <summary>
     /// Transaction items
     /// </summary>
-    public class Log
+    public class Transaction
     {
         public int Id { get; set; }
 
@@ -13,13 +13,10 @@ namespace Bank.Models
 
         public Account Account { get; set; }
 
-        public bool IsRecipient { get; set; }
-
-        public int AnotherAccountId { get; set; }
-
         public Account AnotherAccount { get; set; }
 
-        [Column(TypeName = "decimal(18, 2)")]
-        public decimal TransactionFund { get; set; }
+        public bool IsRecipient { get; set; }
+
+        public Money Amount { get; set; }
     }
 }

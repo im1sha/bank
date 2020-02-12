@@ -10,8 +10,8 @@
 
         public Account Account { get; set; }
 
-        public int DepositVariableId { get; set; }
+        public int DepositCoreId { get; set; }
 
-        public DepositVariable DepositVariable { get; set; }
+        public DepositCore DepositCore { get; set; }
     }
 }

@@ -28,13 +28,12 @@ namespace Bank.Models
         /// Active: false,
         /// Active-Passive: null.
         /// </summary>
-        public bool? IsPassive { get; set; }
+        //public bool? IsPassive { get; set; }
 
         /// <summary>
         /// Financial amount 
         /// </summary>
-        [Column(TypeName = "decimal(18, 2)")]
-        public decimal Fund { get; set; }
+        public Money Money { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime OpenDate { get; set; }
@@ -56,6 +55,6 @@ namespace Bank.Models
         /// </summary>
         public StandardAccount StandardAccount { get; set; }
 
-        public List<Log> Logs { get; set; }
+        public List<Transaction> Transactions { get; set; }
     }
 }
