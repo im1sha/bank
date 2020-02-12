@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 namespace Bank.Models
 {
     /// <summary>
-    /// Plan of account(план учета) : list of accounts stored in the system
+    /// Plan of account(план учета) : list of accounts stored in the system.
+    /// Entities of this class are required to serve deposits.
+    /// Data required to calculate deposits correctly.
+    /// It just may rerefence to deposit.
     /// </summary>
     public class Account
     {
@@ -22,11 +25,12 @@ namespace Bank.Models
         /// </summary>
         public string Name { get; set; }
 
-        // entities of this calls required to serve deposits
+        public bool IsPassive { get; set; }
+         
+        public decimal TotalFund { get; set; }
 
-        // data required to calculate deposits correctly
-        // mb just rerefences to deposits
+        public DepositAccount DepositAccount { get; set; }
 
-
+        public List<Log> Logs { get; set; }
     }
 }
