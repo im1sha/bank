@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Bank.Models
 {
     /// <summary>
     /// Plan of account(план учета) : list of accounts stored in the system.
-    /// Entities of this class are required to serve deposits.
-    /// Data required to calculate deposits correctly.
-    /// It just may rerefence to deposit.
     /// </summary>
     public class Account
     {
@@ -26,10 +20,18 @@ namespace Bank.Models
         public string Name { get; set; }
 
         public bool IsPassive { get; set; }
-         
+
         public decimal TotalFund { get; set; }
 
+        /// <summary>
+        /// Cannot reference both DepositAccount and StandardAccount
+        /// </summary>
         public DepositAccount DepositAccount { get; set; }
+
+        /// <summary>
+        /// Cannot reference both DepositAccount and StandardAccount
+        /// </summary>
+        public StandardAccount StandardAccount { get; set; }
 
         public List<Log> Logs { get; set; }
     }

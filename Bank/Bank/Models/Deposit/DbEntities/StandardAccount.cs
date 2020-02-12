@@ -1,6 +1,9 @@
 ﻿namespace Bank.Models
 {
-    public class DepositAccount
+    /// <summary>
+    /// Stores financials
+    /// </summary>
+    public class StandardAccount
     {
         public int Id { get; set; }
 
@@ -11,9 +14,5 @@
         public int AccountId { get; set; }
 
         public Account Account { get; set; }
-
-        public int DepositVariableId { get; set; }
-
-        public DepositVariable DepositVariable { get; set; }
     }
 }

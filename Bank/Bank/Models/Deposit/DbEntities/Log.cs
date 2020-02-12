@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Bank.Models
+﻿namespace Bank.Models
 {
     public class Log
     {
@@ -8,8 +6,8 @@ namespace Bank.Models
 
         public int AccountId { get; set; }
 
-        public Account Account { get; set; }     
-        
+        public Account Account { get; set; }
+
         public bool IsRecipient { get; set; }
 
         public int AnotherAccountId { get; set; }

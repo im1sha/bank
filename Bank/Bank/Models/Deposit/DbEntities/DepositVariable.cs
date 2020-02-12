@@ -3,7 +3,7 @@
 namespace Bank.Models
 {
     /// <summary>
-    /// Describes deposits terms
+    /// Describes deposits variable terms
     /// </summary>
     public class DepositVariable
     {
