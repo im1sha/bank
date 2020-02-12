@@ -1,13 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Bank.Models;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace Bank
 {
@@ -24,12 +20,12 @@ namespace Bank
                 try
                 {
                     var context = services.GetRequiredService<BankAppDbContext>();
-                    DbInitializer.Initialize(context);
+                    DbInitializer.InitializePeopleAndRelatedEntities(context);
+                    DbInitializer.InitializeDepositsAndRelatedEntities(context);
                 }
                 catch (Exception ex)
                 {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred seeding the DB.");
+                    services.GetRequiredService<ILogger<Program>>().LogError(ex, "An error occurred seeding the DB.");
                 }
             }
             host.Run();
@@ -37,11 +33,13 @@ namespace Bank
             CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+        }
     }
 }

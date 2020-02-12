@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bank.Models
 {
@@ -15,6 +16,7 @@ namespace Bank.Models
         /// <summary>
         /// % 
         /// </summary>
+        [Column(TypeName = "decimal(18, 2)")]
         public decimal InterestRate { get; set; }
 
         /// <summary>

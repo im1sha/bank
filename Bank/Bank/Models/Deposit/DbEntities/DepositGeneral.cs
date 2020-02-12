@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bank.Models
 {
@@ -19,6 +20,7 @@ namespace Bank.Models
 
         public bool WithCapitalization { get; set; }
 
+        [Column(TypeName = "decimal(18, 2)")]
         public decimal MinimalDeposit { get; set; }
 
         /// <summary>

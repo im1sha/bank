@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bank.Models
 {
@@ -19,14 +22,34 @@ namespace Bank.Models
         /// </summary>
         public string Name { get; set; }
 
-        public bool IsPassive { get; set; }
+        /// <summary>
+        /// Account may have following types:
+        /// Passive: true,
+        /// Active: false,
+        /// Active-Passive: null.
+        /// </summary>
+        public bool? IsPassive { get; set; }
 
-        public decimal TotalFund { get; set; }
+        /// <summary>
+        /// Financial amount 
+        /// </summary>
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal Fund { get; set; }
+
+        [DataType(DataType.Date)]
+        public DateTime OpenDate { get; set; }
+
+        [DataType(DataType.Date)]
+        public DateTime? TerminationDate { get; set; }
+
+        public int? DepositAccountId { get; set; }
 
         /// <summary>
         /// Cannot reference both DepositAccount and StandardAccount
         /// </summary>
         public DepositAccount DepositAccount { get; set; }
+
+        public int? StandardAccountId { get; set; }
 
         /// <summary>
         /// Cannot reference both DepositAccount and StandardAccount

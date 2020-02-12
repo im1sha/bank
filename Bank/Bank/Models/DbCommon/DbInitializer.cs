@@ -7,7 +7,7 @@ namespace Bank.Models
 {
     public static class DbInitializer
     {
-        public static void Initialize(BankAppDbContext context)
+        public static void InitializePeopleAndRelatedEntities(BankAppDbContext context)
         {
             var cities = new[] 
             {
@@ -64,23 +64,7 @@ namespace Bank.Models
             {
                 context.Disabilities.AddRange(disabilities);
                 context.SaveChanges();
-            }
-            //var maritalStatuses = new[]
-            //{   
-            //    new MaritalStatus
-            //    {
-            //        Name = "не в браке"
-            //    },
-            //    new MaritalStatus
-            //    {
-            //        Name = "в браке"
-            //    },               
-            //};
-            //if (!context.MaritalStatuses.Any())
-            //{
-            //    context.MaritalStatuses.AddRange(maritalStatuses);
-            //    context.SaveChanges();
-            //}
+            }          
             var nationalities = new[]
             {
                 new Nationality
@@ -146,8 +130,7 @@ namespace Bank.Models
             {
                 context.Locations.AddRange(locations);
                 context.SaveChanges();
-            }
-           
+            }           
             var companies = new[]
             {
                 new Company
@@ -226,8 +209,7 @@ namespace Bank.Models
             {
                 context.IssuingAuthorities.AddRange(issuingAuthorithies);
                 context.SaveChanges();
-            }
-           
+            }          
             var people = new[]
             {
                 new Person
@@ -311,7 +293,6 @@ namespace Bank.Models
                 context.People.AddRange(people);
                 context.SaveChanges();
             }
-
             var births = new[]
            {
                 new Birth
@@ -350,7 +331,6 @@ namespace Bank.Models
                 context.Births.AddRange(births);
                 context.SaveChanges();
             }
-
             var passports = new[]
             {
                 new Passport
@@ -404,7 +384,6 @@ namespace Bank.Models
                 context.Passports.AddRange(passports);
                 context.SaveChanges();
             }
-
             var peopleToLocations = new[]
             {
                 new PersonToLocation
@@ -475,12 +454,18 @@ namespace Bank.Models
                     context.PersonToLocations.Add(peopleToLocations[i]);                    
                 }              
                 context.SaveChanges();
-            }
+            }       
+        }
 
-            
-            //if (!context.Clients.Any())
+        public static void InitializeDepositsAndRelatedEntities(BankAppDbContext context)
+        {
+            //var cities = new[]
             //{
-            //    context.Clients.AddRange(people.Select(i => new Client { Person = i, }));
+                
+            //};
+            //if (!context.Cities.Any())
+            //{
+            //    context.Cities.AddRange(cities);
             //    context.SaveChanges();
             //}
         }

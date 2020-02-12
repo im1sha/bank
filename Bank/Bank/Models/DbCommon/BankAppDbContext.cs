@@ -8,8 +8,6 @@ namespace Bank.Models
 
         public DbSet<Disability> Disabilities { get; set; }
 
-        //public DbSet<MaritalStatus> MaritalStatuses { get; set; }
-
         public DbSet<Nationality> Nationalities { get; set; }
 
         public DbSet<Location> Locations { get; set; }
@@ -26,9 +24,23 @@ namespace Bank.Models
 
         public DbSet<Person> People { get; set; }
 
-        //  public DbSet<Client> Clients { get; set; }
-
         public DbSet<PersonToLocation> PersonToLocations { get; set; }
+
+        public DbSet<InterestAccrual> InterestAccruals { get; set; }
+
+        public DbSet<DepositGeneral> DepositGenerals { get; set; }
+
+        public DbSet<Currency> Currencies { get; set; }
+
+        public DbSet<DepositVariable> DepositVariables { get; set; }
+
+        public DbSet<Account> Accounts { get; set; }
+
+        public DbSet<DepositAccount> DepositAccounts { get; set; }
+
+        public DbSet<StandardAccount> StandardAccounts { get; set; }
+
+        public DbSet<Log> Logs { get; set; }
 
         public BankAppDbContext(DbContextOptions<BankAppDbContext> options)
             : base(options)
@@ -87,7 +99,6 @@ namespace Bank.Models
             modelBuilder.Entity<Passport>()
                 .HasOne(p => p.Person)
                 .WithOne(t => t.Passport)
-                //.HasForeignKey(a => a.);
                 .OnDelete(DeleteBehavior.Cascade);            
 
             modelBuilder.Entity<Birth>()
@@ -115,20 +126,59 @@ namespace Bank.Models
                 .WithMany(t => t.People)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //modelBuilder.Entity<Person>()
-            //    .HasOne(p => p.MaritalStatus)
-            //    .WithMany(t => t.People)
-            //    .OnDelete(DeleteBehavior.Restrict);
+            #region deposit
 
-            //modelBuilder.Entity<Person>()
-            //    .HasOne(p => p.MaritalStatus)
-            //    .WithMany(t => t.People)
-            //    .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<DepositGeneral>()
+                .HasOne(p => p.InterestAccrual)
+                .WithMany(t => t.DepositGenerals)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            //modelBuilder.Entity<Client>()
-            //    .HasOne(p => p.Person)
-            //    .WithOne(t => t.Client)
-            //    .OnDelete(DeleteBehavior.Restrict);          
+            modelBuilder.Entity<DepositVariable>()
+                .HasOne(p => p.DepositGeneral)
+                .WithMany(t => t.DepositVariables)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<DepositVariable>()
+                .HasOne(p => p.Currency)
+                .WithMany(t => t.DepositVariables)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<DepositAccount>()
+                .HasOne(p => p.DepositVariable)
+                .WithMany(t => t.DepositAccounts)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<DepositAccount>()
+                .HasOne(p => p.Person)
+                .WithMany(t => t.DepositAccounts)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<StandardAccount>()
+                .HasOne(p => p.LegalEntity)
+                .WithMany(t => t.StandardAccounts)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<StandardAccount>()
+                .HasOne(p => p.Person)
+                .WithMany(t => t.StandardAccounts)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Account>()
+                .HasOne(p => p.DepositAccount)
+                .WithOne(t => t.Account)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Account>()
+                .HasOne(p => p.StandardAccount)
+                .WithOne(t => t.Account)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Log>()
+                .HasOne(p => p.Account)
+                .WithMany(t => t.Logs)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            #endregion
         }
     }
 }

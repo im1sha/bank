@@ -45,6 +45,8 @@ namespace Bank.Models
         [Column(TypeName = "decimal(18, 2)")]
         public decimal? Revenue { get; set; }
 
-        public List<DepositAccount> Accounts { get; set; }
+        public List<StandardAccount> StandardAccounts { get; set; }
+
+        public List<DepositAccount> DepositAccounts { get; set; }
     }
 }

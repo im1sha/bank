@@ -1,5 +1,10 @@
-﻿namespace Bank.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Bank.Models
 {
+    /// <summary>
+    /// Transaction items
+    /// </summary>
     public class Log
     {
         public int Id { get; set; }
@@ -14,6 +19,7 @@
 
         public Account AnotherAccount { get; set; }
 
+        [Column(TypeName = "decimal(18, 2)")]
         public decimal TransactionFund { get; set; }
     }
 }

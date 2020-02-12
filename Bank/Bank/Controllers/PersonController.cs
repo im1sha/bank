@@ -1,7 +1,6 @@
 ﻿using Bank.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,7 +12,6 @@ namespace Bank.Controllers
 {
     public class PersonController : Controller
     {
-        private const string MESSAGE_KEY = "OUTPUT_MESSAGE";
         private const string MESSAGE_DELETE_SUCCEEDED = "Delete succeeded.";
         private const string MESSAGE_DELETE_FAILED = "Delete failed.";
         private const string MESSAGE_EDIT_SUCCEEDED = "Edit succeeded.";
@@ -327,11 +325,6 @@ namespace Bank.Controllers
                 return View(VIEW_STATUS_FAILED, MESSAGE_DELETE_FAILED);
             }
         }
-
-        //public ActionResult StatusDoesNotExist()
-        //{
-        //    return View();
-        //}
 
         private PersonFullViewModel RestoreSelectLists(PersonFullViewModel model)
         {
