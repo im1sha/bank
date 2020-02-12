@@ -1,0 +1,69 @@
+﻿@model IEnumerable<Bank.Models.DepositIndexViewModel>
+
+@{
+    ViewData["Title"] = "List of deposits";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    @*<a asp-action="Create">Create New</a>*@
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Deposit)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CurrencyName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AccountNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsActive)
+            </th>
+
+            <th>
+
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Deposit)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CurrencyName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AccountNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsActive)
+            </td>
+
+            <td>
+                @Html.ActionLink("Account", "Details", new { Id = item.AccountId }) |
+                @Html.ActionLink("Person", actionName: "Details", controllerName: "Person", new { Id = item.PersonId })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

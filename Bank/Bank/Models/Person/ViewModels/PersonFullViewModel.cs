@@ -31,7 +31,7 @@ namespace Bank.Models
         [Required]
         [DataType(DataType.Date)]
         [DisplayName("Birth date")]
-        [AgeDateRange]
+        [AgeDateRange(150, 0, 0, 0)]
         public DateTime? BirthDate { get; set; } = new DateTime(1999, 4, 4);
 
         public int? BirthLocationId { get; set; }
@@ -85,7 +85,7 @@ namespace Bank.Models
         [Required]
         [DataType(DataType.Date)]
         [DisplayName("Issuing date")]
-        [AgeDateRange]
+        [AgeDateRange(10, 0, 0, 0)]
         public DateTime? PassportIssuingDate { get; set; } = new DateTime(2018, 5, 5);
 
         #endregion
