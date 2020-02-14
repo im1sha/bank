@@ -459,9 +459,9 @@ namespace Bank.Models
 
             var interestAccruals = new[]
             {
-                new InterestAccrual { TermInDays = 95, TermName = "95 days" },
-                new InterestAccrual { TermInDays = 185, TermName = "185 days" },
-                new InterestAccrual { TermInDays = 370, TermName = "370 days" },
+                new InterestAccrual { TermInDays = 95, Name = "95 days" },
+                new InterestAccrual { TermInDays = 185, Name = "185 days" },
+                new InterestAccrual { TermInDays = 370, Name = "370 days" },
             };
             if (!context.InterestAccruals.Any())
             {

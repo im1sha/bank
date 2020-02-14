@@ -1,51 +1,53 @@
-﻿@model Bank.Models.SelectCurrencyViewModel
+﻿@model Bank.Models.SelectDepositViewModel
 
 @{
-    ViewData["Title"] = "Select currency";
+    ViewData["Title"] = "Deposit - currency";
 }
 
-<h1>Select currency</h1>
-
-
-
-
-@*<div class="form-group">
-    <label asp-for="RegistrationLocationCityList" class="control-label"></label>
-    <select asp-for="RegistrationLocationCityId" asp-items="@(new SelectList(Model.RegistrationLocationCityList, "Id", "Name"))" class="form-control">
-        <option value="">Please select one</option>
-    </select>
-    <span asp-validation-for="RegistrationLocationCityId" class="text-danger"></span>
-</div>*@
-
-
-
+<h1>@ViewData["Title"]</h1>
 
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="SelectCurrency">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <form asp-action="Create" method="get">
+
             <div class="form-group">
-                <label asp-for="CurrencyId" class="control-label"></label>
-                <input asp-for="CurrencyId" class="form-control" />
+                <label asp-for="CurrencyList" class="control-label"></label>
+                <select asp-for="CurrencyId" asp-items="@(new SelectList(Model.CurrencyList, "Id", "Name"))"
+                        class="form-control" onchange="dataChanged()">
+                </select>
                 <span asp-validation-for="CurrencyId" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="CurrencyName" class="control-label"></label>
-                <input asp-for="CurrencyName" class="form-control" />
-                <span asp-validation-for="CurrencyName" class="text-danger"></span>
+                <input asp-for="CurrencyName" class="form-control" disabled="disabled">              
             </div>
+
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Next" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Create">Back to List</a>
 </div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+    function dataChanged()
+    {
+        var url = '@Url.Action("GetCurrencyNameByModel", "Deposit")';
+        $.post(url, $('form').serialize(), function (view)
+        {
+
+            console.log(view);
+            $("#CurrencyName").val(view);
+        });
+    }
+    </script>
+
 }
+
+

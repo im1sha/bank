@@ -12,7 +12,7 @@ namespace Bank.Models
         /// <summary>
         /// Month, Year, 30 days, 370 days, 195 days etc.
         /// </summary>
-        public string TermName { get; set; }
+        public string Name { get; set; }
 
         public int? TermInDays { get; set; }
 
