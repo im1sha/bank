@@ -20,25 +20,14 @@ namespace Bank.Controllers
             _logger = logger;
         }
 
-        private string ConvertToYesNoFormat(bool x)
-        {
-            return x ? "Yes" : "No";
-        }
+        
 
-        private List<Currency> GetCurrenciesFromDepositVariables()
-        {
-            return _db.DepositVariables.Include(i => i.Currency).Select(i => i.Currency).OrderBy(i => i.Id).Distinct().ToList();
-        }
-
-        private List<DepositGeneral> GetDepositGenerals()
-        {
-            return _db.DepositGenerals.Include(i => i.DepositVariables).OrderBy(i => i.Id).ToList();
-        }
+       
 
         [HttpPost]
         public ActionResult GetCurrencyNameByModel(SelectDepositViewModel model)
         {
-            return Json(GetCurrenciesFromDepositVariables().FirstOrDefault(i => i.Id == model.CurrencyId)?.Name);
+            return Json(string.Empty);// Json(GetCurrenciesFromDepositVariables().FirstOrDefault(i => i.Id == model.CurrencyId)?.Name);
         }
 
 
@@ -56,7 +45,7 @@ namespace Bank.Controllers
                     Deposit = i.DepositAccount.DepositCore.DepositVariable.DepositGeneral.Name,
                     AccountId = i.Id,
                     AccountNumber = i.Number,
-                    IsActive = ConvertToYesNoFormat(i.TerminationDate == null || i.TerminationDate < DateTime.Now),
+                    IsActive = Utils.ConvertBoolToYesNoFormat(i.TerminationDate == null || i.TerminationDate < DateTime.Now),
                     CurrencyName = i.Money.Currency.Name,
                     FirstName = i.DepositAccount.Person.FirstName,
                     LastName = i.DepositAccount.Person.LastName,
@@ -71,30 +60,31 @@ namespace Bank.Controllers
             return View();
         }
 
-        private 
+         
 
         // GET: Deposit/Create
         public ActionResult Create()
-        {                  
-            var vm = new SelectDepositViewModel
-            {
-                CurrencyId = ,
-                CurrencyList = GetCurrenciesFromDepositVariables(),
-                DepositGeneralId = ,
-                DepositGeneralList = ,
-                InterestAccrualId = ,
-                InterestAccrualList =,
-                DepositCoreList =,
-                DepositCoreId=,
-                IsRevocable=,
-                WithCapitalization=,
-                ReplenishmentAllowed=,
-                RequiredMoney=,
-                SelectedMoney=,
-                StartDate=,
-                TotalMoney=,               
-            };
-            return View("SelectCurrency", vm);            
+        {
+            throw new NotImplementedException();
+            //var vm = new SelectDepositViewModel
+            //{
+            //    CurrencyId = ,
+            //    CurrencyList = GetCurrenciesFromDepositVariables(),
+            //    DepositGeneralId = ,
+            //    DepositGeneralList = ,
+            //    InterestAccrualId = ,
+            //    InterestAccrualList =,
+            //    DepositCoreList =,
+            //    DepositCoreId=,
+            //    IsRevocable=,
+            //    WithCapitalization=,
+            //    ReplenishmentAllowed=,
+            //    RequiredMoney=,
+            //    SelectedMoney=,
+            //    StartDate=,
+            //    TotalMoney=,               
+            //};
+            // return View("SelectCurrency", vm);            
         }
 
         // POST: Deposit/Create

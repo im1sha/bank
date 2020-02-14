@@ -1,12 +1,11 @@
 ﻿@model Bank.Models.SelectDepositViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create deposit";
 }
 
-<h1>Create</h1>
+<h1>@ViewData["Title"]</h1>
 
-<h4>SelectDepositViewModel</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -18,7 +17,6 @@
                 <select asp-for="CurrencyId" asp-items="@(new SelectList(Model.CurrencyList, "Id", "Name"))"
                         class="form-control" onchange="currencyChanged()">
                 </select>
-                <span asp-validation-for="CurrencyId" class="text-danger"></span>
             </div>
 
             <div class="form-group">
@@ -26,23 +24,19 @@
                 <select asp-for="DepositGeneralId" asp-items="@(new SelectList(Model.DepositGeneralList, "Id", "Name"))"
                         class="form-control" onchange="depositChanged()">
                 </select>
-                <span asp-validation-for="DepositGeneralId" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="IsRevocable" class="control-label"></label>
                 <input asp-for="IsRevocable" class="form-control" disabled="disabled" />
-                <span asp-validation-for="IsRevocable" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="WithCapitalization" class="control-label"></label>
                 <input asp-for="WithCapitalization" class="form-control" disabled="disabled" />
-                <span asp-validation-for="WithCapitalization" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ReplenishmentAllowed" class="control-label"></label>
                 <input asp-for="ReplenishmentAllowed" class="form-control" disabled="disabled" />
-                <span asp-validation-for="ReplenishmentAllowed" class="text-danger"></span>
             </div>
 
             <div class="form-group">
@@ -50,7 +44,6 @@
                 <select asp-for="InterestAccrualId" asp-items="@(new SelectList(Model.InterestAccrualList, "Id", "Name"))"
                         class="form-control" onchange="termChanged()">
                 </select>
-                <span asp-validation-for="InterestAccrualId" class="text-danger"></span>
             </div>
 
             <div class="form-group">
@@ -58,7 +51,6 @@
                 <select asp-for="DepositCoreId" asp-items="@(new SelectList(Model.DepositCoreList, "Id", "InterestRate"))"
                         class="form-control" disabled="disabled">
                 </select>
-                <span asp-validation-for="DepositCoreId" class="text-danger"></span>
             </div>
 
             <div class="form-group">
@@ -70,12 +62,10 @@
             <div class="form-group">
                 <label asp-for="TotalMoney" class="control-label"></label>
                 <input asp-for="TotalMoney" class="form-control" disabled="disabled"/>
-                <span asp-validation-for="TotalMoney" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="RequiredMoney" class="control-label"></label>
                 <input asp-for="RequiredMoney" class="form-control" disabled="disabled"/>
-                <span asp-validation-for="RequiredMoney" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="SelectedMoney" class="control-label"></label>
