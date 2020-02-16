@@ -204,7 +204,6 @@ namespace Bank.Models
 
         [Currency(false)]
         public string Revenue { get; set; }
-
     }
 }
 

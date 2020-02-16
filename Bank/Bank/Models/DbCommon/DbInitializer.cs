@@ -737,28 +737,28 @@ namespace Bank.Models
                 {
                     DepositAccount = depositAccounts[0],
                     Name = "dep acc#0",
-                    Number = "30141234567891",
+                    Number = "30140000000008",
                     OpenDate = DateTime.Now.AddDays(-55),                   
                 },
                 new Account
                 {
                     DepositAccount = depositAccounts[1],
                     Name = "dep acc#1",
-                    Number = "30141234567880",
+                    Number = "3014000000007",
                     OpenDate = DateTime.Now.AddDays(-20),
                 },
                 new Account
                 {
                     DepositAccount = depositAccounts[2],
                     Name = "dep acc#2",
-                    Number = "30141234567879",
+                    Number = "3014000000006",
                     OpenDate = DateTime.Now.AddDays(-10),
                 },
                 new Account
                 {
                     DepositAccount = depositAccounts[3],
                     Name = "dep acc#3",
-                    Number = "30141234567868",
+                    Number = "3014000000005",
                     OpenDate = DateTime.Now.AddDays(-5),
                 },
                 #region accs of person#0 
@@ -766,14 +766,14 @@ namespace Bank.Models
                 {
                     StandardAccount = standardAccount[0],
                     Name = "st acc#0-1",
-                    Number = "9999012345612",
+                    Number = "9999000000004",
                     OpenDate = DateTime.Now.AddDays(-500),
                 },
                 new Account
                 {
                     StandardAccount = standardAccount[0],
                     Name = "st acc#0-2",
-                    Number = "9999012345623",
+                    Number = "99990000000003",
                     OpenDate = DateTime.Now.AddDays(-600),
                 },
                 #endregion
@@ -781,42 +781,42 @@ namespace Bank.Models
                 {
                     StandardAccount = standardAccount[1],
                     Name = "st acc#1",
-                    Number = "9999012345645",
+                    Number = "9999000000002",
                     OpenDate = DateTime.Now.AddDays(-500),
                 },
                 new Account
                 {
                     StandardAccount = standardAccount[2],
                     Name = "st acc#2",
-                    Number = "9999012345656",
+                    Number = "9999000000002",
                     OpenDate = DateTime.Now.AddDays(-1000),
                 },
                 new Account
                 {
                     StandardAccount = standardAccount[3],
                     Name = "st acc#3",
-                    Number = "9999012345667",
+                    Number = "9999000000001",
                     OpenDate = DateTime.Now.AddDays(-1500),
                 },
                 new Account
                 {
                     StandardAccount = standardAccount[4],
                     Name = "st acc#4",
-                    Number = "9999012345678",
+                    Number = "9999000000000",
                     OpenDate = DateTime.Now.AddDays(-500),
                 },
                 new Account
                 {
                     StandardAccount = standardAccount[5],
                     Name = "st acc#5 = fund",
-                    Number = "7327012345678",
+                    Number = "7327000000009",
                     OpenDate = DateTime.Now.AddDays(-500),
                 },
                 new Account
                 {
                     StandardAccount = standardAccount[6],
                     Name = "st acc#6 = cashdesk",
-                    Number = "1010012345678",
+                    Number = "1010000000010",
                     OpenDate = DateTime.Now.AddDays(-500),
                 },
             };
