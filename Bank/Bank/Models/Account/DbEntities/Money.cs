@@ -11,6 +11,8 @@ namespace Bank.Models
     {
         public int Id { get; set; }
 
+        public int CurrencyId { get; set; }
+
         public Currency Currency { get; set; }
 
         [Column(TypeName = "decimal(18, 2)")]
@@ -25,6 +27,9 @@ namespace Bank.Models
 
         public int? TransactionId { get; set; }
         public Transaction Transaction { get; set; }
+
+        public int? DepositAccountId { get; set; }
+        public DepositAccount DepositAccount { get; set; }
         #endregion
     }
 }

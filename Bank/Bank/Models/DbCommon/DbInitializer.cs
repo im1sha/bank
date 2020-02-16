@@ -808,14 +808,14 @@ namespace Bank.Models
                 new Account
                 {
                     StandardAccount = standardAccount[5],
-                    Name = "st acc#5",
+                    Name = "st acc#5 = fund",
                     Number = "7327012345678",
                     OpenDate = DateTime.Now.AddDays(-500),
                 },
                 new Account
                 {
                     StandardAccount = standardAccount[6],
-                    Name = "st acc#6",
+                    Name = "st acc#6 = cashdesk",
                     Number = "1010012345678",
                     OpenDate = DateTime.Now.AddDays(-500),
                 },
@@ -846,7 +846,8 @@ namespace Bank.Models
                 new Money { Amount = 100m, Currency = currencies[2], Account = accounts[7], },
                 new Money { Amount = 100m, Currency = currencies[2], Account = accounts[8], },
                 new Money { Amount = 100m, Currency = currencies[2], Account = accounts[9], },
-                new Money { Amount = 100m, Currency = currencies[2], Account = accounts[10], },
+
+                new Money { Amount = 1000000000000m, Currency = currencies[2], Account = accounts[10], },
                 new Money { Amount = 10m, Currency = currencies[2], Account = accounts[11], },
             };
             if (!context.Moneys.Any())

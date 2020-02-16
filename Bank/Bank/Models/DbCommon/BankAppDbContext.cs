@@ -198,6 +198,11 @@ namespace Bank.Models
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Money>()
+                .HasOne(p => p.Currency)
+                .WithMany(t => t.Moneys)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Money>()
                 .HasOne(p => p.Account)
                 .WithOne(t => t.Money)
                 .OnDelete(DeleteBehavior.Restrict);
@@ -205,12 +210,17 @@ namespace Bank.Models
             modelBuilder.Entity<Money>()
                 .HasOne(p => p.DepositVariable)
                 .WithOne(t => t.MinimalDeposit)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Money>()
                 .HasOne(p => p.Transaction)
                 .WithOne(t => t.Amount)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Money>()
+                .HasOne(p => p.DepositAccount)
+                .WithOne(t => t.Profit)
+                .OnDelete(DeleteBehavior.Restrict);
 
             #endregion
         }

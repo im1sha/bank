@@ -10,7 +10,7 @@ namespace Bank.Models
     /// <summary>
     /// Step 5
     /// </summary>
-    public class SelectDepositSummaryViewModel
+    public class CreateDepositSummaryViewModel
     {
         [DisplayName("Currency")]
         public string CurrencyName { get; set; }

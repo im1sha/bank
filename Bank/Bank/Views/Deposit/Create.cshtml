@@ -1,4 +1,4 @@
-﻿@model Bank.Models.SelectDepositViewModel
+﻿@model Bank.Models.CreateDepositViewModel
 
 @{
     ViewData["Title"] = "Create deposit";
@@ -46,12 +46,12 @@
                 </select>
             </div>
 
-            <div class="form-group">
+            @*<div class="form-group">
                 <label asp-for="DepositCoreList" class="control-label"></label>
                 <select asp-for="DepositCoreId" asp-items="@(new SelectList(Model.DepositCoreList, "Id", "InterestRate"))"
                         class="form-control" disabled="disabled">
                 </select>
-            </div>
+            </div>*@
 
             <div class="form-group">
                 <label asp-for="StartDate" class="control-label"></label>

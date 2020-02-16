@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Bank
 {
-    public static class Utils
+    public static class OutputFormatUtils
     {
         public static string ConvertBoolToYesNoFormat(bool x)
         {

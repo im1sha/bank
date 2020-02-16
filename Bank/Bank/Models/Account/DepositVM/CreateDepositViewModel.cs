@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Bank.Models
 {
-    public class SelectDepositViewModel
+    public class CreateDepositViewModel
     {
         [DisplayName("Currency")]
         public int CurrencyId { get; set; }
@@ -59,14 +59,7 @@ namespace Bank.Models
 
 
         [DisplayName("Interest rate")]
-        public int DepositCoreId { get; set; }
-
-        [DisplayName("Interest rate")]
-        public List<DepositCore> DepositCoreList { get; set; }       
-
-        [DisplayName("Interest rate")]
         public string InterestRate { get; set; }
-
 
         [DisplayName("Amount of money")]
         public decimal TotalMoney { get; set; }

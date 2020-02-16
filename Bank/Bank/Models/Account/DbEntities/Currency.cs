@@ -8,6 +8,8 @@ namespace Bank.Models
 
         public string Name { get; set; }
 
+        public List<Money> Moneys { get; set; }
+
         public List<DepositVariable> DepositVariables { get; set; }
     }
 }

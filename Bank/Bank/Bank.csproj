@@ -16,7 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Deposit\Validation\" />
+    <Folder Include="Models\Account\Validation\" />
+    <Folder Include="Views\StandardAccount\" />
   </ItemGroup>
 
 

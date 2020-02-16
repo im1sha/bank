@@ -10,6 +10,8 @@
 
         public Account Account { get; set; }
 
+        public Money Profit { get; set; }
+
         public int DepositCoreId { get; set; }
 
         public DepositCore DepositCore { get; set; }

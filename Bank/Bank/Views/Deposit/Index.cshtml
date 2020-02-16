@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Bank.Models.DepositIndexViewModel>
+﻿@model IEnumerable<Bank.Models.DepositIndexOverallViewModel>
 
 @{
     ViewData["Title"] = "List of deposits";
@@ -17,6 +17,9 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Passport)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Deposit)
@@ -45,6 +48,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.FirstName)
             </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Passport)
+            </td>
 
             <td>
                 @Html.DisplayFor(modelItem => item.Deposit)
@@ -60,8 +66,8 @@
             </td>
 
             <td>
-                @Html.ActionLink("Account", "Details", new { Id = item.AccountId }) |
-                @Html.ActionLink("Person", actionName: "Details", controllerName: "Person", new { Id = item.PersonId })
+                @Html.ActionLink("Details", "Details", new { Id = item.AccountId }) |
+                @Html.ActionLink("Owner", actionName: "Details", controllerName: "Person", new { Id = item.PersonId })
             </td>
         </tr>
 }

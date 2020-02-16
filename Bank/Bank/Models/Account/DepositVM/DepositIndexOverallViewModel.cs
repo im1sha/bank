@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Bank.Models
 {
-    public class DepositIndexViewModel
+    public class DepositIndexOverallViewModel
     {
         public int AccountId { get; set; }
 
@@ -26,6 +26,9 @@ namespace Bank.Models
 
         [DisplayName("Surname")]
         public string LastName { get; set; }
+
+        [DisplayName("Passport")]
+        public string Passport { get; set; }
 
         public string Deposit { get; set; }
     }
