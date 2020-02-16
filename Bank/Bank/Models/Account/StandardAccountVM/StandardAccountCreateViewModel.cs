@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Bank.Models
 {
-    public class CreateStandardAccountViewModel
+    public class StandardAccountCreateViewModel
     {
     }
 }

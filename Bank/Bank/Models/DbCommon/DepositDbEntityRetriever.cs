@@ -107,8 +107,8 @@ namespace Bank.Models
         public List<StandardAccount> GetStandardAccounts()
         {
             return Db.StandardAccounts
-                .Include(i => i.Account)
-                .Include(i => i.Person)
+                .Include(i => i.Account).ThenInclude(i => i.Money).ThenInclude(i => i.Currency)
+                .Include(i => i.Person).ThenInclude(i => i.Passport)
                 .Include(i => i.LegalEntity)
                 .OrderBy(i => i.Id)
                 .ToList();

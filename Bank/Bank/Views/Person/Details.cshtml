@@ -170,5 +170,7 @@
 </div>
 <div>
     @Html.ActionLink("Edit", "Edit", new { Id = Model.Id }) |
+    @Html.ActionLink("Standard accounts", "Index", "StandardAccount", new { Id = Model.Id }) |
+    @Html.ActionLink("Deposits", "Index", "Deposit", new { Id = Model.Id }) |
     <a asp-action="Index">Back to List</a>
 </div>
