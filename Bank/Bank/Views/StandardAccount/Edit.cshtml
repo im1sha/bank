@@ -1,0 +1,56 @@
+﻿@model Bank.Models.StandardAccountCreateViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit standard account</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Owner" class="control-label"></label>
+                <input asp-for="Owner" class="form-control" disabled="disabled"/>
+                <span asp-validation-for="Owner" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Number" class="control-label"></label>
+                <input asp-for="Number" class="form-control" disabled="disabled"/>
+                <span asp-validation-for="Number" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CurrencyName" class="control-label"></label>
+                <input asp-for="CurrencyName" class="form-control" disabled="disabled" />
+                <span asp-validation-for="CurrencyName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Amount" class="control-label"></label>
+                <input asp-for="Amount" class="form-control" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
+            </div>
+
+            <div> <input class="form-check-input" asp-for="IsPerson" hidden="hidden" /> </div>
+            <div> <input class="form-check-input" asp-for="Id" hidden="hidden" /> </div>                              
+            <div ><input asp-for="OwnerId" class="form-check-input" hidden="hidden" /></div>
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

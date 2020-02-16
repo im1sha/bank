@@ -184,25 +184,78 @@ namespace Bank.Controllers
         }
 
         // GET: StandardAccount/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(int? id)
         {
-            return View();
+            if (id == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            try
+            {
+                var acc = _depositDb.GetStandardAccounts().Where(i => i.Id == id)
+                   .Select(i => new StandardAccountCreateViewModel
+                   {
+                       Amount = i.Account.Money.Amount.ToString(),
+                       CurrencyName = i.Account.Money.Currency.Name,
+                       Owner = i?.LegalEntity?.Name ?? ((i?.Person?.FirstName ?? "") + " " + (i?.Person?.LastName ?? "")),
+                       Id = i.Id,
+                       OwnerId = i.LegalEntityId == null ? (int)i.PersonId : (int)i.LegalEntityId,
+                       Name = i.Account.Name,
+                       Number = i.Account.Number,
+                       IsPerson = i.LegalEntityId == null,
+                   }).First();
+                return View(acc);
+            }
+            catch
+            {
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // POST: StandardAccount/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, StandardAccountCreateViewModel model)
         {
+            RestoreLists(model);
+
+            LegalEntity legalEntity = null;
+            Person person = null;
+            StandardAccount standardAccount = null;
+            Account acc = null;
+            Money money = null;
+
             try
             {
-                // TODO: Add update logic here
+                if (ModelState.IsValid)
+                {
+                    if (model.IsPerson)
+                    {
+                        person = _personDb.GetPeople().First(i => i.Id == model.OwnerId);
+                    }
+                    else
+                    {
+                        legalEntity = _depositDb.GetLegalEntities().First(i => i.Id == model.OwnerId);
+                    }
+                    standardAccount = _depositDb.GetStandardAccounts().First(i => i.Id == model.Id);
 
-                return RedirectToAction(nameof(Index));
+                    acc = _depositDb.GetAccounts().First(i => i.StandardAccount == standardAccount);
+                    acc.Name = model.Name;
+                    _db.Accounts.Update(acc);
+                    _db.SaveChanges();
+
+                    money = _depositDb.GetMoneys().First(i => i.Account == acc);
+                    money.Amount = decimal.Parse(model.Amount);
+                    _db.Moneys.Update(money);
+                    _db.SaveChanges();
+
+                    return View("StatusSucceeded", "Standard account edit succeeded.");
+                }
+                return View(model);
             }
             catch
             {
-                return View();
+                return View("StatusFailed", "Standard account edit failed.");
             }
         }
 
