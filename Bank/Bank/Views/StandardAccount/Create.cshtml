@@ -1,10 +1,11 @@
 ﻿@model Bank.Models.StandardAccountCreateViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create standard account";
 }
 
-<h1>Create standard account</h1>
+<h1>@ViewData["Title"]</h1>
+<h4>New standard account</h4>
 
 <hr />
 <div class="row">
@@ -38,8 +39,8 @@
                 <span asp-validation-for="Amount" class="text-danger"></span>
             </div>
             <div>
-                <input asp-for="IsPerson" class="form-control" hidden="hidden"/>
-                <input asp-for="OwnerId" class="form-control" hidden="hidden"/>
+                <input asp-for="IsPerson" class="form-control" hidden="hidden" />
+                <input asp-for="OwnerId" class="form-control" hidden="hidden" />
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

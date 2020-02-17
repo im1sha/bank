@@ -1,10 +1,11 @@
 ﻿@model Bank.Models.StandardAccountCreateViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit standard account";
 }
 
-<h1>Edit standard account</h1>
+<h1>@ViewData["Title"]</h1>
+<h4>@Html.DisplayFor(model => model.Owner)</h4>
 
 <hr />
 <div class="row">
@@ -14,13 +15,13 @@
 
             <div class="form-group">
                 <label asp-for="Owner" class="control-label"></label>
-                <input asp-for="Owner" class="form-control" disabled="disabled"/>
+                <input asp-for="Owner" class="form-control" disabled="disabled" />
                 <span asp-validation-for="Owner" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="Number" class="control-label"></label>
-                <input asp-for="Number" class="form-control" disabled="disabled"/>
+                <input asp-for="Number" class="form-control" disabled="disabled" />
                 <span asp-validation-for="Number" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -40,8 +41,8 @@
             </div>
 
             <div> <input class="form-check-input" asp-for="IsPerson" hidden="hidden" /> </div>
-            <div> <input class="form-check-input" asp-for="Id" hidden="hidden" /> </div>                              
-            <div ><input asp-for="OwnerId" class="form-check-input" hidden="hidden" /></div>
+            <div> <input class="form-check-input" asp-for="Id" hidden="hidden" /> </div>
+            <div><input asp-for="OwnerId" class="form-check-input" hidden="hidden" /></div>
 
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

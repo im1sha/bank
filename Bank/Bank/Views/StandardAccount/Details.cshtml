@@ -1,10 +1,11 @@
 ﻿@model Bank.Models.StandardAccountIndexViewModel
 
 @{
-    ViewData["Title"] = "Standard account details";
+    ViewData["Title"] = "Details of standard account";
 }
 
 <h1>@ViewData["Title"]</h1>
+<h4>@Html.DisplayFor(model => model.Owner)</h4>
 
 <div>
     <hr />
@@ -67,6 +68,6 @@
     </dl>
 </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new {  id = Model.Id }) |
-    @Html.ActionLink("All", "Index", new {  id = Model.Id }) 
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("All", "Index", new { id = Model.Id })
 </div>
