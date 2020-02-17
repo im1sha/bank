@@ -38,9 +38,11 @@ namespace Bank.Models
         public List<DepositAccount> GetDepositAccounts()
         {
             return Db.DepositAccounts
-                .Include(i => i.Account)
-                .Include(i => i.Person)
-                .Include(i => i.DepositCore)
+                .Include(i => i.Account).ThenInclude(i => i.Money)
+                .Include(i => i.Person).ThenInclude(i => i.Passport)
+                .Include(i => i.DepositCore).ThenInclude(i => i.InterestAccrual)
+                .Include(i => i.DepositCore).ThenInclude(i => i.DepositVariable).ThenInclude(i => i.Currency)
+                .Include(i => i.DepositCore).ThenInclude(i => i.DepositVariable).ThenInclude(i => i.DepositGeneral)
                 .Include(i => i.Profit)
                 .OrderBy(i => i.Id)
                 .ToList();

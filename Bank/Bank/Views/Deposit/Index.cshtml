@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Bank.Models.DepositIndexOverallViewModel>
+﻿@model IEnumerable<Bank.Models.DepositIndexViewModel>
 
 @{
     ViewData["Title"] = "List of deposits";
@@ -6,68 +6,80 @@
 
 <h1>@ViewData["Title"]</h1>
 
-<p>
-    <a asp-action="Create">Create new depsoit</a>
-</p>
 <table class="table">
     <thead>
-        <tr>
+        <tr>           
             <th>
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstName)
+                @Html.DisplayNameFor(model => model.Owner)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Passport)
             </th>
+        
             <th>
-                @Html.DisplayNameFor(model => model.Deposit)
+                @Html.DisplayNameFor(model => model.DepositName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CurrencyName)
+                @Html.DisplayNameFor(model => model.Currency)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.AccountNumber)
+                @Html.DisplayNameFor(model => model.MoneyAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Profit)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.IsActive)
             </th>
-
+           
             <th>
-
+                @Html.DisplayNameFor(model => model.AccountNumber)
             </th>
+                
+            <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
+            <td hidden="hidden">
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td hidden="hidden">
+                @Html.DisplayFor(modelItem => item.OwnerId)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
+                @Html.DisplayFor(modelItem => item.Owner)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Passport)
             </td>
-
             <td>
-                @Html.DisplayFor(modelItem => item.Deposit)
+                @Html.DisplayFor(modelItem => item.DepositName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CurrencyName)
+                @Html.DisplayFor(modelItem => item.Currency)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MoneyAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Profit)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsActive)
+            </td>          
+            <td hidden="hidden">
+                @Html.DisplayFor(modelItem => item.AccountId)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.AccountNumber)
             </td>
+                    
             <td>
-                @Html.DisplayFor(modelItem => item.IsActive)
-            </td>
-
-            <td>
-                @Html.ActionLink("Details", "Details", new { Id = item.AccountId }) |
-                @Html.ActionLink("Owner", actionName: "Details", controllerName: "Person", new { Id = item.PersonId })
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
             </td>
         </tr>
 }

@@ -7,8 +7,14 @@ using System.Threading.Tasks;
 
 namespace Bank.Models
 {
-    public class CreateDepositViewModel
+    public class DepositCreateViewModel
     {
+        
+
+
+
+
+
         [DisplayName("Currency")]
         public int CurrencyId { get; set; }
 

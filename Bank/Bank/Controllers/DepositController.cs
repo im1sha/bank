@@ -29,22 +29,35 @@ namespace Bank.Controllers
         //}
 
         // GET: Deposit
-        public ActionResult Index()
-        {
-            var result = _depositDb.GetAccounts().Where(i => i.DepositAccount != null && i.DepositAccount.Person != null)
-                .Select(i => new DepositIndexOverallViewModel
-                {
-                    Passport = i.DepositAccount.Person.Passport.Series + i.DepositAccount.Person.Passport.Number,
-                    Deposit = i.DepositAccount.DepositCore.DepositVariable.DepositGeneral.Name,
-                    AccountId = i.Id,
-                    AccountNumber = i.Number,
-                    IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(i.TerminationDate == null || i.TerminationDate > DateTime.Now),
-                    CurrencyName =  i.Money.Currency.Name,
-                    FirstName = i.DepositAccount.Person.FirstName,
-                    LastName = i.DepositAccount.Person.LastName,
-                    PersonId = i.DepositAccount.Person.Id,
-                });
-            return View(result);
+        //      Deposit/index/5
+        public ActionResult Index(int? id)
+        {         
+            var accs = _depositDb.GetDepositAccounts().Where(i => id == null ? true : i.PersonId == id).ToList();
+            
+            var models = accs.Select(i => new DepositIndexViewModel
+            { 
+                AccountId = i.Account.Id,
+                AccountName = i.Account.Name,
+                AccountNumber = i.Account.Number,
+                Currency = i.DepositCore.DepositVariable.Currency.Name,
+                DepositName = i.DepositCore.DepositVariable.DepositGeneral.Name,
+                Id = i.Id,
+                InterestRate = i.DepositCore.InterestRate,
+                IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(i.Account.TerminationDate == null ||  i.Account.TerminationDate > DateTime.Now),
+                IsRevocable = OutputFormatUtils.ConvertBoolToYesNoFormat(i.DepositCore.DepositVariable.DepositGeneral.IsRevocable),
+                MoneyAmount = i.Account.Money.Amount,
+                OpenDate = i.Account.OpenDate,
+                Owner = i.Person.FirstName + " " + i.Person.LastName,
+                OwnerId = i.Person.Id,
+                Passport = i.Person.Passport.Series + i.Person.Passport.Number,
+                Profit = i.Profit?.Amount ?? 0m,
+                ReplenishmentAllowed = OutputFormatUtils.ConvertBoolToYesNoFormat(i.DepositCore.DepositVariable.DepositGeneral.ReplenishmentAllowed),
+                Term = i.DepositCore.InterestAccrual.Name,
+                TerminationDate = i.Account.TerminationDate,
+                WithCapitalization = OutputFormatUtils.ConvertBoolToYesNoFormat(i.DepositCore.DepositVariable.DepositGeneral.WithCapitalization),
+            }).ToList();
+
+            return View(models);
         }
 
         // GET: Deposit/Details/5
@@ -71,7 +84,7 @@ namespace Bank.Controllers
             var interestAccrualList = coreList.Select(i => i.InterestAccrual).Distinct().ToList();
             var interestAccrualId = interestAccrualList.First().Id;
 
-            var vm = new CreateDepositViewModel
+            var vm = new DepositCreateViewModel
             {
                 CurrencyId = currencyId,
                 CurrencyList = currencyList,
@@ -159,3 +172,4 @@ namespace Bank.Controllers
         }
     }
 }
+
