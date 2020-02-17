@@ -192,23 +192,28 @@ namespace Bank.Controllers
             }
             try
             {
-                var acc = _depositDb.GetStandardAccounts().Where(i => i.Id == id)
-                   .Select(i => new StandardAccountCreateViewModel
-                   {
-                       Amount = i.Account.Money.Amount.ToString(),
-                       CurrencyName = i.Account.Money.Currency.Name,
-                       Owner = i?.LegalEntity?.Name ?? ((i?.Person?.FirstName ?? "") + " " + (i?.Person?.LastName ?? "")),
-                       Id = i.Id,
-                       OwnerId = i.LegalEntityId == null ? (int)i.PersonId : (int)i.LegalEntityId,
-                       Name = i.Account.Name,
-                       Number = i.Account.Number,
-                       IsPerson = i.LegalEntityId == null,
-                   }).First();
-                return View(acc);
+                var acc = _depositDb.GetStandardAccounts().Where(i => i.Id == id).First();
+                var model = new StandardAccountCreateViewModel
+                {
+                    Amount = acc.Account.Money.Amount.ToString(),
+                    CurrencyName = acc.Account.Money.Currency.Name,
+                    Owner = acc?.LegalEntity?.Name ?? ((acc?.Person?.FirstName ?? "") + " " + (acc?.Person?.LastName ?? "")),
+                    Id = acc.Id,
+                    OwnerId = acc.LegalEntityId == null ? (int)acc.PersonId : (int)acc.LegalEntityId,
+                    Name = acc.Account.Name,
+                    Number = acc.Account.Number,
+                    IsPerson = acc.LegalEntityId == null,
+                };
+
+                if (acc.Account.TerminationDate <= DateTime.Now)
+                {
+                    return View("StatusFailed", "Account is closed.");
+                }
+                return View(model);
             }
             catch
             {
-                return RedirectToAction(nameof(Index));
+                return View("StatusFailed", "Account edit failed.");
             }
         }
 
@@ -240,6 +245,12 @@ namespace Bank.Controllers
                     standardAccount = _depositDb.GetStandardAccounts().First(i => i.Id == model.Id);
 
                     acc = _depositDb.GetAccounts().First(i => i.StandardAccount == standardAccount);
+
+                    if (acc.TerminationDate <= DateTime.Now)
+                    {
+                        return View("StatusFailed", "Account is closed.");
+                    }
+
                     acc.Name = model.Name;
                     _db.Accounts.Update(acc);
                     _db.SaveChanges();
@@ -251,7 +262,10 @@ namespace Bank.Controllers
 
                     return View("StatusSucceeded", "Standard account edit succeeded.");
                 }
-                return View(model);
+                else
+                {
+                    return View(model);
+                }
             }
             catch
             {
@@ -262,24 +276,63 @@ namespace Bank.Controllers
         // GET: StandardAccount/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            try
+            {
+                var acc = _depositDb.GetStandardAccounts().Where(i => i.Id == id).First();
+
+                if (acc.Account.TerminationDate <= DateTime.Now)
+                {
+                    return View("StatusFailed", "Account is closed.");
+                }
+
+                var model = new StandardAccountIndexViewModel
+                {
+                    Amount = acc.Account.Money.Amount,
+                    Currency = acc.Account.Money.Currency.Name,
+                    Owner = acc?.LegalEntity?.Name ?? ((acc?.Person?.FirstName ?? "") + " " + (acc?.Person?.LastName ?? "")),
+                    Id = acc.Id,
+                    Name = acc.Account.Name,
+                    Number = acc.Account.Number,
+                    Passport = (acc?.Person?.Passport?.Series + acc?.Person?.Passport?.Number) ?? " ",
+                    PersonId = acc.PersonId,
+                    LegalEntityId = acc.LegalEntityId,
+                    IsPerson = acc.LegalEntityId == null,
+                    IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(acc.Account?.TerminationDate == null || acc.Account?.TerminationDate > DateTime.Now),
+                    OpenDate = acc.Account.OpenDate,
+                    TerminationDate = acc.Account.TerminationDate,
+                };
+                return View(model);
+            }
+            catch (Exception)
+            {
+                return View("StatusFailed", "Standard account delete failed.");
+            }
         }
 
         // POST: StandardAccount/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, StandardAccountIndexViewModel model)
         {
             try
             {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
+                var acc = _depositDb.GetAccounts().First(i => i.StandardAccountId == model.Id);
+                if (acc.TerminationDate <= DateTime.Now)
+                {
+                    return View("StatusFailed", "Account is closed.");
+                }
+                acc.TerminationDate = DateTime.Now;
+                acc.Money.Amount = 0m;
+                _db.Update(acc);             
+                _db.SaveChanges();
+                return View("StatusSucceeded", "Standard account close succeeded.");               
             }
             catch
             {
-                return View();
+                return View("StatusFailed", "Standard account delete failed.");
             }
         }
     }
 }
+
+
