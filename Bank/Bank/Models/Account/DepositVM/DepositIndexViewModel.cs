@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -42,9 +43,11 @@ namespace Bank.Models
         public string AccountNumber { get; set; }
 
         [DisplayName("Open")]
+        [DataType(DataType.Date)]
         public DateTime OpenDate { get; set; }
 
         [DisplayName("Terminated")]
+        [DataType(DataType.Date)]
         public DateTime? TerminationDate { get; set; }
 
         [DisplayName("Term")]

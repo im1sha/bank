@@ -30,6 +30,7 @@ namespace Bank.Controllers
 
         // GET: Deposit
         //      Deposit/index/5
+        // id == person id
         public ActionResult Index(int? id)
         {         
             var accs = _depositDb.GetDepositAccounts().Where(i => id == null ? true : i.PersonId == id).ToList();
@@ -63,7 +64,32 @@ namespace Bank.Controllers
         // GET: Deposit/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            var acc = _depositDb.GetDepositAccounts().First(j => j.Id == id);
+
+            var model = new DepositIndexViewModel
+            {
+                AccountId = acc.Account.Id,
+                AccountName = acc.Account.Name,
+                AccountNumber = acc.Account.Number,
+                Currency = acc.DepositCore.DepositVariable.Currency.Name,
+                DepositName = acc.DepositCore.DepositVariable.DepositGeneral.Name,
+                Id = acc.Id,
+                InterestRate = acc.DepositCore.InterestRate,
+                IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(acc.Account.TerminationDate == null || acc.Account.TerminationDate > DateTime.Now),
+                IsRevocable = OutputFormatUtils.ConvertBoolToYesNoFormat(acc.DepositCore.DepositVariable.DepositGeneral.IsRevocable),
+                MoneyAmount = acc.Account.Money.Amount,
+                OpenDate = acc.Account.OpenDate,
+                Owner = acc.Person.FirstName + " " + acc.Person.LastName,
+                OwnerId = acc.Person.Id,
+                Passport = acc.Person.Passport.Series + acc.Person.Passport.Number,
+                Profit = acc.Profit?.Amount ?? 0m,
+                ReplenishmentAllowed = OutputFormatUtils.ConvertBoolToYesNoFormat(acc.DepositCore.DepositVariable.DepositGeneral.ReplenishmentAllowed),
+                Term = acc.DepositCore.InterestAccrual.Name,
+                TerminationDate = acc.Account.TerminationDate,
+                WithCapitalization = OutputFormatUtils.ConvertBoolToYesNoFormat(acc.DepositCore.DepositVariable.DepositGeneral.WithCapitalization),
+            };
+
+            return View(model);
         }
 
         // GET: Deposit/Create
