@@ -24,5 +24,17 @@ namespace Bank
                 .Select(i => decimal.Parse(string.Join("", i.Number.TakeLast(i.Number.Count() - standardAccountDefaultPartLength))))
                 .Aggregate((val, i) => Math.Max(i, val)) + 1).ToString().PadLeft(otherPartLength, '0');
         }
+
+        public static string GenerateNewDepositId(DepositDbEntityRetriever depositDbEntityRetriever)
+        {
+            const int otherPartLength = 9;
+            var standardAccountDefaultPart = "3014";
+            var standardAccountDefaultPartLength = 4;
+
+            return standardAccountDefaultPart
+                + (depositDbEntityRetriever.GetAccounts()
+                .Select(i => decimal.Parse(string.Join("", i.Number.TakeLast(i.Number.Count() - standardAccountDefaultPartLength))))
+                .Aggregate((val, i) => Math.Max(i, val)) + 1).ToString().PadLeft(otherPartLength, '0');
+        }
     }
 }

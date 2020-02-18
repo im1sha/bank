@@ -92,44 +92,59 @@ namespace Bank.Controllers
             return View(model);
         }
 
-        // GET: Deposit/Create
-        public ActionResult Create()
+        // GET: Deposit/Create/5
+        // where 5 is personId
+        public ActionResult Create(int? id)
         {
-            var currencyList = _depositDb.GetCurrencies().Where(i => i.DepositVariables.Any()).ToList();//.Take(1).ToList();
-            var currencyId = currencyList.First().Id ;
-           
-            var depositVariableList = _depositDb.GetDepositVariables().Where(i => i.CurrencyId == currencyId).ToList();
+            if (id == null)
+            {
+                return View("StatusNotFound");
+            }
+
+            var person = _personDb.GetPeople().First(i => i.Id == id);
+            var standardAccounts = _depositDb.GetStandardAccounts().Where(i => i.PersonId == id).ToList();
+
+            var currencyList = _depositDb.GetCurrencies()
+                .Where(i => i.DepositVariables.Any() && standardAccounts.Any(j => i == j.Account.Money.Currency))
+                .ToList();
+            var currencyId = currencyList.First().Id;
+
+            var depositVariableList = _depositDb.GetDepositVariables()
+                .Where(i => i.CurrencyId == currencyId).ToList();
             var depositVariableId = depositVariableList.First().Id;
-           
-            var depositGeneralList = _depositDb.GetDepositGenerals().Where(i => i.DepositVariables.Any(j => depositVariableList.Contains(j))).ToList();
-            var depsoitGeneralId = depositGeneralList.First(i => i.DepositVariables.Contains(depositVariableList.First())).Id;
-            
-            var coreList = _depositDb.GetDepositCores().Where(i => depositVariableList.Contains(i.DepositVariable)).ToList();
+
+            var depositGeneralList = _depositDb.GetDepositGenerals()
+                .Where(i => i.DepositVariables.Any(j => depositVariableList.Contains(j))).ToList();
+            var depsoitGeneralId = depositGeneralList
+                .First(i => i.DepositVariables.Contains(depositVariableList.First())).Id;
+
+            var coreList = _depositDb.GetDepositCores()
+                .Where(i => depositVariableList.Contains(i.DepositVariable)).ToList();
             var core = coreList.First(i => i.DepositVariableId == depositVariableId);
 
-            var interestAccrualList = coreList.Select(i => i.InterestAccrual).Distinct().ToList();
+            var interestAccrualList = coreList.Where(i => depositVariableList.Contains(i.DepositVariable))
+                .Select(i => i.InterestAccrual).Distinct().ToList();
             var interestAccrualId = interestAccrualList.First().Id;
 
             var vm = new DepositCreateViewModel
             {
                 CurrencyId = currencyId,
                 CurrencyList = currencyList,
-
                 DepositGeneralId = depsoitGeneralId,
                 DepositGeneralList = depositGeneralList,
-
                 InterestAccrualId = interestAccrualId,
                 InterestAccrualList = interestAccrualList,
-
                 IsRevocable = OutputFormatUtils.ConvertBoolToYesNoFormat(core.DepositVariable.DepositGeneral.IsRevocable),
                 WithCapitalization = OutputFormatUtils.ConvertBoolToYesNoFormat(core.DepositVariable.DepositGeneral.WithCapitalization),
                 ReplenishmentAllowed = OutputFormatUtils.ConvertBoolToYesNoFormat(core.DepositVariable.DepositGeneral.ReplenishmentAllowed),
-
-                StartDate = DateTime.Now,
-
+                OpenDate = DateTime.Now,
                 RequiredMoney = core.DepositVariable.MinimalDeposit.Amount,
                 SelectedMoney = 0,
-                TotalMoney = 999999,
+                DepositNumber = OutputFormatUtils.GenerateNewDepositId(_depositDb),
+                InterestRate = core.InterestRate,
+
+                // to-do: add 
+                
             };
             return View(vm);
         }

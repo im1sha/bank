@@ -2,17 +2,43 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Bank.Models
 {
     public class DepositCreateViewModel
     {
-        
+        public int Id { get; set; }
 
+        [Required]
+        [DisplayName("Deposit name")]
+        public string Name { get; set; }
 
+        [DisplayName("Account number")]
+        public string DepositNumber { get; set; }
 
+        #region const : person data
+
+        public int OwnerId { get; set; }
+
+        [DisplayName("Owner")]
+        public string Owner { get; set; }
+
+        [DisplayName("Passport")]
+        public string Passport { get; set; }
+
+        #endregion
+
+        [DisplayName("Source account")]
+        public int StandardAccountSourceId { get; set; }
+
+        [DisplayName("Source account")]
+        public List<Account> StandardAccountSourceList { get; set; }
+
+        [DisplayName("Source account")]
+        public string StandardAccountSourceName { get; set; }
+
+        [DisplayName("Source account money")]
+        public decimal MoneyAmount { get; set; }
 
 
         [DisplayName("Currency")]
@@ -35,7 +61,30 @@ namespace Bank.Models
         public string DepositName { get; set; }
 
 
-        [DisplayName("Revocable")]
+        [DisplayName("Interest rate")]
+        public decimal InterestRate { get; set; }
+
+        [DisplayName("Term")]
+        public int InterestAccrualId { get; set; }
+
+        [DisplayName("Term")]
+        public List<InterestAccrual> InterestAccrualList { get; set; }
+
+        [DisplayName("Term")]
+        public string TermName { get; set; }
+
+
+        [DisplayName("Open")]
+        [DataType(DataType.Date)]
+        [AgeDateRange(0, 0, 1, 0)]
+        public DateTime OpenDate { get; set; }
+
+        [DisplayName("Terminated")]
+        [DataType(DataType.Date)]
+        public DateTime? TerminationDate { get; set; }
+
+
+        [DisplayName("Is revocable")]
         public string IsRevocable { get; set; }
 
         [DisplayName("With capitalization")]
@@ -45,31 +94,6 @@ namespace Bank.Models
         public string ReplenishmentAllowed { get; set; }
 
 
-        [Required]
-        [DataType(DataType.Date)]
-        [DisplayName("Start date")]
-        [AgeDateRange(0, 0, 1, 0)]
-        public DateTime? StartDate { get; set; } = DateTime.Now;
-
-
-        [Required]
-        [DisplayName("Term")]
-        public int InterestAccrualId { get; set; } 
-
-        [Required]
-        [DisplayName("Term")]
-        public List<InterestAccrual> InterestAccrualList { get; set; }
-        
-        [DisplayName("Term")]
-        public string Term { get; set; }
-
-
-        [DisplayName("Interest rate")]
-        public string InterestRate { get; set; }
-
-        [DisplayName("Amount of money")]
-        public decimal TotalMoney { get; set; }
-
         [DisplayName("Required amount of money")]
         public decimal RequiredMoney { get; set; }
 
@@ -77,3 +101,4 @@ namespace Bank.Models
         public decimal SelectedMoney { get; set; }
     }
 }
+
