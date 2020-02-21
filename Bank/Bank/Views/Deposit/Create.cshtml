@@ -1,0 +1,153 @@
+﻿@model Bank.Models.DepositCreateViewModel
+
+@{
+    ViewData["Title"] = "Create deposit";
+}
+
+<h1>@ViewData["Title"]</h1>
+<h4>@Model.Owner</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <input asp-for="Id" class="form-control" hidden="hidden" />
+            <input asp-for="DepositNumber" class="form-control" disabled="disabled" hidden="hidden" />
+            <input asp-for="OwnerId" class="form-control" hidden="hidden" disabled="disabled" />
+
+            <div class="form-group">
+                <label asp-for="Owner" class="control-label"></label>
+                <input asp-for="Owner" class="form-control" disabled="disabled" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Passport" class="control-label"></label>
+                <input asp-for="Passport" class="form-control" disabled="disabled" />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="StandardAccountSourceList" class="control-label"></label>
+                <select asp-for="StandardAccountSourceId" asp-items="@(new SelectList(Model.StandardAccountSourceList, "Id", "Number"))" class="form-control">
+                </select>
+                <span asp-validation-for="StandardAccountSourceId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="MoneyAmount" class="control-label"></label>
+                <input asp-for="MoneyAmount" class="form-control" disabled="disabled" />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CurrencyList" class="control-label"></label>
+                <select asp-for="CurrencyId" asp-items="@(new SelectList(Model.CurrencyList, "Id", "Name"))" class="form-control">
+                </select>
+                <span asp-validation-for="CurrencyId" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group">
+                <label asp-for="DepositGeneralList" class="control-label"></label>
+                <select asp-for="DepositGeneralId" asp-items="@(new SelectList(Model.DepositGeneralList, "Id", "Name"))" class="form-control">
+                </select>
+                <span asp-validation-for="DepositGeneralId" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group">
+                <label asp-for="InterestAccrualList" class="control-label"></label>
+                <select asp-for="InterestAccrualId" asp-items="@(new SelectList(Model.InterestAccrualList, "Id", "Name"))" class="form-control">
+                </select>
+                <span asp-validation-for="InterestAccrualId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="InterestRate" class="control-label"></label>
+                <input asp-for="InterestRate" class="form-control" disabled="disabled" />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="OpenDate" class="control-label"></label>
+                <input asp-for="OpenDate" class="form-control" />
+                <span asp-validation-for="OpenDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TerminationDate" class="control-label"></label>
+                <input asp-for="TerminationDate" class="form-control" disabled="disabled" />
+            </div>
+            <div class="form-group">
+                <label asp-for="IsRevocable" class="control-label"></label>
+                <input asp-for="IsRevocable" class="form-control" disabled="disabled" />
+            </div>
+            <div class="form-group">
+                <label asp-for="WithCapitalization" class="control-label"></label>
+                <input asp-for="WithCapitalization" class="form-control" disabled="disabled" />
+                <span asp-validation-for="WithCapitalization" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ReplenishmentAllowed" class="control-label"></label>
+                <input asp-for="ReplenishmentAllowed" class="form-control" disabled="disabled" />
+                <span asp-validation-for="ReplenishmentAllowed" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RequiredMoney" class="control-label"></label>
+                <input asp-for="RequiredMoney" class="form-control" disabled="disabled" />
+                <span asp-validation-for="RequiredMoney" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SelectedMoney" class="control-label"></label>
+                <input asp-for="SelectedMoney" class="form-control" />
+                <span asp-validation-for="SelectedMoney" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+
+@section Scripts {
+
+    <script type="text/javascript">
+    function currencyChanged()
+    {
+        console.log("currencyChanged");
+        @*var url = '@Url.Action("GetCurrencyNameByModel", "Deposit")';
+        $.post(url, $('form').serialize(), function (view)
+        {
+            console.log(view);
+            $("#CurrencyName").val(view);
+        });*@
+    }
+    function depositChanged()
+    {
+        console.log("depositChanged");
+
+        @*var url = '@Url.Action("GetCurrencyNameByModel", "Deposit")';
+        $.post(url, $('form').serialize(), function (view)
+        {
+
+            console.log(view);
+            $("#CurrencyName").val(view);
+        });*@
+    }
+    function termChanged()
+    {
+        console.log("termChanged");
+
+    }
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

@@ -13,7 +13,7 @@ namespace Bank.Models
         [DisplayName("Deposit name")]
         public string Name { get; set; }
 
-        [DisplayName("Account number")]
+        [DisplayName("Account")]
         public string DepositNumber { get; set; }
 
         #region const : person data

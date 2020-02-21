@@ -494,14 +494,14 @@ namespace Bank.Models
                 new DepositGeneral
                 {
                     IsRevocable = false,
-                    Name = "Growth+",
+                    Name = "Stability+",  
                     ReplenishmentAllowed = true,
                     WithCapitalization = false,
                 },
                 new DepositGeneral
                 {
                     IsRevocable = true,
-                    Name = "Stability+",
+                    Name = "Growth+",
                     ReplenishmentAllowed = true,
                     WithCapitalization = true,                    
                 },

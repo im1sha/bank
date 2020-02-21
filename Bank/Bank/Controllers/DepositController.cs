@@ -14,6 +14,8 @@ namespace Bank.Controllers
         private readonly PersonDbEntityRetriever _personDb;
         private readonly BankAppDbContext _db;
 
+        public static DateTime CurrentTime { get; private set; } = DateTime.Now;
+
         public DepositController(BankAppDbContext context, ILogger<PersonController> logger)
         {
             _db = context;
@@ -22,21 +24,21 @@ namespace Bank.Controllers
             _logger = logger;
         }
 
-        //[HttpPost]
-        //public ActionResult GetCurrencyNameByModel(SelectDepositViewModel model)
-        //{
-        //    return Json(string.Empty);
-        //}
+        [HttpPost]
+        public ActionResult GetCurrencyNameByModel(DepositCreateViewModel model)
+        {
+            return Json(string.Empty);
+        }
 
         // GET: Deposit
         //      Deposit/index/5
         // id == person id
         public ActionResult Index(int? id)
-        {         
+        {
             var accs = _depositDb.GetDepositAccounts().Where(i => id == null ? true : i.PersonId == id).ToList();
-            
+
             var models = accs.Select(i => new DepositIndexViewModel
-            { 
+            {
                 AccountId = i.Account.Id,
                 AccountName = i.Account.Name,
                 AccountNumber = i.Account.Number,
@@ -44,7 +46,7 @@ namespace Bank.Controllers
                 DepositName = i.DepositCore.DepositVariable.DepositGeneral.Name,
                 Id = i.Id,
                 InterestRate = i.DepositCore.InterestRate,
-                IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(i.Account.TerminationDate == null ||  i.Account.TerminationDate > DateTime.Now),
+                IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(i.Account.TerminationDate == null || i.Account.TerminationDate > CurrentTime),
                 IsRevocable = OutputFormatUtils.ConvertBoolToYesNoFormat(i.DepositCore.DepositVariable.DepositGeneral.IsRevocable),
                 MoneyAmount = i.Account.Money.Amount,
                 OpenDate = i.Account.OpenDate,
@@ -56,6 +58,7 @@ namespace Bank.Controllers
                 Term = i.DepositCore.InterestAccrual.Name,
                 TerminationDate = i.Account.TerminationDate,
                 WithCapitalization = OutputFormatUtils.ConvertBoolToYesNoFormat(i.DepositCore.DepositVariable.DepositGeneral.WithCapitalization),
+                
             }).ToList();
 
             return View(models);
@@ -75,7 +78,7 @@ namespace Bank.Controllers
                 DepositName = acc.DepositCore.DepositVariable.DepositGeneral.Name,
                 Id = acc.Id,
                 InterestRate = acc.DepositCore.InterestRate,
-                IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(acc.Account.TerminationDate == null || acc.Account.TerminationDate > DateTime.Now),
+                IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(acc.Account.TerminationDate == null || acc.Account.TerminationDate > CurrentTime),
                 IsRevocable = OutputFormatUtils.ConvertBoolToYesNoFormat(acc.DepositCore.DepositVariable.DepositGeneral.IsRevocable),
                 MoneyAmount = acc.Account.Money.Amount,
                 OpenDate = acc.Account.OpenDate,
@@ -103,11 +106,13 @@ namespace Bank.Controllers
 
             var person = _personDb.GetPeople().First(i => i.Id == id);
             var standardAccounts = _depositDb.GetStandardAccounts().Where(i => i.PersonId == id).ToList();
+            var accounts = standardAccounts.Select(i => i.Account).ToList();
+            var standardAccount = standardAccounts.First();
 
             var currencyList = _depositDb.GetCurrencies()
                 .Where(i => i.DepositVariables.Any() && standardAccounts.Any(j => i == j.Account.Money.Currency))
                 .ToList();
-            var currencyId = currencyList.First().Id;
+            var currencyId = currencyList.First(i => i.Id == standardAccount.Account.Money.CurrencyId).Id;
 
             var depositVariableList = _depositDb.GetDepositVariables()
                 .Where(i => i.CurrencyId == currencyId).ToList();
@@ -137,14 +142,19 @@ namespace Bank.Controllers
                 IsRevocable = OutputFormatUtils.ConvertBoolToYesNoFormat(core.DepositVariable.DepositGeneral.IsRevocable),
                 WithCapitalization = OutputFormatUtils.ConvertBoolToYesNoFormat(core.DepositVariable.DepositGeneral.WithCapitalization),
                 ReplenishmentAllowed = OutputFormatUtils.ConvertBoolToYesNoFormat(core.DepositVariable.DepositGeneral.ReplenishmentAllowed),
-                OpenDate = DateTime.Now,
+                OpenDate = CurrentTime,
+                TerminationDate = CurrentTime.AddDays((int)interestAccrualList.First(i => i.Id == interestAccrualId).TermInDays),
                 RequiredMoney = core.DepositVariable.MinimalDeposit.Amount,
-                SelectedMoney = 0,
+                SelectedMoney = 0m,
                 DepositNumber = OutputFormatUtils.GenerateNewDepositId(_depositDb),
                 InterestRate = core.InterestRate,
-
-                // to-do: add 
-                
+                MoneyAmount = standardAccount.Account.Money.Amount,
+                Name = "Any user-defined name here",
+                Owner = standardAccount.Person.FirstName + " " + standardAccount.Person.LastName,
+                OwnerId = standardAccount.Person.Id,
+                Passport = standardAccount.Person.Passport.Series + " " + standardAccount.Person.Passport.Number,
+                StandardAccountSourceList = accounts,
+                StandardAccountSourceId = accounts.First().Id,
             };
             return View(vm);
         }

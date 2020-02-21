@@ -11,7 +11,7 @@ namespace Bank.Models
     {
         public int Id { get; set; }
 
-        [DisplayName("Account number")]
+        [DisplayName("Account")]
         public string Number { get; set; }
 
         public string Name { get; set; }
