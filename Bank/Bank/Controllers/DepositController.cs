@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Bank.Controllers
@@ -14,8 +15,8 @@ namespace Bank.Controllers
         private readonly PersonDbEntityRetriever _personDb;
         private readonly BankAppDbContext _db;
 
-        public static DateTime CurrentTime { get; private set; } = DateTime.Now;
-
+        private readonly TimeService _timeService = new TimeService();
+      
         public DepositController(BankAppDbContext context, ILogger<PersonController> logger)
         {
             _db = context;
@@ -24,11 +25,48 @@ namespace Bank.Controllers
             _logger = logger;
         }
 
+        #region api
         [HttpPost]
-        public ActionResult GetCurrencyNameByModel(DepositCreateViewModel model)
+        public ActionResult CurrencyChanged(DepositCreateViewModel model)
         {
-            return Json(string.Empty);
+            return Json(new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService).CurrencyChanged(model));
         }
+
+        [HttpPost]
+        public ActionResult AccountChanged(DepositCreateViewModel model)
+        {
+            var result = new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService).AccountChanged(model);
+
+            return Json(result.MoneyAmount);
+        }
+
+        [HttpPost]
+        public ActionResult DepositChanged(DepositCreateViewModel model)
+        {
+            return Json(new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService).DepositChanged(model));
+        }
+
+        //[HttpPost]
+        //public ActionResult MoneyChanged(DepositCreateViewModel model)
+        //{
+        //    return Json(new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService).MoneyChanged(model));
+        //}
+
+        [HttpPost]
+        public ActionResult DateChanged(DepositCreateViewModel model)
+        {
+            return Json(new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService).DateChanged(model));
+        }
+
+        [HttpPost]
+        public ActionResult TermChanged(DepositCreateViewModel model)
+        {
+            var result = new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService).TermChanged(model);
+
+            return Json(new { openDate = result.OpenDate, terminationDate = result.TerminationDate, interestRate = result.InterestRate, });
+        }
+
+        #endregion
 
         // GET: Deposit
         //      Deposit/index/5
@@ -46,7 +84,7 @@ namespace Bank.Controllers
                 DepositName = i.DepositCore.DepositVariable.DepositGeneral.Name,
                 Id = i.Id,
                 InterestRate = i.DepositCore.InterestRate,
-                IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(i.Account.TerminationDate == null || i.Account.TerminationDate > CurrentTime),
+                IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(_timeService.CheckActive(i.Account.TerminationDate)),
                 IsRevocable = OutputFormatUtils.ConvertBoolToYesNoFormat(i.DepositCore.DepositVariable.DepositGeneral.IsRevocable),
                 MoneyAmount = i.Account.Money.Amount,
                 OpenDate = i.Account.OpenDate,
@@ -58,7 +96,7 @@ namespace Bank.Controllers
                 Term = i.DepositCore.InterestAccrual.Name,
                 TerminationDate = i.Account.TerminationDate,
                 WithCapitalization = OutputFormatUtils.ConvertBoolToYesNoFormat(i.DepositCore.DepositVariable.DepositGeneral.WithCapitalization),
-                
+
             }).ToList();
 
             return View(models);
@@ -78,7 +116,7 @@ namespace Bank.Controllers
                 DepositName = acc.DepositCore.DepositVariable.DepositGeneral.Name,
                 Id = acc.Id,
                 InterestRate = acc.DepositCore.InterestRate,
-                IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(acc.Account.TerminationDate == null || acc.Account.TerminationDate > CurrentTime),
+                IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(_timeService.CheckActive(acc.Account.TerminationDate)),
                 IsRevocable = OutputFormatUtils.ConvertBoolToYesNoFormat(acc.DepositCore.DepositVariable.DepositGeneral.IsRevocable),
                 MoneyAmount = acc.Account.Money.Amount,
                 OpenDate = acc.Account.OpenDate,
@@ -104,59 +142,7 @@ namespace Bank.Controllers
                 return View("StatusNotFound");
             }
 
-            var person = _personDb.GetPeople().First(i => i.Id == id);
-            var standardAccounts = _depositDb.GetStandardAccounts().Where(i => i.PersonId == id).ToList();
-            var accounts = standardAccounts.Select(i => i.Account).ToList();
-            var standardAccount = standardAccounts.First();
-
-            var currencyList = _depositDb.GetCurrencies()
-                .Where(i => i.DepositVariables.Any() && standardAccounts.Any(j => i == j.Account.Money.Currency))
-                .ToList();
-            var currencyId = currencyList.First(i => i.Id == standardAccount.Account.Money.CurrencyId).Id;
-
-            var depositVariableList = _depositDb.GetDepositVariables()
-                .Where(i => i.CurrencyId == currencyId).ToList();
-            var depositVariableId = depositVariableList.First().Id;
-
-            var depositGeneralList = _depositDb.GetDepositGenerals()
-                .Where(i => i.DepositVariables.Any(j => depositVariableList.Contains(j))).ToList();
-            var depsoitGeneralId = depositGeneralList
-                .First(i => i.DepositVariables.Contains(depositVariableList.First())).Id;
-
-            var coreList = _depositDb.GetDepositCores()
-                .Where(i => depositVariableList.Contains(i.DepositVariable)).ToList();
-            var core = coreList.First(i => i.DepositVariableId == depositVariableId);
-
-            var interestAccrualList = coreList.Where(i => depositVariableList.Contains(i.DepositVariable))
-                .Select(i => i.InterestAccrual).Distinct().ToList();
-            var interestAccrualId = interestAccrualList.First().Id;
-
-            var vm = new DepositCreateViewModel
-            {
-                CurrencyId = currencyId,
-                CurrencyList = currencyList,
-                DepositGeneralId = depsoitGeneralId,
-                DepositGeneralList = depositGeneralList,
-                InterestAccrualId = interestAccrualId,
-                InterestAccrualList = interestAccrualList,
-                IsRevocable = OutputFormatUtils.ConvertBoolToYesNoFormat(core.DepositVariable.DepositGeneral.IsRevocable),
-                WithCapitalization = OutputFormatUtils.ConvertBoolToYesNoFormat(core.DepositVariable.DepositGeneral.WithCapitalization),
-                ReplenishmentAllowed = OutputFormatUtils.ConvertBoolToYesNoFormat(core.DepositVariable.DepositGeneral.ReplenishmentAllowed),
-                OpenDate = CurrentTime,
-                TerminationDate = CurrentTime.AddDays((int)interestAccrualList.First(i => i.Id == interestAccrualId).TermInDays),
-                RequiredMoney = core.DepositVariable.MinimalDeposit.Amount,
-                SelectedMoney = 0m,
-                DepositNumber = OutputFormatUtils.GenerateNewDepositId(_depositDb),
-                InterestRate = core.InterestRate,
-                MoneyAmount = standardAccount.Account.Money.Amount,
-                Name = "Any user-defined name here",
-                Owner = standardAccount.Person.FirstName + " " + standardAccount.Person.LastName,
-                OwnerId = standardAccount.Person.Id,
-                Passport = standardAccount.Person.Passport.Series + " " + standardAccount.Person.Passport.Number,
-                StandardAccountSourceList = accounts,
-                StandardAccountSourceId = accounts.First().Id,
-            };
-            return View(vm);
+            return View(new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService).Generate((int)id));
         }
 
         // POST: Deposit/Create

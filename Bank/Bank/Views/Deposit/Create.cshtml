@@ -12,7 +12,7 @@
         <form asp-action="Create">
             <div asp-validation-summary="All" class="text-danger"></div>
 
-            <input asp-for="Id" class="form-control" hidden="hidden" />
+            <input asp-for="Id" class="form-control" hidden="hidden" disabled="disabled"/>
             <input asp-for="DepositNumber" class="form-control" disabled="disabled" hidden="hidden" />
             <input asp-for="OwnerId" class="form-control" hidden="hidden" disabled="disabled" />
 
@@ -25,15 +25,20 @@
                 <input asp-for="Passport" class="form-control" disabled="disabled" />
             </div>
 
+
+
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label asp-for="CurrencyList" class="control-label"></label>
+                <select asp-for="CurrencyId" asp-items="@(new SelectList(Model.CurrencyList, "Id", "Name"))"
+                        onchange="currencyChanged()" class="form-control">
+                </select>
+                <span asp-validation-for="CurrencyId" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <label asp-for="StandardAccountSourceList" class="control-label"></label>
-                <select asp-for="StandardAccountSourceId" asp-items="@(new SelectList(Model.StandardAccountSourceList, "Id", "Number"))" class="form-control">
+                <select asp-for="StandardAccountSourceId" asp-items="@(new SelectList(Model.StandardAccountSourceList, "Id", "Number"))"
+                        class="form-control" onchange="accountChanged()">
                 </select>
                 <span asp-validation-for="StandardAccountSourceId" class="text-danger"></span>
             </div>
@@ -44,24 +49,17 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="CurrencyList" class="control-label"></label>
-                <select asp-for="CurrencyId" asp-items="@(new SelectList(Model.CurrencyList, "Id", "Name"))" class="form-control">
-                </select>
-                <span asp-validation-for="CurrencyId" class="text-danger"></span>
-            </div>
-
-
-            <div class="form-group">
                 <label asp-for="DepositGeneralList" class="control-label"></label>
-                <select asp-for="DepositGeneralId" asp-items="@(new SelectList(Model.DepositGeneralList, "Id", "Name"))" class="form-control">
+                <select asp-for="DepositGeneralId" asp-items="@(new SelectList(Model.DepositGeneralList, "Id", "Name"))"
+                        onchange="depositChanged()" class="form-control">
                 </select>
                 <span asp-validation-for="DepositGeneralId" class="text-danger"></span>
             </div>
 
-
             <div class="form-group">
                 <label asp-for="InterestAccrualList" class="control-label"></label>
-                <select asp-for="InterestAccrualId" asp-items="@(new SelectList(Model.InterestAccrualList, "Id", "Name"))" class="form-control">
+                <select asp-for="InterestAccrualId" asp-items="@(new SelectList(Model.InterestAccrualList, "Id", "Name"))"
+                        onchange="termChanged()" class="form-control">
                 </select>
                 <span asp-validation-for="InterestAccrualId" class="text-danger"></span>
             </div>
@@ -73,7 +71,7 @@
 
             <div class="form-group">
                 <label asp-for="OpenDate" class="control-label"></label>
-                <input asp-for="OpenDate" class="form-control" />
+                <input asp-for="OpenDate" class="form-control" onchange="dateChanged()" />
                 <span asp-validation-for="OpenDate" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -101,9 +99,16 @@
             </div>
             <div class="form-group">
                 <label asp-for="SelectedMoney" class="control-label"></label>
-                <input asp-for="SelectedMoney" class="form-control" />
+                <input asp-for="SelectedMoney" class="form-control" onchange="moneyChanged()" />
                 <span asp-validation-for="SelectedMoney" class="text-danger"></span>
             </div>
+
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -119,34 +124,137 @@
 @section Scripts {
 
     <script type="text/javascript">
-    function currencyChanged()
+    function accountChanged()
     {
-        console.log("currencyChanged");
-        @*var url = '@Url.Action("GetCurrencyNameByModel", "Deposit")';
+        console.log("accountChanged");
+        // Find disabled inputs, and remove the "disabled" attribute
+        var disabled = $('form').find(':input:disabled').removeAttr('disabled');
+
+        var url = '@Url.Action("AccountChanged", "Deposit")';
         $.post(url, $('form').serialize(), function (view)
         {
             console.log(view);
-            $("#CurrencyName").val(view);
-        });*@
+            $("#MoneyAmount").val(view);
+        });
+
+         // re-disabled the set of inputs that you previously enabled
+        disabled.attr('disabled','disabled');
     }
+
+    function currencyChanged()
+    {
+        console.log("currencyChanged");
+         // Find disabled inputs, and remove the "disabled" attribute
+        var disabled = $('form').find(':input:disabled').removeAttr('disabled');
+
+        var url = '@Url.Action("CurrencyChanged", "Deposit")';
+        $.post(url, $('form').serialize(), function (view)
+        {
+            console.log(view);
+        });
+
+        
+         // re-disabled the set of inputs that you previously enabled
+        disabled.attr('disabled','disabled');
+    }
+
     function depositChanged()
     {
         console.log("depositChanged");
 
-        @*var url = '@Url.Action("GetCurrencyNameByModel", "Deposit")';
+         // Find disabled inputs, and remove the "disabled" attribute
+        var disabled = $('form').find(':input:disabled').removeAttr('disabled');
+        var url = '@Url.Action("DepositChanged", "Deposit")';
         $.post(url, $('form').serialize(), function (view)
         {
-
             console.log(view);
-            $("#CurrencyName").val(view);
-        });*@
+            //$("#CurrencyName").val(view);
+        });
+
+        
+         // re-disabled the set of inputs that you previously enabled
+        disabled.attr('disabled','disabled');
     }
+
     function termChanged()
     {
         console.log("termChanged");
 
+         // Find disabled inputs, and remove the "disabled" attribute
+        var disabled = $('form').find(':input:disabled').removeAttr('disabled');
+        var url = '@Url.Action("TermChanged", "Deposit")';
+        $.post(url, $('form').serialize(), function (view)
+        {
+            console.log(view);
+            $("#OpenDate").val(view.openDate.substring(0, 10));
+            $("#TerminationDate").val(view.terminationDate.substring(0, 10));
+            $("#InterestRate").val(view.interestRate);
+        });
+        
+        // re-disabled the set of inputs that you previously enabled
+        disabled.attr('disabled','disabled');
     }
+
+    function dateChanged()
+    {
+        console.log("dateChanged");
+
+        // Find disabled inputs, and remove the "disabled" attribute
+        var disabled = $('form').find(':input:disabled').removeAttr('disabled');
+        var url = '@Url.Action("DateChanged", "Deposit")';
+        $.post(url, $('form').serialize(), function (view)
+        {
+            // view should return string of date
+            $("#TerminationDate").val(view.substring(0, 10));
+        });
+
+        // re-disabled the set of inputs that you previously enabled
+        disabled.attr('disabled','disabled');
+    }
+
+    function moneyChanged()
+    {
+        console.log("moneyChanged");
+    }
+
     </script>
+
+    @*[HttpPost]
+    public ActionResult CurrencyChanged(DepositCreateViewModel model)
+    {
+    return Json(model);
+    }
+
+    [HttpPost]
+    public ActionResult AccountChanged(DepositCreateViewModel model)
+    {
+    return Json(model);
+    }
+
+    [HttpPost]
+    public ActionResult DepositChanged(DepositCreateViewModel model)
+    {
+    return Json(model);
+    }
+
+    [HttpPost]
+    public ActionResult MoneyChanged(DepositCreateViewModel model)
+    {
+    return Json(model);
+    }
+
+    [HttpPost]
+    public ActionResult DateChanged(DepositCreateViewModel model)
+    {
+    return Json(model);
+    }
+
+    [HttpPost]
+    public ActionResult TermChanged(DepositCreateViewModel model)
+    {
+    return Json(model);
+    }*@
+
 
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

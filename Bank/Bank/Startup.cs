@@ -25,6 +25,9 @@ namespace Bank
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<BankAppDbContext>(options => options.UseSqlServer(connection));
             services.AddControllersWithViews();
+            //services.AddControllersWithViews().AddNewtonsoftJson(options =>
+            //    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            //);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
