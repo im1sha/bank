@@ -29,13 +29,13 @@ namespace Bank.Models
         #endregion
 
         [DisplayName("Source account")]
-        public int StandardAccountSourceId { get; set; }
+        public int AccountSourceId { get; set; }
 
         [DisplayName("Source account")]
-        public List<Account> StandardAccountSourceList { get; set; }
+        public List<AccountViewModel> AccountSourceList { get; set; }
 
         [DisplayName("Source account")]
-        public string StandardAccountSourceName { get; set; }
+        public string AccountSourceName { get; set; }
 
         [DisplayName("Source account money")]
         public decimal MoneyAmount { get; set; }
@@ -45,7 +45,7 @@ namespace Bank.Models
         public int CurrencyId { get; set; }
 
         [DisplayName("Currency")]
-        public List<Currency> CurrencyList { get; set; }
+        public List<CurrencyViewModel> CurrencyList { get; set; }
 
         [DisplayName("Currency")]
         public string CurrencyName { get; set; }
@@ -55,7 +55,7 @@ namespace Bank.Models
         public int DepositGeneralId { get; set; }
 
         [DisplayName("Deposit")]
-        public List<DepositGeneral> DepositGeneralList { get; set; }
+        public List<DepositGeneralViewModel> DepositGeneralList { get; set; }
 
         [DisplayName("Deposit")]
         public string DepositName { get; set; }
@@ -68,7 +68,7 @@ namespace Bank.Models
         public int InterestAccrualId { get; set; }
 
         [DisplayName("Term")]
-        public List<InterestAccrual> InterestAccrualList { get; set; }
+        public List<InterestAccrualViewModel> InterestAccrualList { get; set; }
 
         [DisplayName("Term")]
         public string TermName { get; set; }

@@ -36,11 +36,11 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="StandardAccountSourceList" class="control-label"></label>
-                <select asp-for="StandardAccountSourceId" asp-items="@(new SelectList(Model.StandardAccountSourceList, "Id", "Number"))"
+                <label asp-for="AccountSourceList" class="control-label"></label>
+                <select asp-for="AccountSourceId" asp-items="@(new SelectList(Model.AccountSourceList, "Id", "Number"))"
                         class="form-control" onchange="accountChanged()">
                 </select>
-                <span asp-validation-for="StandardAccountSourceId" class="text-danger"></span>
+                <span asp-validation-for="AccountSourceId" class="text-danger"></span>
             </div>
 
             <div class="form-group">
@@ -139,41 +139,43 @@
 
          // re-disabled the set of inputs that you previously enabled
         disabled.attr('disabled','disabled');
-    }
+        }
+
+    var baseurl = "@Url.Action("Create", "Deposit")";
 
     function currencyChanged()
     {
         console.log("currencyChanged");
-         // Find disabled inputs, and remove the "disabled" attribute
+        @*// Find disabled inputs, and remove the "disabled" attribute
         var disabled = $('form').find(':input:disabled').removeAttr('disabled');
 
         var url = '@Url.Action("CurrencyChanged", "Deposit")';
         $.post(url, $('form').serialize(), function (view)
         {
             console.log(view);
+            populateForm("form", view);
         });
-
         
-         // re-disabled the set of inputs that you previously enabled
-        disabled.attr('disabled','disabled');
+        // re-disabled the set of inputs that you previously enabled
+        disabled.attr('disabled','disabled');*@
+        window.location.href = baseurl + "?" 
+            + "personId="           + $("#OwnerId").val()               + "&"
+            + "currencyId="         + $("#CurrencyId").val()            + "&"
+            + "openDate="           + $("#OpenDate").val()
+            ;
+
     }
 
     function depositChanged()
     {
         console.log("depositChanged");
 
-         // Find disabled inputs, and remove the "disabled" attribute
-        var disabled = $('form').find(':input:disabled').removeAttr('disabled');
-        var url = '@Url.Action("DepositChanged", "Deposit")';
-        $.post(url, $('form').serialize(), function (view)
-        {
-            console.log(view);
-            //$("#CurrencyName").val(view);
-        });
-
-        
-         // re-disabled the set of inputs that you previously enabled
-        disabled.attr('disabled','disabled');
+        window.location.href = baseurl + "?" 
+            + "personId="           + $("#OwnerId").val()               + "&"
+            + "currencyId="         + $("#CurrencyId").val()            + "&"
+            + "depositGeneralId="   + $("#DepositGeneralId").val()      + "&"
+            + "openDate="           + $("#OpenDate").val()
+            ;
     }
 
     function termChanged()
@@ -219,41 +221,6 @@
 
     </script>
 
-    @*[HttpPost]
-    public ActionResult CurrencyChanged(DepositCreateViewModel model)
-    {
-    return Json(model);
-    }
-
-    [HttpPost]
-    public ActionResult AccountChanged(DepositCreateViewModel model)
-    {
-    return Json(model);
-    }
-
-    [HttpPost]
-    public ActionResult DepositChanged(DepositCreateViewModel model)
-    {
-    return Json(model);
-    }
-
-    [HttpPost]
-    public ActionResult MoneyChanged(DepositCreateViewModel model)
-    {
-    return Json(model);
-    }
-
-    [HttpPost]
-    public ActionResult DateChanged(DepositCreateViewModel model)
-    {
-    return Json(model);
-    }
-
-    [HttpPost]
-    public ActionResult TermChanged(DepositCreateViewModel model)
-    {
-    return Json(model);
-    }*@
 
 
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

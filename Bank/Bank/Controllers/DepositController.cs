@@ -26,10 +26,22 @@ namespace Bank.Controllers
         }
 
         #region api
-        [HttpPost]
-        public ActionResult CurrencyChanged(DepositCreateViewModel model)
+        // GET: Deposit/Create/5
+        public ActionResult Create(
+            [FromQuery]int? personId,
+            [FromQuery]int? currencyId = null,
+            [FromQuery]int? depositGeneralId = null,
+            // [FromQuery]int? accountId = null,
+            // [FromQuery]int? interestAccrualId = null,
+            [FromQuery]DateTime? openDate = null)
         {
-            return Json(new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService).CurrencyChanged(model));
+            if (personId == null)
+            {
+                return View("StatusNotFound");
+            }
+            var result = new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService)
+                .GenerateNew((int)personId, currencyId, depositGeneralId, null, null, /*accountId, interestAccrualId,*/ openDate);
+            return View(result);
         }
 
         [HttpPost]
@@ -39,18 +51,6 @@ namespace Bank.Controllers
 
             return Json(result.MoneyAmount);
         }
-
-        [HttpPost]
-        public ActionResult DepositChanged(DepositCreateViewModel model)
-        {
-            return Json(new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService).DepositChanged(model));
-        }
-
-        //[HttpPost]
-        //public ActionResult MoneyChanged(DepositCreateViewModel model)
-        //{
-        //    return Json(new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService).MoneyChanged(model));
-        //}
 
         [HttpPost]
         public ActionResult DateChanged(DepositCreateViewModel model)
@@ -133,18 +133,7 @@ namespace Bank.Controllers
             return View(model);
         }
 
-        // GET: Deposit/Create/5
-        // where 5 is personId
-        public ActionResult Create(int? id)
-        {
-            if (id == null)
-            {
-                return View("StatusNotFound");
-            }
-
-            return View(new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService).Generate((int)id));
-        }
-
+      
         // POST: Deposit/Create
         [HttpPost]
         [ValidateAntiForgeryToken]

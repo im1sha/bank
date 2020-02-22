@@ -27,7 +27,9 @@ namespace Bank.Controllers
         // id is personId or LegalEntityId
         public ActionResult Index(int? id, bool isPerson = true)
         {
-            var accs = _depositDb.GetStandardAccounts().Where(i => id == null ? true : (isPerson ? i.PersonId == id : i.LegalEntityId == id))
+            var accs = _depositDb.GetStandardAccounts()
+                .Where(i => id == null ? true : (isPerson ? i.PersonId == id : i.LegalEntityId == id))
+                .Where(i => i.Account?.TerminationDate == null || i.Account?.TerminationDate > DateTime.Now)
                 .Select(i => new StandardAccountIndexViewModel
                 {
                     Amount = i.Account.Money.Amount,
