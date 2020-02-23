@@ -7,6 +7,12 @@ namespace Bank
 {
     public class TimeService
     {
+        public TimeService(int deltaDays = 0, int deltaMonths = 0)
+        {
+            DeltaDays = deltaDays;
+            DeltaMonths = deltaMonths;
+        }
+
         public void AddMonths(int months)
         {
             DeltaMonths += months;

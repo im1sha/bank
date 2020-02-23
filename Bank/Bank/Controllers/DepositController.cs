@@ -1,6 +1,7 @@
 ﻿using Bank.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -11,62 +12,20 @@ namespace Bank.Controllers
     public class DepositController : Controller
     {
         private readonly ILogger<PersonController> _logger;
+        private readonly LinkGenerator _linkGenerator;
         private readonly DepositDbEntityRetriever _depositDb;
         private readonly PersonDbEntityRetriever _personDb;
         private readonly BankAppDbContext _db;
-
         private readonly TimeService _timeService = new TimeService();
       
-        public DepositController(BankAppDbContext context, ILogger<PersonController> logger)
+        public DepositController(BankAppDbContext context, ILogger<PersonController> logger, LinkGenerator linkGenerator)
         {
             _db = context;
             _depositDb = new DepositDbEntityRetriever(context);
             _personDb = new PersonDbEntityRetriever(context);
             _logger = logger;
+            _linkGenerator = linkGenerator;
         }
-
-        #region api
-        // GET: Deposit/Create/5
-        public ActionResult Create(
-            [FromQuery]int? personId,
-            [FromQuery]int? currencyId = null,
-            [FromQuery]int? depositGeneralId = null,
-            // [FromQuery]int? accountId = null,
-            // [FromQuery]int? interestAccrualId = null,
-            [FromQuery]DateTime? openDate = null)
-        {
-            if (personId == null)
-            {
-                return View("StatusNotFound");
-            }
-            var result = new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService)
-                .GenerateNew((int)personId, currencyId, depositGeneralId, null, null, /*accountId, interestAccrualId,*/ openDate);
-            return View(result);
-        }
-
-        [HttpPost]
-        public ActionResult AccountChanged(DepositCreateViewModel model)
-        {
-            var result = new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService).AccountChanged(model);
-
-            return Json(result.MoneyAmount);
-        }
-
-        [HttpPost]
-        public ActionResult DateChanged(DepositCreateViewModel model)
-        {
-            return Json(new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService).DateChanged(model));
-        }
-
-        [HttpPost]
-        public ActionResult TermChanged(DepositCreateViewModel model)
-        {
-            var result = new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService).TermChanged(model);
-
-            return Json(new { openDate = result.OpenDate, terminationDate = result.TerminationDate, interestRate = result.InterestRate, });
-        }
-
-        #endregion
 
         // GET: Deposit
         //      Deposit/index/5
@@ -133,7 +92,69 @@ namespace Bank.Controllers
             return View(model);
         }
 
-      
+        #region api of interaction with form of deposit creation
+
+        [HttpPost]
+        public ActionResult AccountChanged(DepositCreateViewModel model)
+        {
+            var result = new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService).AccountChanged(model);
+
+            return Json(result.MoneyAmount);
+        }
+
+        [HttpPost]
+        public ActionResult DateChanged(DepositCreateViewModel model)
+        {
+            return Json(new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService).DateChanged(model));
+        }
+
+        [HttpPost]
+        public ActionResult TermChanged(DepositCreateViewModel model)
+        {
+            var result = new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService).TermChanged(model);
+
+            return Json(new { openDate = result.OpenDate, terminationDate = result.TerminationDate, interestRate = result.InterestRate, });
+        }
+
+        #endregion
+
+        // GET: Deposit/Create?personId=5&currencyId=1
+        public ActionResult Create(
+            [FromQuery]int? personId,
+            [FromQuery]int? currencyId = null,
+            [FromQuery]int? depositGeneralId = null,
+            // [FromQuery]int? accountId = null,
+            // [FromQuery]int? interestAccrualId = null,
+            [FromQuery]DateTime? openDate = null)
+        {
+            if (personId == null)
+            {
+                return View("StatusNotFound");
+            }
+            try
+            {
+                var result = new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService)
+                    .GenerateNew((int)personId, currencyId, depositGeneralId, null, null, /*accountId, interestAccrualId,*/ openDate);
+                return View(result);
+            }
+            catch (DepositCreateException e)
+            {
+                switch (e.Reason)
+                {
+                    case DepositCreateExceptionType.StandardAccountsNotExist:
+                        return View(
+                            "StatusStandardAccountsNotFound",
+                            _linkGenerator.GetUriByAction(HttpContext, nameof(StandardAccountController.Create), "StandardAccount", new { id = personId, isPerson = true }));
+                    case DepositCreateExceptionType.PersonNotExist:
+                    case DepositCreateExceptionType.AccountsOfGivenCurrencyNotExist:
+                    case DepositCreateExceptionType.DepositNotExist:
+                    case DepositCreateExceptionType.InterestAccrualNotFound:
+                    default:
+                        return View("StatusNotFound");
+                }
+            }            
+        }
+
         // POST: Deposit/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
