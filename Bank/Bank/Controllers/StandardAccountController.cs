@@ -92,7 +92,7 @@ namespace Bank.Controllers
                         ? (_personDb.GetPeople().First(i => i.Id == id).FirstName + " " + _personDb.GetPeople().First(i => i.Id == id).LastName)
                         : _depositDb.GetLegalEntities().First(i => i.Id == id).Name,
                     OwnerId = (int)id,
-                    Number = OutputFormatUtils.GenerateNewStandardAccountId(_depositDb),
+                    Number = DbRetrieverUtils.GenerateNewStandardAccountId(_depositDb),
                 };
                 return View(model);
             }
@@ -144,7 +144,7 @@ namespace Bank.Controllers
                     acc = new Account
                     {
                         Name = model.Name,
-                        Number = OutputFormatUtils.GenerateNewStandardAccountId(_depositDb),
+                        Number = DbRetrieverUtils.GenerateNewStandardAccountId(_depositDb),
                         OpenDate = _timeService.CurrentTime,
                         StandardAccount = standardAccount,
                     };

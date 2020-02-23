@@ -6,16 +6,21 @@
 
 <h1>@ViewData["Title"]</h1>
 
+<h3>
+    @Html.ActionLink("Skip day", "Skip",  new { skipDay = true, skipMonth = false }) |
+    @Html.ActionLink("Skip month", "Skip", new { skipDay = false, skipMonth = true }) 
+</h3>
+
 <table class="table">
     <thead>
-        <tr>           
+        <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Owner)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Passport)
             </th>
-        
+
             <th>
                 @Html.DisplayNameFor(model => model.DepositName)
             </th>
@@ -31,57 +36,58 @@
             <th>
                 @Html.DisplayNameFor(model => model.IsActive)
             </th>
-           
+
             <th>
                 @Html.DisplayNameFor(model => model.AccountNumber)
             </th>
-                
+
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td hidden="hidden">
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td hidden="hidden">
-                @Html.DisplayFor(modelItem => item.OwnerId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Owner)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Passport)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DepositName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Currency)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MoneyAmount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Profit)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsActive)
-            </td>          
-            <td hidden="hidden">
-                @Html.DisplayFor(modelItem => item.AccountId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AccountNumber)
-            </td>
-                    
-            <td>
-                @Html.ActionLink("Details", "Details", new { Id = item.Id }) |
-                @Html.ActionLink("Edit", "Edit", new { Id = item.Id }) |
-                @Html.ActionLink("Close", "Delete", new { Id = item.Id })
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td hidden="hidden">
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td hidden="hidden">
+                    @Html.DisplayFor(modelItem => item.OwnerId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Owner)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Passport)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DepositName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Currency)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MoneyAmount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Profit)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsActive)
+                </td>
+                <td hidden="hidden">
+                    @Html.DisplayFor(modelItem => item.AccountId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AccountNumber)
+                </td>
+
+                <td>
+                    @Html.ActionLink("Details", "Details", new { Id = item.Id }) |
+                    @Html.ActionLink("Edit", "Edit", new { Id = item.Id }) |
+                    @Html.ActionLink("Close", "Delete", new { Id = item.Id })
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

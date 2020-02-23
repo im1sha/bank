@@ -28,11 +28,34 @@ namespace Bank.Controllers
             _timeService = timeService;
         }
 
+        // here month is 30 days
+        public ActionResult Skip([FromQuery]bool skipDay, [FromQuery]bool skipMonth)
+        {
+            if (skipDay)
+            {
+                SkipDay();
+            }
+            else if (skipMonth)
+            {
+                for (int i = 0; i < 30; i++)
+                {
+                    SkipDay();
+                }
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        private void SkipDay() 
+        { 
+
+        }
+
         // GET: Deposit
         //      Deposit/index/5
         // id == person id
         public ActionResult Index(int? id)
-        {
+        {                     
             var accs = _depositDb.GetDepositAccounts().Where(i => id == null ? true : i.PersonId == id).ToList();
 
             var models = accs.Select(i => new DepositIndexViewModel
@@ -214,7 +237,7 @@ namespace Bank.Controllers
                     { 
                         DepositAccount = deposit,
                         Name = accName,
-                        Number = OutputFormatUtils.GenerateNewDepositId(_depositDb), 
+                        Number = DbRetrieverUtils.GenerateNewDepositId(_depositDb), 
                         OpenDate = openDate,
                         TerminationDate = null,                        
                     };

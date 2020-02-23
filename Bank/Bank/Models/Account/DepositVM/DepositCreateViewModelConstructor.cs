@@ -137,7 +137,7 @@ namespace Bank
                                           : ((DateTime)outOpenDate).AddDays((int)interestAccrual.TermInDays),
                     RequiredMoney = requiredMoney,
                     SelectedMoney = requiredMoney,
-                    DepositNumber = OutputFormatUtils.GenerateNewDepositId(_depositDb),
+                    DepositNumber = DbRetrieverUtils.GenerateNewDepositId(_depositDb),
                     InterestRate = core.InterestRate,
                     MoneyAmount = account.StandardAccount.Account.Money.Amount,
                     Name = "Any user-defined name here",
