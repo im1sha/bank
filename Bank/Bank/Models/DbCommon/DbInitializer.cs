@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Bank.Models
 {
@@ -9,7 +7,7 @@ namespace Bank.Models
     {
         public static void InitializePeopleAndRelatedEntities(BankAppDbContext context)
         {
-            var cities = new[] 
+            var cities = new[]
             {
                 new City
                 {
@@ -58,13 +56,13 @@ namespace Bank.Models
                 new Disability
                 {
                     Name = "III group"
-                } 
+                }
             };
             if (!context.Disabilities.Any())
             {
                 context.Disabilities.AddRange(disabilities);
                 context.SaveChanges();
-            }          
+            }
             var nationalities = new[]
             {
                 new Nationality
@@ -130,7 +128,7 @@ namespace Bank.Models
             {
                 context.Locations.AddRange(locations);
                 context.SaveChanges();
-            }           
+            }
             var companies = new[]
             {
                 new Company
@@ -209,7 +207,7 @@ namespace Bank.Models
             {
                 context.IssuingAuthorities.AddRange(issuingAuthorithies);
                 context.SaveChanges();
-            }          
+            }
             var people = new[]
             {
                 new Person
@@ -225,7 +223,7 @@ namespace Bank.Models
                     MaritalStatus = false,
                     Nationality = nationalities[0],
                     Post = posts[0],
-                    Revenue = 2000000,                   
+                    Revenue = 2000000,
                 },
                 new Person
                 {
@@ -286,7 +284,7 @@ namespace Bank.Models
                     Nationality = nationalities[0],
                     Post = posts[3],
                     Revenue = 700000,
-                },        
+                },
             };
             if (!context.People.Any())
             {
@@ -324,7 +322,7 @@ namespace Bank.Models
                     Person = people[4],
                     Date = new DateTime(1996, 1, 2),
                     Location = locations[1],
-                },               
+                },
             };
             if (!context.Births.Any())
             {
@@ -377,7 +375,7 @@ namespace Bank.Models
                     IssuingDate = new DateTime(2016, 1, 1),
                     IssuingAuthority = issuingAuthorithies[0],
                     Person = people[4]
-                },           
+                },
             };
             if (!context.Passports.Any())
             {
@@ -387,7 +385,7 @@ namespace Bank.Models
             var peopleToLocations = new[]
             {
                 new PersonToLocation
-                { 
+                {
                     IsActual = true,
                     Location = locations[0],
                     Person = people[0]
@@ -433,7 +431,7 @@ namespace Bank.Models
                     IsActual = false,
                     Location = locations[2],
                     Person = people[3]
-                }, 
+                },
                 new PersonToLocation
                 {
                     IsActual = true,
@@ -451,11 +449,12 @@ namespace Bank.Models
             {
                 for (int i = 0; i < peopleToLocations.Length; i++)
                 {
-                    context.PersonToLocations.Add(peopleToLocations[i]);                    
-                }              
+                    context.PersonToLocations.Add(peopleToLocations[i]);
+                }
                 context.SaveChanges();
-            }       
+            }
 
+            //=================================================================
 
             var interestAccruals = new[]
             {
@@ -469,7 +468,7 @@ namespace Bank.Models
                 context.SaveChanges();
             }
             var currencies = new[]
-            {            
+            {
                 new Currency { Name = "EUR" },
                 new Currency { Name = "USD" },
                 new Currency { Name = "BYN" },
@@ -481,8 +480,7 @@ namespace Bank.Models
             }
             var legalEntities = new[]
             {
-                new LegalEntity { Name = "Development fund" },
-                new LegalEntity { Name = "BelAPB.by cashdesk" },
+                new LegalEntity { Name = "Development fund BelAPB.by" },
             };
             if (!context.LegalEntities.Any())
             {
@@ -494,18 +492,18 @@ namespace Bank.Models
                 new DepositGeneral
                 {
                     IsRevocable = false,
-                    Name = "Stability+",  
-                    ReplenishmentAllowed = true,
+                    Name = "Stability+",
+                    ReplenishmentAllowed = false,
                     WithCapitalization = false,
                 },
                 new DepositGeneral
                 {
                     IsRevocable = true,
                     Name = "Growth+",
-                    ReplenishmentAllowed = true,
-                    WithCapitalization = true,                    
+                    ReplenishmentAllowed = false,
+                    WithCapitalization = true,
                 },
-                
+
             };
             if (!context.DepositGenerals.Any())
             {
@@ -517,7 +515,7 @@ namespace Bank.Models
                 new DepositVariable
                 {
                    Currency = currencies[0],
-                   DepositGeneral = depositGenerals[0],                   
+                   DepositGeneral = depositGenerals[0],
                 },
                 new DepositVariable
                 {
@@ -671,7 +669,7 @@ namespace Bank.Models
                 new DepositAccount
                 {
                     DepositCore = depositCores[0],
-                    Person = people[0], 
+                    Person = people[0],
                 },
                 new DepositAccount
                 {
@@ -698,7 +696,7 @@ namespace Bank.Models
             {
                 new StandardAccount
                 {
-                    Person = people[0],                       
+                    Person = people[0],
                 },
                 new StandardAccount
                 {
@@ -714,7 +712,7 @@ namespace Bank.Models
                 },
                 new StandardAccount
                 {
-                    Person = people[4],
+                    LegalEntity = legalEntities[0],
                 },
                 new StandardAccount
                 {
@@ -722,7 +720,7 @@ namespace Bank.Models
                 },
                 new StandardAccount
                 {
-                    LegalEntity = legalEntities[1],
+                    LegalEntity = legalEntities[0],
                 },
             };
             if (!context.StandardAccounts.Any())
@@ -730,15 +728,17 @@ namespace Bank.Models
                 context.StandardAccounts.AddRange(standardAccount);
                 context.SaveChanges();
             }
-            
+
             var accounts = new[]
             {
+                #region accounts for deposit accounts
+
                 new Account
                 {
                     DepositAccount = depositAccounts[0],
                     Name = "dep acc#0",
                     Number = "3014000000008",
-                    OpenDate = DateTime.Now.AddDays(-55),                   
+                    OpenDate = DateTime.Now.AddDays(-55),
                 },
                 new Account
                 {
@@ -761,27 +761,50 @@ namespace Bank.Models
                     Number = "3014000000005",
                     OpenDate = DateTime.Now.AddDays(-5),
                 },
-                #region accs of person#0 
+
+                #endregion
+
+                #region for development fund
+
                 new Account
                 {
-                    StandardAccount = standardAccount[0],
-                    Name = "st acc#0-1",
-                    Number = "9999000000004",
+                    StandardAccount = standardAccount[4],
+                    Name = "st acc#4 = fund",
+                    Number = "7327000000009",
                     OpenDate = DateTime.Now.AddDays(-500),
                 },
                 new Account
                 {
-                    StandardAccount = standardAccount[0],
-                    Name = "st acc#0-2",
-                    Number = "99990000000003",
-                    OpenDate = DateTime.Now.AddDays(-600),
+                    StandardAccount = standardAccount[5],
+                    Name = "st acc#5 = fund",
+                    Number = "7327000000010",
+                    OpenDate = DateTime.Now.AddDays(-500),
                 },
-                #endregion
+                new Account
+                {
+                    StandardAccount = standardAccount[6],
+                    Name = "st acc#6 = fund",
+                    Number = "7327000000011",
+                    OpenDate = DateTime.Now.AddDays(-500),
+                },
+
+                #endregion   
+                
+                #region accs of person standard accounts
+
+                new Account
+                {
+                    StandardAccount = standardAccount[0],
+                    Name = "st acc#0",
+                    Number = "9999000000004",
+                    OpenDate = DateTime.Now.AddDays(-500),
+                },
+             
                 new Account
                 {
                     StandardAccount = standardAccount[1],
                     Name = "st acc#1",
-                    Number = "9999000000002",
+                    Number = "9999000000003",
                     OpenDate = DateTime.Now.AddDays(-500),
                 },
                 new Account
@@ -798,27 +821,8 @@ namespace Bank.Models
                     Number = "9999000000001",
                     OpenDate = DateTime.Now.AddDays(-1500),
                 },
-                new Account
-                {
-                    StandardAccount = standardAccount[4],
-                    Name = "st acc#4",
-                    Number = "9999000000000",
-                    OpenDate = DateTime.Now.AddDays(-500),
-                },
-                new Account
-                {
-                    StandardAccount = standardAccount[5],
-                    Name = "st acc#5 = fund",
-                    Number = "7327000000009",
-                    OpenDate = DateTime.Now.AddDays(-500),
-                },
-                new Account
-                {
-                    StandardAccount = standardAccount[6],
-                    Name = "st acc#6 = cashdesk",
-                    Number = "1010000000010",
-                    OpenDate = DateTime.Now.AddDays(-500),
-                },
+
+                #endregion
             };
             if (!context.Accounts.Any())
             {
@@ -828,6 +832,7 @@ namespace Bank.Models
 
             var money = new[]
             {
+                // deposit terms
                 new Money { Amount= 25m, Currency = currencies[0], DepositVariable = depositVariables[0], },
                 new Money { Amount= 25m, Currency = currencies[0], DepositVariable = depositVariables[1], },
                 new Money { Amount= 25m, Currency = currencies[1], DepositVariable = depositVariables[2], },
@@ -835,20 +840,22 @@ namespace Bank.Models
                 new Money { Amount= 50m, Currency = currencies[2], DepositVariable = depositVariables[4], },
                 new Money { Amount= 50m, Currency = currencies[2], DepositVariable = depositVariables[5], },
 
+                // deposits
                 new Money { Amount = 100m, Currency = currencies[0], Account = accounts[0], },
                 new Money { Amount = 100m, Currency = currencies[1], Account = accounts[1], },
                 new Money { Amount = 100m, Currency = currencies[1], Account = accounts[2], },
                 new Money { Amount = 100m, Currency = currencies[2], Account = accounts[3], },
 
-                new Money { Amount = 100m, Currency = currencies[0], Account = accounts[4], },
-                new Money { Amount = 50m, Currency = currencies[1], Account = accounts[5], },
-                new Money { Amount = 100m, Currency = currencies[1], Account = accounts[6], },
-                new Money { Amount = 100m, Currency = currencies[2], Account = accounts[7], },
-                new Money { Amount = 100m, Currency = currencies[2], Account = accounts[8], },
-                new Money { Amount = 100m, Currency = currencies[2], Account = accounts[9], },
+                // standard -> dev fund
+                new Money { Amount = 10000000000m, Currency = currencies[0], Account = accounts[4], },
+                new Money { Amount = 20000000000m, Currency = currencies[1], Account = accounts[5], },
+                new Money { Amount = 30000000000m, Currency = currencies[2], Account = accounts[6], },
 
-                new Money { Amount = 1000000000000m, Currency = currencies[2], Account = accounts[10], },
-                new Money { Amount = 10m, Currency = currencies[2], Account = accounts[11], },
+                // standard
+                new Money { Amount = 50m,  Currency = currencies[0], Account = accounts[7], },
+                new Money { Amount = 100m, Currency = currencies[1], Account = accounts[8], },
+                new Money { Amount = 100m, Currency = currencies[2], Account = accounts[9], },
+                new Money { Amount = 100m, Currency = currencies[2], Account = accounts[10], },              
             };
             if (!context.Moneys.Any())
             {

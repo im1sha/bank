@@ -215,7 +215,7 @@ namespace Bank.Controllers
                         Name = accName,
                         Number = OutputFormatUtils.GenerateNewDepositId(_depositDb), 
                         OpenDate = openDate,
-                        TerminationDate = openDate.AddDays((int) _depositDb.GetInterestAccruals().First(i => i.Id == interestAccrualId).TermInDays),                        
+                        TerminationDate = null,                        
                     };
                     _db.Accounts.Add(accForDeposit);
                     _db.SaveChanges();
