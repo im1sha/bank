@@ -5,7 +5,7 @@ namespace Bank.Models
 {
     public static class DbInitializer
     {
-        public static void InitializePeopleAndRelatedEntities(BankAppDbContext context)
+        public static void InitializePeopleAndRelatedEntities(BankAppDbContext context, TimeService timeService)
         {
             var cities = new[]
             {
@@ -296,31 +296,31 @@ namespace Bank.Models
                 new Birth
                 {
                     Person = people[0],
-                    Date = new DateTime(2000, 1, 2),
+                    Date = timeService.CurrentTime.AddYears(-20),
                     Location = locations[0],
                 },
                 new Birth
                 {
                     Person = people[1],
-                    Date = new DateTime(1999, 1, 2),
+                    Date = timeService.CurrentTime.AddYears(-21),
                     Location = locations[0],
                 },
                 new Birth
                 {
                     Person = people[2],
-                    Date = new DateTime(1998, 1, 2),
+                    Date = timeService.CurrentTime.AddYears(-22),
                     Location = locations[0],
                 },
                 new Birth
                 {
                     Person = people[3],
-                    Date = new DateTime(1997, 1, 2),
+                    Date = timeService.CurrentTime.AddYears(-23),
                     Location = locations[1],
                 },
                 new Birth
                 {
                     Person = people[4],
-                    Date = new DateTime(1996, 1, 2),
+                    Date = timeService.CurrentTime.AddYears(-24),
                     Location = locations[1],
                 },
             };
@@ -336,7 +336,7 @@ namespace Bank.Models
                     IdentifyingNumber = "1111111A123AA1",
                     Series = "AA",
                     Number = "1111111",
-                    IssuingDate = new DateTime(2016, 1, 1),
+                    IssuingDate = timeService.CurrentTime.AddYears(-2),
                     IssuingAuthority = issuingAuthorithies[0],
                     Person = people[0]
                 },
@@ -345,7 +345,7 @@ namespace Bank.Models
                     IdentifyingNumber = "1111111A123AA2",
                     Series = "AA",
                     Number = "2222222",
-                    IssuingDate = new DateTime(2016, 1, 1),
+                    IssuingDate = timeService.CurrentTime.AddYears(-1),
                     IssuingAuthority = issuingAuthorithies[1],
                     Person = people[1]
                 },
@@ -354,7 +354,7 @@ namespace Bank.Models
                     IdentifyingNumber = "1111111A123AA3",
                     Series = "AA",
                     Number = "3333333",
-                    IssuingDate = new DateTime(2016, 1, 1),
+                    IssuingDate = timeService.CurrentTime.AddYears(-2),
                     IssuingAuthority = issuingAuthorithies[0],
                     Person = people[2]
                 },
@@ -363,7 +363,7 @@ namespace Bank.Models
                     IdentifyingNumber = "1111111A123AA4",
                     Series = "AA",
                     Number = "4444444",
-                    IssuingDate = new DateTime(2016, 1, 1),
+                    IssuingDate = timeService.CurrentTime.AddYears(-2),
                     IssuingAuthority = issuingAuthorithies[1],
                     Person = people[3]
                 },
@@ -372,7 +372,7 @@ namespace Bank.Models
                     IdentifyingNumber = "1111111A123AA5",
                     Series = "AA",
                     Number = "5555555",
-                    IssuingDate = new DateTime(2016, 1, 1),
+                    IssuingDate = timeService.CurrentTime.AddYears(-3),
                     IssuingAuthority = issuingAuthorithies[0],
                     Person = people[4]
                 },
@@ -738,28 +738,28 @@ namespace Bank.Models
                     DepositAccount = depositAccounts[0],
                     Name = "dep acc#0",
                     Number = "3014000000008",
-                    OpenDate = DateTime.Now.AddDays(-55),
+                    OpenDate = timeService.CurrentTime,
                 },
                 new Account
                 {
                     DepositAccount = depositAccounts[1],
                     Name = "dep acc#1",
                     Number = "3014000000007",
-                    OpenDate = DateTime.Now.AddDays(-20),
+                    OpenDate = timeService.CurrentTime,
                 },
                 new Account
                 {
                     DepositAccount = depositAccounts[2],
                     Name = "dep acc#2",
                     Number = "3014000000006",
-                    OpenDate = DateTime.Now.AddDays(-10),
+                    OpenDate = timeService.CurrentTime,
                 },
                 new Account
                 {
                     DepositAccount = depositAccounts[3],
                     Name = "dep acc#3",
                     Number = "3014000000005",
-                    OpenDate = DateTime.Now.AddDays(-5),
+                    OpenDate = timeService.CurrentTime,
                 },
 
                 #endregion
@@ -771,21 +771,21 @@ namespace Bank.Models
                     StandardAccount = standardAccount[4],
                     Name = "st acc#4 = fund",
                     Number = "7327000000009",
-                    OpenDate = DateTime.Now.AddDays(-500),
+                    OpenDate = timeService.CurrentTime.AddDays(-500),
                 },
                 new Account
                 {
                     StandardAccount = standardAccount[5],
                     Name = "st acc#5 = fund",
                     Number = "7327000000010",
-                    OpenDate = DateTime.Now.AddDays(-500),
+                    OpenDate = timeService.CurrentTime.AddDays(-500),
                 },
                 new Account
                 {
                     StandardAccount = standardAccount[6],
                     Name = "st acc#6 = fund",
                     Number = "7327000000011",
-                    OpenDate = DateTime.Now.AddDays(-500),
+                    OpenDate = timeService.CurrentTime.AddDays(-500),
                 },
 
                 #endregion   
@@ -797,7 +797,7 @@ namespace Bank.Models
                     StandardAccount = standardAccount[0],
                     Name = "st acc#0",
                     Number = "9999000000004",
-                    OpenDate = DateTime.Now.AddDays(-500),
+                    OpenDate = timeService.CurrentTime.AddDays(-500),
                 },
              
                 new Account
@@ -805,21 +805,21 @@ namespace Bank.Models
                     StandardAccount = standardAccount[1],
                     Name = "st acc#1",
                     Number = "9999000000003",
-                    OpenDate = DateTime.Now.AddDays(-500),
+                    OpenDate = timeService.CurrentTime.AddDays(-500),
                 },
                 new Account
                 {
                     StandardAccount = standardAccount[2],
                     Name = "st acc#2",
                     Number = "9999000000002",
-                    OpenDate = DateTime.Now.AddDays(-1000),
+                    OpenDate = timeService.CurrentTime.AddDays(-1000),
                 },
                 new Account
                 {
                     StandardAccount = standardAccount[3],
                     Name = "st acc#3",
                     Number = "9999000000001",
-                    OpenDate = DateTime.Now.AddDays(-1500),
+                    OpenDate = timeService.CurrentTime.AddDays(-1500),
                 },
 
                 #endregion

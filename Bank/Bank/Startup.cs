@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Globalization;
+using System.IO;
 
 namespace Bank
 {
@@ -25,10 +26,30 @@ namespace Bank
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<BankAppDbContext>(options => options.UseSqlServer(connection));
             services.AddControllersWithViews();
-            //services.AddControllersWithViews().AddNewtonsoftJson(options =>
-            //    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-            //);
-        }
+
+            var path = Configuration.GetValue<string>(WebHostDefaults.ContentRootKey)
+                + Path.DirectorySeparatorChar.ToString()
+                + "ServiceData"
+                + Path.DirectorySeparatorChar.ToString()
+                + "timeshift";
+
+            var timeshiftData = File.ReadAllText(path);
+
+            //DeltaDays DeltaMonth 
+            int deltaDays, deltaMonths;          
+            var strings = timeshiftData.Split(" ");
+            if (strings.Length != 2 || !int.TryParse(strings[0], out _) || !int.TryParse(strings[1], out _))
+            {
+                deltaDays = deltaMonths = 0;
+            }
+            else
+            {
+                deltaDays = int.Parse(strings[0]);
+                deltaMonths = int.Parse(strings[1]);
+            }
+            
+            services.AddSingleton(new TimeService(path, deltaDays, deltaMonths));
+        } 
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

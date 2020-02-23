@@ -1,0 +1,1 @@
+﻿timeshift format: $"{_deltaDays} {_deltaMonths}"

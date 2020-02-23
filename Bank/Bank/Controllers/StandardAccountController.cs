@@ -13,13 +13,15 @@ namespace Bank.Controllers
         private readonly DepositDbEntityRetriever _depositDb;
         private readonly PersonDbEntityRetriever _personDb;
         private readonly BankAppDbContext _db;
+        private readonly TimeService _timeService;
 
-        public StandardAccountController(BankAppDbContext context, ILogger<PersonController> logger)
+        public StandardAccountController(BankAppDbContext context, ILogger<PersonController> logger, TimeService timeService)
         {
             _db = context;
             _depositDb = new DepositDbEntityRetriever(context);
             _personDb = new PersonDbEntityRetriever(context);
             _logger = logger;
+            _timeService = timeService;
         }
 
         // GET: StandardAccount/
@@ -29,7 +31,7 @@ namespace Bank.Controllers
         {
             var accs = _depositDb.GetStandardAccounts()
                 .Where(i => id == null ? true : (isPerson ? i.PersonId == id : i.LegalEntityId == id))
-                .Where(i => i.Account?.TerminationDate == null || i.Account?.TerminationDate > DateTime.Now)
+                .Where(i => i.Account?.TerminationDate == null || i.Account?.TerminationDate > _timeService.CurrentTime)
                 .Select(i => new StandardAccountIndexViewModel
                 {
                     Amount = i.Account.Money.Amount,
@@ -42,7 +44,7 @@ namespace Bank.Controllers
                     PersonId = i.PersonId,
                     LegalEntityId = i.LegalEntityId,
                     IsPerson = i.LegalEntityId == null,
-                    IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(i.Account?.TerminationDate == null || i.Account?.TerminationDate > DateTime.Now),
+                    IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(i.Account?.TerminationDate == null || i.Account?.TerminationDate > _timeService.CurrentTime),
                 });
             return View(accs);
         }
@@ -63,7 +65,7 @@ namespace Bank.Controllers
                     PersonId = i.PersonId,
                     LegalEntityId = i.LegalEntityId,
                     IsPerson = i.LegalEntityId == null,
-                    IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(i.Account?.TerminationDate == null || i.Account?.TerminationDate > DateTime.Now),
+                    IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(i.Account?.TerminationDate == null || i.Account?.TerminationDate > _timeService.CurrentTime),
                     OpenDate = i.Account.OpenDate,
                     TerminationDate = i.Account.TerminationDate,
                 }).First();
@@ -143,7 +145,7 @@ namespace Bank.Controllers
                     {
                         Name = model.Name,
                         Number = OutputFormatUtils.GenerateNewStandardAccountId(_depositDb),
-                        OpenDate = DateTime.Now,
+                        OpenDate = _timeService.CurrentTime,
                         StandardAccount = standardAccount,
                     };
 
@@ -207,7 +209,7 @@ namespace Bank.Controllers
                     IsPerson = acc.LegalEntityId == null,
                 };
 
-                if (acc.Account.TerminationDate <= DateTime.Now)
+                if (acc.Account.TerminationDate <= _timeService.CurrentTime)
                 {
                     return View("StatusFailed", "Account is closed.");
                 }
@@ -248,7 +250,7 @@ namespace Bank.Controllers
 
                     acc = _depositDb.GetAccounts().First(i => i.StandardAccount == standardAccount);
 
-                    if (acc.TerminationDate <= DateTime.Now)
+                    if (acc.TerminationDate <= _timeService.CurrentTime)
                     {
                         return View("StatusFailed", "Account is closed.");
                     }
@@ -282,7 +284,7 @@ namespace Bank.Controllers
             {
                 var acc = _depositDb.GetStandardAccounts().Where(i => i.Id == id).First();
 
-                if (acc.Account.TerminationDate <= DateTime.Now)
+                if (acc.Account.TerminationDate <= _timeService.CurrentTime)
                 {
                     return View("StatusFailed", "Account is closed.");
                 }
@@ -299,7 +301,7 @@ namespace Bank.Controllers
                     PersonId = acc.PersonId,
                     LegalEntityId = acc.LegalEntityId,
                     IsPerson = acc.LegalEntityId == null,
-                    IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(acc.Account?.TerminationDate == null || acc.Account?.TerminationDate > DateTime.Now),
+                    IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(acc.Account?.TerminationDate == null || acc.Account?.TerminationDate > _timeService.CurrentTime),
                     OpenDate = acc.Account.OpenDate,
                     TerminationDate = acc.Account.TerminationDate,
                 };
@@ -319,11 +321,11 @@ namespace Bank.Controllers
             try
             {
                 var acc = _depositDb.GetAccounts().First(i => i.StandardAccountId == model.Id);
-                if (acc.TerminationDate <= DateTime.Now)
+                if (acc.TerminationDate <= _timeService.CurrentTime)
                 {
                     return View("StatusFailed", "Account is closed.");
                 }
-                acc.TerminationDate = DateTime.Now;
+                acc.TerminationDate = _timeService.CurrentTime;
                 acc.Money.Amount = 0m;
                 _db.Update(acc);             
                 _db.SaveChanges();

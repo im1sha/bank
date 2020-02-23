@@ -16,15 +16,16 @@ namespace Bank.Controllers
         private readonly DepositDbEntityRetriever _depositDb;
         private readonly PersonDbEntityRetriever _personDb;
         private readonly BankAppDbContext _db;
-        private readonly TimeService _timeService = new TimeService();
+        private readonly TimeService _timeService;
       
-        public DepositController(BankAppDbContext context, ILogger<PersonController> logger, LinkGenerator linkGenerator)
+        public DepositController(BankAppDbContext context, ILogger<PersonController> logger, LinkGenerator linkGenerator, TimeService timeService)
         {
             _db = context;
             _depositDb = new DepositDbEntityRetriever(context);
             _personDb = new PersonDbEntityRetriever(context);
             _logger = logger;
             _linkGenerator = linkGenerator;
+            _timeService = timeService;
         }
 
         // GET: Deposit

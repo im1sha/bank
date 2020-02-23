@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,26 +8,36 @@ namespace Bank
 {
     public class TimeService
     {
-        public TimeService(int deltaDays = 0, int deltaMonths = 0)
+        private readonly string _pathToStorage;
+        private int _deltaDays;
+        private int _deltaMonths;
+
+        public DateTime CurrentTime => DateTime.Now.AddDays(_deltaDays).AddMonths(_deltaMonths);
+
+        public TimeService(string pathToShiftStorage, int deltaDays, int deltaMonths)
         {
-            DeltaDays = deltaDays;
-            DeltaMonths = deltaMonths;
+            _deltaDays = deltaDays;
+            _deltaMonths = deltaMonths;
+            _pathToStorage = pathToShiftStorage;
+            WriteToStorage();
         }
 
         public void AddMonths(int months)
         {
-            DeltaMonths += months;
+            _deltaMonths += months;
+            WriteToStorage();
         }
 
         public void AddDays(int days)
         {
-            DeltaDays += days;
+            _deltaDays += days;
+            WriteToStorage();
         }
 
-        private static int DeltaDays = 0;
-        private static int DeltaMonths = 0;
-
-        public DateTime CurrentTime => DateTime.Now.AddDays(DeltaDays).AddMonths(DeltaMonths);
+        private void WriteToStorage()
+        { 
+            File.WriteAllText(_pathToStorage, $"{_deltaDays} {_deltaMonths}");
+        }       
 
         public bool CheckActive(DateTime? termination)
         {
