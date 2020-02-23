@@ -51,7 +51,7 @@ namespace Bank.Models
         public List<DepositCore> GetDepositCores()
         {
             return Db.DepositCores
-                .Include(i => i.DepositVariable)
+                .Include(i => i.DepositVariable).ThenInclude(i => i.DepositGeneral)
                 .Include(i => i.InterestAccrual)
                 .Include(i => i.DepositAccounts)
                 .OrderBy(i => i.InterestAccrualId)

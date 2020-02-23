@@ -12,6 +12,7 @@ namespace Bank
         AccountsOfGivenCurrencyNotExist,
         DepositNotExist,
         InterestAccrualNotFound,
+        NotEnoughOfMoney,
     }
 
     public class DepositCreateException : ApplicationException

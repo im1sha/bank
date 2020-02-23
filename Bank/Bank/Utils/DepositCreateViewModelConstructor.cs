@@ -118,6 +118,8 @@ namespace Bank
                 var interestAccrualList = GetIntersestAccrualsByCores(coreList).ToList();           
                 var interestAccrual = interestAccrualList.First(i => outInterestAccrualId == null ? true : i.Id == outInterestAccrualId);
 
+                var requiredMoney = core.DepositVariable.MinimalDeposit.Amount;
+
                 var vm = new DepositCreateViewModel
                 {
                     CurrencyId = currency.Id,
@@ -133,8 +135,8 @@ namespace Bank
                     TerminationDate = outOpenDate == null 
                                           ? _timeService.CurrentTime.AddDays((int)interestAccrual.TermInDays)
                                           : ((DateTime)outOpenDate).AddDays((int)interestAccrual.TermInDays),
-                    RequiredMoney = core.DepositVariable.MinimalDeposit.Amount,
-                    SelectedMoney = 0m,
+                    RequiredMoney = requiredMoney,
+                    SelectedMoney = requiredMoney,
                     DepositNumber = OutputFormatUtils.GenerateNewDepositId(_depositDb),
                     InterestRate = core.InterestRate,
                     MoneyAmount = account.StandardAccount.Account.Money.Amount,
@@ -312,6 +314,19 @@ namespace Bank
             }
 
             return coreList.Select(i => i.InterestAccrual).Distinct().ToList();
+        }
+
+        private void ChangeAccountsUsingRequiredMoneyAmount(ref List<Account> accounts, ref Account account, decimal requiredMoney, int? outAccountId)
+        {
+            accounts = accounts.Where(i => i.Money.Amount >= requiredMoney).ToList();
+            if (!accounts.Contains(account) && outAccountId != null)
+            {
+                throw new DepositCreateException(DepositCreateExceptionType.NotEnoughOfMoney);
+            }
+            else
+            {
+                account = GetAccountByAccountsAndAccountId(accounts, outAccountId);
+            }
         }
     }
 }

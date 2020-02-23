@@ -76,7 +76,7 @@ namespace Bank.Models
 
         [DisplayName("Open")]
         [DataType(DataType.Date)]
-        [AgeDateRange(0, 0, 1, 0)]
+        //[AgeDateRange(0, 0, 1, 0)]
         public DateTime OpenDate { get; set; }
 
         [DisplayName("Terminated")]
