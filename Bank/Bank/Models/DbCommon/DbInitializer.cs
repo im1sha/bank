@@ -846,6 +846,11 @@ namespace Bank.Models
                 new Money { Amount = 100m, Currency = currencies[1], Account = accounts[2], },
                 new Money { Amount = 100m, Currency = currencies[2], Account = accounts[3], },
 
+                new Money { Amount = 0, Currency = currencies[0], DepositAccount = accounts[0].DepositAccount, },
+                new Money { Amount = 0, Currency = currencies[1], DepositAccount = accounts[1].DepositAccount, },
+                new Money { Amount = 0, Currency = currencies[1], DepositAccount = accounts[2].DepositAccount, },
+                new Money { Amount = 0, Currency = currencies[2], DepositAccount = accounts[3].DepositAccount, },
+
                 // standard -> dev fund
                 new Money { Amount = 10000000000m, Currency = currencies[0], Account = accounts[4], },
                 new Money { Amount = 20000000000m, Currency = currencies[1], Account = accounts[5], },

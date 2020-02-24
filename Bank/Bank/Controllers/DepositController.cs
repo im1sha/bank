@@ -34,6 +34,7 @@ namespace Bank.Controllers
             if (skipDay)
             {
                 SkipDay();
+                _timeService.AddDays(1);
             }
             else if (skipMonth)
             {
@@ -41,14 +42,82 @@ namespace Bank.Controllers
                 {
                     SkipDay();
                 }
+                _timeService.AddDays(30);
             }
 
             return RedirectToAction(nameof(Index));
         }
 
         private void SkipDay() 
-        { 
+        {
+            foreach (var dep in _depositDb.GetDepositAccounts())
+            {
+                if (_timeService.CheckActive(dep.Account.TerminationDate))
+                {
+                    var profitAdded = false;
+                    // month elapsed (for deposit with capitalization)
+                    if (dep.DepositCore.DepositVariable.DepositGeneral.WithCapitalization 
+                        && _timeService.IsMultipleOfMonth(dep.Account.OpenDate))
+                    {
+                        dep.Profit.Amount += dep.DepositCore.InterestRate / 100.0m * (30.0m / 365.0m) * (dep.Account.Money.Amount + dep.Profit.Amount);
+                        _db.DepositAccounts.Update(dep);
+                        _db.SaveChanges();
+                        profitAdded = true;
+                    }
+                    // termination date now
+                    if (Math.Floor((_timeService.CurrentTime - dep.Account.OpenDate).TotalDays) == (dep.DepositCore.InterestAccrual.TermInDays ?? -1))
+                    {
+                        if (!profitAdded && dep.DepositCore.DepositVariable.DepositGeneral.WithCapitalization)
+                        {
+                            dep.Profit.Amount += ((int)Math.Floor((_timeService.CurrentTime - dep.Account.OpenDate).TotalDays) % 30) 
+                                * (dep.DepositCore.InterestRate / 100.0m / 365.0m * (dep.Account.Money.Amount + dep.Profit.Amount));
+                        }
+                        else if (!dep.DepositCore.DepositVariable.DepositGeneral.WithCapitalization)
+                        {
+                            dep.Profit.Amount += (int)dep.DepositCore.InterestAccrual.TermInDays * dep.DepositCore.InterestRate / 100.0m / 365.0m;
+                        }      
+                        // close depsoit
+                        var total = dep.Account.Money.Amount + dep.Profit.Amount;
 
+                        dep.Account.TerminationDate = _timeService.CurrentTime;
+                        dep.Account.Money.Amount = 0;
+                        dep.Profit.Amount = 0;
+
+                        _db.DepositAccounts.Update(dep);
+                        _db.SaveChanges();
+
+                        // create standard account with equal amount of money
+                        var standardAccount = new StandardAccount
+                        {
+                            Person = dep.Person,
+                        };
+
+                        _db.StandardAccounts.Add(standardAccount);
+                        _db.SaveChanges();
+
+                        var acc = new Account
+                        {
+                            Name = $"closed deposit {dep.Account.Number}",
+                            Number = DbRetrieverUtils.GenerateNewStandardAccountId(_depositDb),
+                            OpenDate = _timeService.CurrentTime,
+                            StandardAccount = standardAccount,
+                        };
+
+                        _db.Accounts.Add(acc);
+                        _db.SaveChanges();
+
+                        var money = new Money
+                        {
+                            Currency = dep.Account.Money.Currency,
+                            Account = acc,
+                            Amount = total,
+                        };
+
+                        _db.Moneys.Add(money);
+                        _db.SaveChanges();
+                    }
+                }               
+            }
         }
 
         // GET: Deposit

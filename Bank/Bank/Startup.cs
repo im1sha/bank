@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 using System.Globalization;
 using System.IO;
 
@@ -31,24 +32,24 @@ namespace Bank
                 + Path.DirectorySeparatorChar.ToString()
                 + "ServiceData"
                 + Path.DirectorySeparatorChar.ToString()
-                + "timeshift";
+                + "time";
 
             var timeshiftData = File.ReadAllText(path);
-
+            DateTime date;
             //DeltaDays DeltaMonth 
-            int deltaDays, deltaMonths;          
             var strings = timeshiftData.Split(" ");
-            if (strings.Length != 2 || !int.TryParse(strings[0], out _) || !int.TryParse(strings[1], out _))
+            if (strings.Length != 3 || !int.TryParse(strings[0], out _) 
+                || !int.TryParse(strings[1], out _)
+                || !int.TryParse(strings[2], out _))
             {
-                deltaDays = deltaMonths = 0;
+                date = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
             }
             else
             {
-                deltaDays = int.Parse(strings[0]);
-                deltaMonths = int.Parse(strings[1]);
+                date = new DateTime(int.Parse(strings[0]), int.Parse(strings[1]), int.Parse(strings[2]));
             }
             
-            services.AddSingleton(new TimeService(path, deltaDays, deltaMonths));
+            services.AddSingleton(new TimeService(path, date));
         } 
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

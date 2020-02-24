@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<Bank.Models.DepositIndexViewModel>
-
+@inject Bank.TimeService Timer
 @{
     ViewData["Title"] = "List of deposits";
 }
@@ -7,8 +7,9 @@
 <h1>@ViewData["Title"]</h1>
 
 <h3>
-    @Html.ActionLink("Skip day", "Skip",  new { skipDay = true, skipMonth = false }) |
-    @Html.ActionLink("Skip month", "Skip", new { skipDay = false, skipMonth = true }) 
+    @Html.ActionLink("Skip day", "Skip", new { skipDay = true, skipMonth = false }) |
+    @Html.ActionLink("Skip 30 days", "Skip", new { skipDay = false, skipMonth = true }) |
+    Date: @Timer.CurrentTime.Date.ToShortDateString()
 </h3>
 
 <table class="table">

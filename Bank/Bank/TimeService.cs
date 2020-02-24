@@ -9,34 +9,38 @@ namespace Bank
     public class TimeService
     {
         private readonly string _pathToStorage;
-        private int _deltaDays;
-        private int _deltaMonths;
 
-        public DateTime CurrentTime => DateTime.Now.AddDays(_deltaDays).AddMonths(_deltaMonths);
+        public DateTime CurrentTime { get; private set; }
 
-        public TimeService(string pathToShiftStorage, int deltaDays, int deltaMonths)
+        public TimeService(string pathToShiftStorage, DateTime dateTime)
         {
-            _deltaDays = deltaDays;
-            _deltaMonths = deltaMonths;
+            CurrentTime = dateTime;
             _pathToStorage = pathToShiftStorage;
             WriteToStorage();
         }
-
-        public void AddMonths(int months)
+     
+        public void AddDays(int days)
         {
-            _deltaMonths += months;
+            CurrentTime = CurrentTime.AddDays(days);
             WriteToStorage();
         }
 
-        public void AddDays(int days)
+        public bool IsMultipleOfMonth(DateTime openDate)
         {
-            _deltaDays += days;
-            WriteToStorage();
+            if (CurrentTime < openDate)
+            {
+                throw new ArgumentNullException();
+            }
+            if (CurrentTime == openDate)
+            {
+                return false;
+            }    
+            return ((int)Math.Floor((CurrentTime - openDate).TotalDays) % 30 == 0);
         }
 
         private void WriteToStorage()
         { 
-            File.WriteAllText(_pathToStorage, $"{_deltaDays} {_deltaMonths}");
+            File.WriteAllText(_pathToStorage, $"{CurrentTime.Year} {CurrentTime.Month} {CurrentTime.Day}");
         }       
 
         public bool CheckActive(DateTime? termination)
