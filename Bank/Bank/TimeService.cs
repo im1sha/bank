@@ -31,20 +31,18 @@ namespace Bank
             {
                 throw new ArgumentNullException();
             }
-            if ((int)(CurrentTime - openDate).TotalDays == 0)
+            if (CountElapsedDays(openDate) == 0)
             {
                 return false;
             }    
-            var result = (int)(CurrentTime - openDate).TotalDays % 30 == 0;
-            if (result)
-            {
+            var result = CountElapsedDays(openDate) % 30 == 0;
 
-            }
-            else
-            {
-
-            }
             return result;
+        }
+
+        public int CountElapsedDays(DateTime startDay)
+        {
+            return (int)(CurrentTime - startDay).TotalDays;
         }
 
         private void WriteToStorage()

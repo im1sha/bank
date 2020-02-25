@@ -53,7 +53,6 @@ namespace Bank.Controllers
             {
                 if (_timeService.CheckActive(deposit.Account.TerminationDate))
                 {
-                    var profitAdded = false;
                     // month elapsed (for deposit with capitalization)
                     if (deposit.DepositCore.DepositVariable.DepositGeneral.WithCapitalization
                         && _timeService.IsMultipleOfMonth(deposit.Account.OpenDate))
@@ -64,68 +63,75 @@ namespace Bank.Controllers
                         deposit.Profit.Amount += profit;
                         _db.DepositAccounts.Update(deposit);
                         _db.SaveChanges();
-
-                        profitAdded = true;
                     }
-                    // termination date now
-                    if ((int)(_timeService.CurrentTime - deposit.Account.OpenDate).TotalDays == (deposit.DepositCore.InterestAccrual.TermInDays ?? 365))
-                    {
-                        if (!profitAdded && deposit.DepositCore.DepositVariable.DepositGeneral.WithCapitalization)
-                        {
-                            var profit = ((int)(_timeService.CurrentTime - deposit.Account.OpenDate).TotalDays % 30) / 365.0m
-                                * (deposit.DepositCore.InterestRate / 100.0m) 
-                                * (deposit.Account.Money.Amount + deposit.Profit.Amount);
-                            deposit.Profit.Amount += profit;
-                        }
-                        else if (!deposit.DepositCore.DepositVariable.DepositGeneral.WithCapitalization)
-                        {
-                            var profit = (int)deposit.DepositCore.InterestAccrual.TermInDays / 365.0m 
-                                * (deposit.DepositCore.InterestRate / 100.0m)
-                                * (deposit.Account.Money.Amount + deposit.Profit.Amount);
-                            deposit.Profit.Amount += profit;
-                        }
-                        // close depsoit
-                        var total = deposit.Account.Money.Amount + deposit.Profit.Amount;
-
-                        deposit.Account.TerminationDate = _timeService.CurrentTime;                       
-                        _db.DepositAccounts.Update(deposit);
-                        _db.SaveChanges();
-
-                        var bank = _depositDb.GetStandardAccounts().First(i => i.LegalEntity == _depositDb.GetLegalEntities().First()
-                            && i.Account.Money.Currency == deposit.Account.Money.Currency);
-                        bank.Account.Money.Amount -= total;
-                        _db.StandardAccounts.Update(bank);
-                        _db.SaveChanges();
-
-                        // create standard account with equal amount of money
-                        var standardAccount = new StandardAccount
-                        {
-                            Person = deposit.Person,
-                        };
-                        _db.StandardAccounts.Add(standardAccount);
-                        _db.SaveChanges();
-
-                        var acc = new Account
-                        {
-                            Name = $"closed deposit {deposit.Account.Number}",
-                            Number = DbRetrieverUtils.GenerateNewStandardAccountId(_depositDb),
-                            OpenDate = _timeService.CurrentTime,
-                            StandardAccount = standardAccount,
-                        };
-                        _db.Accounts.Add(acc);
-                        _db.SaveChanges();
-
-                        var money = new Money
-                        {
-                            Currency = deposit.Account.Money.Currency,
-                            Account = acc,
-                            Amount = total,
-                        };
-                        _db.Moneys.Add(money);
-                        _db.SaveChanges();
+                    // termination date is now
+                    if (_timeService.CountElapsedDays(deposit.Account.OpenDate) == (deposit.DepositCore.InterestAccrual.TermInDays ?? 365))
+                    {                        
+                        CloseDeposit(deposit, true);
                     }
                 }
             }
+        }
+
+     
+        private void CloseDeposit(DepositAccount deposit, bool saveProfit)
+        {
+            if (saveProfit)
+            {            
+                if (deposit.DepositCore.DepositVariable.DepositGeneral.WithCapitalization)
+                {
+                    var profit = (_timeService.CountElapsedDays(deposit.Account.OpenDate) % 30) / 365.0m
+                        * (deposit.DepositCore.InterestRate / 100.0m)
+                        * (deposit.Account.Money.Amount + deposit.Profit.Amount);
+                    deposit.Profit.Amount += profit;
+                }
+                else if (!deposit.DepositCore.DepositVariable.DepositGeneral.WithCapitalization)
+                {
+                    var profit = (int)deposit.DepositCore.InterestAccrual.TermInDays / 365.0m
+                        * (deposit.DepositCore.InterestRate / 100.0m)
+                        * (deposit.Account.Money.Amount + deposit.Profit.Amount);
+                    deposit.Profit.Amount += profit;
+                }
+            }
+
+            var totalMoney = deposit.Account.Money.Amount + deposit.Profit.Amount;
+
+            deposit.Account.TerminationDate = _timeService.CurrentTime;
+            _db.DepositAccounts.Update(deposit);
+            _db.SaveChanges();
+
+            var bank = _depositDb.GetStandardAccounts().First(i => i.LegalEntity == _depositDb.GetLegalEntities().First()
+                && i.Account.Money.Currency == deposit.Account.Money.Currency);
+            bank.Account.Money.Amount -= totalMoney;
+            _db.StandardAccounts.Update(bank);
+            _db.SaveChanges();
+
+            // create standard account with equal amount of money
+            var standardAccount = new StandardAccount
+            {
+                Person = deposit.Person,
+            };
+            _db.StandardAccounts.Add(standardAccount);
+            _db.SaveChanges();
+
+            var acc = new Account
+            {
+                Name = $"closed deposit {deposit.Account.Number}",
+                Number = DbRetrieverUtils.GenerateNewStandardAccountId(_depositDb),
+                OpenDate = _timeService.CurrentTime,
+                StandardAccount = standardAccount,
+            };
+            _db.Accounts.Add(acc);
+            _db.SaveChanges();
+
+            var money = new Money
+            {
+                Currency = deposit.Account.Money.Currency,
+                Account = acc,
+                Amount = totalMoney,
+            };
+            _db.Moneys.Add(money);
+            _db.SaveChanges();
         }
 
         // GET: Deposit
@@ -365,7 +371,7 @@ namespace Bank.Controllers
 
         private bool CheckOpenDate(DateTime openDate)
         {
-            return openDate.AddDays(1) >= _timeService.CurrentTime;
+            return openDate >= _timeService.CurrentTime;
         }
 
         private bool CheckMoneyAmount(int currencyId, int depositGeneralId, int interestAccrualId, int accountSourceId, decimal moneyAmount)
@@ -418,25 +424,71 @@ namespace Bank.Controllers
         //}
 
         // GET: Deposit/Delete/5
+        // id == depositaccount id
         public ActionResult Delete(int id)
         {
-            return View();
+            try
+            {
+                var depositAccount = _depositDb.GetDepositAccounts().Where(i => i.Id == id).FirstOrDefault();
+
+                if (depositAccount == null)
+                {
+                    return View("StatusNotFound");
+                }
+                if (!_timeService.CheckActive(depositAccount.Account.TerminationDate))
+                {
+                    return View("StatusFailed", "Account is closed.");
+                }
+                var model = new DepositIndexViewModel
+                {
+                    AccountId = depositAccount.Account.Id,
+                    AccountName = depositAccount.Account.Name,
+                    AccountNumber = depositAccount.Account.Number,
+                    Currency = depositAccount.DepositCore.DepositVariable.Currency.Name,
+                    DepositName = depositAccount.DepositCore.DepositVariable.DepositGeneral.Name,
+                    Id = depositAccount.Id,
+                    InterestRate = depositAccount.DepositCore.InterestRate,
+                    IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(_timeService.CheckActive(depositAccount.Account.TerminationDate)),
+                    IsRevocable = OutputFormatUtils.ConvertBoolToYesNoFormat(depositAccount.DepositCore.DepositVariable.DepositGeneral.IsRevocable),
+                    MoneyAmount = depositAccount.Account.Money.Amount,
+                    OpenDate = depositAccount.Account.OpenDate,
+                    Owner = depositAccount.Person.FirstName + " " + depositAccount.Person.LastName,
+                    OwnerId = depositAccount.Person.Id,
+                    Passport = depositAccount.Person.Passport.Series + depositAccount.Person.Passport.Number,
+                    Profit = depositAccount.Profit?.Amount ?? 0m,
+                    ReplenishmentAllowed = OutputFormatUtils.ConvertBoolToYesNoFormat(depositAccount.DepositCore.DepositVariable.DepositGeneral.ReplenishmentAllowed),
+                    Term = depositAccount.DepositCore.InterestAccrual.Name,
+                    TerminationDate = depositAccount.Account.TerminationDate,
+                    WithCapitalization = OutputFormatUtils.ConvertBoolToYesNoFormat(depositAccount.DepositCore.DepositVariable.DepositGeneral.WithCapitalization),
+                };
+                return View(model);
+            }
+            catch (Exception)
+            {
+                return View("StatusFailed", "Deposit delete failed.");
+            }
         }
 
         // POST: Deposit/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, DepositIndexViewModel model)
         {
             try
             {
-                // TODO: Add delete logic here
+                var dep = _depositDb.GetDepositAccounts().First(i => i.Id == model.Id);
+                if (!_timeService.CheckActive(dep.Account.TerminationDate))
+                {
+                    return View("StatusFailed", "Account is closed.");
+                }
 
-                return RedirectToAction(nameof(Index));
+                CloseDeposit(dep, false);
+
+                return View("StatusSucceeded", "Deposit close succeeded.");
             }
             catch
             {
-                return View();
+                return View("StatusFailed", "Deposit delete failed.");
             }
         }
     }

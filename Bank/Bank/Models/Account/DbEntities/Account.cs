@@ -38,6 +38,9 @@ namespace Bank.Models
         [DataType(DataType.Date)]
         public DateTime OpenDate { get; set; }
 
+        /// <summary>
+        /// null for active accounts
+        /// </summary>
         [DataType(DataType.Date)]
         public DateTime? TerminationDate { get; set; }
 
