@@ -48,9 +48,14 @@ namespace Bank.Models
         private void WriteToStorage()
         { 
             File.WriteAllText(_pathToStorage, $"{CurrentTime.Year} {CurrentTime.Month} {CurrentTime.Day}");
-        }       
+        }
 
-        public bool CheckActive(DateTime? termination)
+        public bool IsActive(DateTime begin, DateTime? end) 
+        {
+            return CurrentTime > begin && (end == null || end > CurrentTime);
+        }
+
+        public bool CheckTerminationDate(DateTime? termination)
         {
             if (termination == null)
             {

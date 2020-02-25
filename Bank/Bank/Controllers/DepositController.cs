@@ -51,7 +51,7 @@ namespace Bank.Controllers
 
             foreach (var deposit in _depositDb.GetDepositAccounts())
             {
-                if (_timeService.CheckActive(deposit.Account.TerminationDate))
+                if (_timeService.IsActive(deposit.Account.OpenDate, deposit.Account.TerminationDate))
                 {
                     // month elapsed (for deposit with capitalization)
                     if (deposit.DepositCore.DepositVariable.DepositGeneral.WithCapitalization
@@ -157,7 +157,7 @@ namespace Bank.Controllers
                 DepositName = i.DepositCore.DepositVariable.DepositGeneral.Name,
                 Id = i.Id,
                 InterestRate = i.DepositCore.InterestRate,
-                IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(_timeService.CheckActive(i.Account.TerminationDate)),
+                IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(_timeService.IsActive(i.Account.OpenDate, i.Account.TerminationDate)),
                 IsRevocable = OutputFormatUtils.ConvertBoolToYesNoFormat(i.DepositCore.DepositVariable.DepositGeneral.IsRevocable),
                 MoneyAmount = i.Account.Money.Amount,
                 OpenDate = i.Account.OpenDate,
@@ -178,29 +178,29 @@ namespace Bank.Controllers
         // GET: Deposit/Details/5
         public ActionResult Details(int id)
         {
-            var acc = _depositDb.GetDepositAccounts().First(j => j.Id == id);
+            var dep = _depositDb.GetDepositAccounts().First(j => j.Id == id);
 
             var model = new DepositIndexViewModel
             {
-                AccountId = acc.Account.Id,
-                AccountName = acc.Account.Name,
-                AccountNumber = acc.Account.Number,
-                Currency = acc.DepositCore.DepositVariable.Currency.Name,
-                DepositName = acc.DepositCore.DepositVariable.DepositGeneral.Name,
-                Id = acc.Id,
-                InterestRate = acc.DepositCore.InterestRate,
-                IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(_timeService.CheckActive(acc.Account.TerminationDate)),
-                IsRevocable = OutputFormatUtils.ConvertBoolToYesNoFormat(acc.DepositCore.DepositVariable.DepositGeneral.IsRevocable),
-                MoneyAmount = acc.Account.Money.Amount,
-                OpenDate = acc.Account.OpenDate,
-                Owner = acc.Person.FirstName + " " + acc.Person.LastName,
-                OwnerId = acc.Person.Id,
-                Passport = acc.Person.Passport.Series + acc.Person.Passport.Number,
-                Profit = acc.Profit?.Amount ?? 0m,
-                ReplenishmentAllowed = OutputFormatUtils.ConvertBoolToYesNoFormat(acc.DepositCore.DepositVariable.DepositGeneral.ReplenishmentAllowed),
-                Term = acc.DepositCore.InterestAccrual.Name,
-                TerminationDate = acc.Account.TerminationDate,
-                WithCapitalization = OutputFormatUtils.ConvertBoolToYesNoFormat(acc.DepositCore.DepositVariable.DepositGeneral.WithCapitalization),
+                AccountId = dep.Account.Id,
+                AccountName = dep.Account.Name,
+                AccountNumber = dep.Account.Number,
+                Currency = dep.DepositCore.DepositVariable.Currency.Name,
+                DepositName = dep.DepositCore.DepositVariable.DepositGeneral.Name,
+                Id = dep.Id,
+                InterestRate = dep.DepositCore.InterestRate,
+                IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(_timeService.IsActive(dep.Account.OpenDate, dep.Account.TerminationDate)),
+                IsRevocable = OutputFormatUtils.ConvertBoolToYesNoFormat(dep.DepositCore.DepositVariable.DepositGeneral.IsRevocable),
+                MoneyAmount = dep.Account.Money.Amount,
+                OpenDate = dep.Account.OpenDate,
+                Owner = dep.Person.FirstName + " " + dep.Person.LastName,
+                OwnerId = dep.Person.Id,
+                Passport = dep.Person.Passport.Series + dep.Person.Passport.Number,
+                Profit = dep.Profit?.Amount ?? 0m,
+                ReplenishmentAllowed = OutputFormatUtils.ConvertBoolToYesNoFormat(dep.DepositCore.DepositVariable.DepositGeneral.ReplenishmentAllowed),
+                Term = dep.DepositCore.InterestAccrual.Name,
+                TerminationDate = dep.Account.TerminationDate,
+                WithCapitalization = OutputFormatUtils.ConvertBoolToYesNoFormat(dep.DepositCore.DepositVariable.DepositGeneral.WithCapitalization),
             };
 
             return View(model);
@@ -442,7 +442,7 @@ namespace Bank.Controllers
                 {
                     return View("StatusNotFound");
                 }
-                if (!_timeService.CheckActive(depositAccount.Account.TerminationDate))
+                if (!_timeService.CheckTerminationDate(depositAccount.Account.TerminationDate))
                 {
                     return View("StatusFailed", "Account is closed.");
                 }
@@ -455,7 +455,7 @@ namespace Bank.Controllers
                     DepositName = depositAccount.DepositCore.DepositVariable.DepositGeneral.Name,
                     Id = depositAccount.Id,
                     InterestRate = depositAccount.DepositCore.InterestRate,
-                    IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(_timeService.CheckActive(depositAccount.Account.TerminationDate)),
+                    IsActive = OutputFormatUtils.ConvertBoolToYesNoFormat(_timeService.IsActive(depositAccount.Account.OpenDate, depositAccount.Account.TerminationDate)),
                     IsRevocable = OutputFormatUtils.ConvertBoolToYesNoFormat(depositAccount.DepositCore.DepositVariable.DepositGeneral.IsRevocable),
                     MoneyAmount = depositAccount.Account.Money.Amount,
                     OpenDate = depositAccount.Account.OpenDate,
@@ -484,7 +484,7 @@ namespace Bank.Controllers
             try
             {
                 var dep = _depositDb.GetDepositAccounts().First(i => i.Id == model.Id);
-                if (!_timeService.CheckActive(dep.Account.TerminationDate))
+                if (!_timeService.CheckTerminationDate(dep.Account.TerminationDate))
                 {
                     return View("StatusFailed", "Account is closed.");
                 }

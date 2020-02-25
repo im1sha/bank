@@ -175,7 +175,7 @@ namespace Bank
             }
 
             var result = _depositDb.GetStandardAccounts().Where(i => i.Person == person 
-                && (!activeOnly || _timeService.CheckActive(i.Account.TerminationDate))).ToList();
+                && (!activeOnly || _timeService.CheckTerminationDate(i.Account.TerminationDate))).ToList();
 
             if (result.Count == 0)
             {
