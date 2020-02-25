@@ -24,7 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Core\Credit\" />
     <Folder Include="Views\Credit\" />
   </ItemGroup>
 
