@@ -5,10 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\Account\Validation\**" />
-    <Content Remove="Models\Account\Validation\**" />
-    <EmbeddedResource Remove="Models\Account\Validation\**" />
-    <None Remove="Models\Account\Validation\**" />
+    <Compile Remove="Models\Core\Account\Validation\**" />
+    <Content Remove="Models\Core\Account\Validation\**" />
+    <EmbeddedResource Remove="Models\Core\Account\Validation\**" />
+    <None Remove="Models\Core\Account\Validation\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,6 +21,11 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.2" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\Core\Credit\" />
+    <Folder Include="Views\Credit\" />
   </ItemGroup>
 
 

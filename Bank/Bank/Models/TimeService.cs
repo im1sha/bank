@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Bank
+namespace Bank.Models
 {
     public class TimeService
     {
