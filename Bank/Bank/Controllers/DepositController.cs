@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Bank.Controllers
@@ -17,7 +16,7 @@ namespace Bank.Controllers
         private readonly PersonDbEntityRetriever _personDb;
         private readonly BankAppDbContext _db;
         private readonly TimeService _timeService;
-      
+
         public DepositController(BankAppDbContext context, ILogger<PersonController> logger, LinkGenerator linkGenerator, TimeService timeService)
         {
             _db = context;
@@ -34,89 +33,98 @@ namespace Bank.Controllers
             if (skipDay)
             {
                 SkipDay();
-                _timeService.AddDays(1);
             }
             else if (skipMonth)
             {
                 for (int i = 0; i < 30; i++)
                 {
-                    SkipDay();
+                    SkipDay();      
                 }
-                _timeService.AddDays(30);
             }
 
             return RedirectToAction(nameof(Index));
         }
 
-        private void SkipDay() 
+        private void SkipDay()
         {
-            foreach (var dep in _depositDb.GetDepositAccounts())
+            _timeService.AddDays(1);
+
+            foreach (var deposit in _depositDb.GetDepositAccounts())
             {
-                if (_timeService.CheckActive(dep.Account.TerminationDate))
+                if (_timeService.CheckActive(deposit.Account.TerminationDate))
                 {
                     var profitAdded = false;
                     // month elapsed (for deposit with capitalization)
-                    if (dep.DepositCore.DepositVariable.DepositGeneral.WithCapitalization 
-                        && _timeService.IsMultipleOfMonth(dep.Account.OpenDate))
+                    if (deposit.DepositCore.DepositVariable.DepositGeneral.WithCapitalization
+                        && _timeService.IsMultipleOfMonth(deposit.Account.OpenDate))
                     {
-                        dep.Profit.Amount += dep.DepositCore.InterestRate / 100.0m * (30.0m / 365.0m) * (dep.Account.Money.Amount + dep.Profit.Amount);
-                        _db.DepositAccounts.Update(dep);
+                        var profit =  (30.0m / 365.0m)
+                            * (deposit.DepositCore.InterestRate / 100.0m) 
+                            * (deposit.Account.Money.Amount + deposit.Profit.Amount);
+                        deposit.Profit.Amount += profit;
+                        _db.DepositAccounts.Update(deposit);
                         _db.SaveChanges();
+
                         profitAdded = true;
                     }
                     // termination date now
-                    if (Math.Floor((_timeService.CurrentTime - dep.Account.OpenDate).TotalDays) == (dep.DepositCore.InterestAccrual.TermInDays ?? -1))
+                    if ((int)(_timeService.CurrentTime - deposit.Account.OpenDate).TotalDays == (deposit.DepositCore.InterestAccrual.TermInDays ?? 365))
                     {
-                        if (!profitAdded && dep.DepositCore.DepositVariable.DepositGeneral.WithCapitalization)
+                        if (!profitAdded && deposit.DepositCore.DepositVariable.DepositGeneral.WithCapitalization)
                         {
-                            dep.Profit.Amount += ((int)Math.Floor((_timeService.CurrentTime - dep.Account.OpenDate).TotalDays) % 30) 
-                                * (dep.DepositCore.InterestRate / 100.0m / 365.0m * (dep.Account.Money.Amount + dep.Profit.Amount));
+                            var profit = ((int)(_timeService.CurrentTime - deposit.Account.OpenDate).TotalDays % 30) / 365.0m
+                                * (deposit.DepositCore.InterestRate / 100.0m) 
+                                * (deposit.Account.Money.Amount + deposit.Profit.Amount);
+                            deposit.Profit.Amount += profit;
                         }
-                        else if (!dep.DepositCore.DepositVariable.DepositGeneral.WithCapitalization)
+                        else if (!deposit.DepositCore.DepositVariable.DepositGeneral.WithCapitalization)
                         {
-                            dep.Profit.Amount += (int)dep.DepositCore.InterestAccrual.TermInDays * dep.DepositCore.InterestRate / 100.0m / 365.0m;
-                        }      
+                            var profit = (int)deposit.DepositCore.InterestAccrual.TermInDays / 365.0m 
+                                * (deposit.DepositCore.InterestRate / 100.0m)
+                                * (deposit.Account.Money.Amount + deposit.Profit.Amount);
+                            deposit.Profit.Amount += profit;
+                        }
                         // close depsoit
-                        var total = dep.Account.Money.Amount + dep.Profit.Amount;
+                        var total = deposit.Account.Money.Amount + deposit.Profit.Amount;
 
-                        dep.Account.TerminationDate = _timeService.CurrentTime;
-                        dep.Account.Money.Amount = 0;
-                        dep.Profit.Amount = 0;
+                        deposit.Account.TerminationDate = _timeService.CurrentTime;                       
+                        _db.DepositAccounts.Update(deposit);
+                        _db.SaveChanges();
 
-                        _db.DepositAccounts.Update(dep);
+                        var bank = _depositDb.GetStandardAccounts().First(i => i.LegalEntity == _depositDb.GetLegalEntities().First()
+                            && i.Account.Money.Currency == deposit.Account.Money.Currency);
+                        bank.Account.Money.Amount -= total;
+                        _db.StandardAccounts.Update(bank);
                         _db.SaveChanges();
 
                         // create standard account with equal amount of money
                         var standardAccount = new StandardAccount
                         {
-                            Person = dep.Person,
+                            Person = deposit.Person,
                         };
-
                         _db.StandardAccounts.Add(standardAccount);
                         _db.SaveChanges();
 
                         var acc = new Account
                         {
-                            Name = $"closed deposit {dep.Account.Number}",
+                            Name = $"closed deposit {deposit.Account.Number}",
                             Number = DbRetrieverUtils.GenerateNewStandardAccountId(_depositDb),
                             OpenDate = _timeService.CurrentTime,
                             StandardAccount = standardAccount,
                         };
-
                         _db.Accounts.Add(acc);
                         _db.SaveChanges();
 
                         var money = new Money
                         {
-                            Currency = dep.Account.Money.Currency,
+                            Currency = deposit.Account.Money.Currency,
                             Account = acc,
                             Amount = total,
                         };
-
                         _db.Moneys.Add(money);
                         _db.SaveChanges();
                     }
-                }               
+                }
             }
         }
 
@@ -124,7 +132,7 @@ namespace Bank.Controllers
         //      Deposit/index/5
         // id == person id
         public ActionResult Index(int? id)
-        {                     
+        {
             var accs = _depositDb.GetDepositAccounts().Where(i => id == null ? true : i.PersonId == id).ToList();
 
             var models = accs.Select(i => new DepositIndexViewModel
@@ -249,7 +257,7 @@ namespace Bank.Controllers
                     default:
                         return View("StatusNotFound");
                 }
-            }            
+            }
         }
 
         // POST: Deposit/Create
@@ -260,7 +268,7 @@ namespace Bank.Controllers
             var personId = input.OwnerId;
             var currencyId = input.CurrencyId;
             var depositGeneralId = input.DepositGeneralId;
-            var accountSourceId = input.AccountSourceId; 
+            var accountSourceId = input.AccountSourceId;
             var interestAccrualId = input.InterestAccrualId;
             var openDate = input.OpenDate;
             var selectedMoney = input.SelectedMoney;
@@ -293,22 +301,22 @@ namespace Bank.Controllers
                     // use input data here, not vm
 
                     var sourceAccount = _depositDb.GetAccounts().First(i => i.Id == accountSourceId);
-                    var deposit = new DepositAccount 
-                    { 
+                    var deposit = new DepositAccount
+                    {
                         Person = _personDb.GetPeople().First(i => i.Id == personId),
-                        DepositCore = _depositDb.GetDepositCores().First(i => i.DepositVariable.DepositGeneralId == depositGeneralId 
-                            && i.DepositVariable.CurrencyId == currencyId && i.InterestAccrualId == interestAccrualId),                      
+                        DepositCore = _depositDb.GetDepositCores().First(i => i.DepositVariable.DepositGeneralId == depositGeneralId
+                            && i.DepositVariable.CurrencyId == currencyId && i.InterestAccrualId == interestAccrualId),
                     };
                     _db.DepositAccounts.Add(deposit);
                     _db.SaveChanges();
 
                     var accForDeposit = new Account
-                    { 
+                    {
                         DepositAccount = deposit,
                         Name = accName,
-                        Number = DbRetrieverUtils.GenerateNewDepositId(_depositDb), 
+                        Number = DbRetrieverUtils.GenerateNewDepositId(_depositDb),
                         OpenDate = openDate,
-                        TerminationDate = null,                        
+                        TerminationDate = null,
                     };
                     _db.Accounts.Add(accForDeposit);
                     _db.SaveChanges();
@@ -317,7 +325,7 @@ namespace Bank.Controllers
                     {
                         DepositAccount = deposit,
                         Currency = _depositDb.GetCurrencies().First(i => i.Id == currencyId),
-                        Amount = 0,                        
+                        Amount = 0,
                     };
                     _db.Moneys.Add(profit);
                     _db.SaveChanges();
@@ -336,6 +344,12 @@ namespace Bank.Controllers
                     _db.Accounts.Update(source);
                     _db.SaveChanges();
 
+                    var bank = _depositDb.GetStandardAccounts().First(i => i.LegalEntity == _depositDb.GetLegalEntities().First()
+                        && i.Account.Money.CurrencyId == currencyId);
+                    bank.Account.Money.Amount += selectedMoney;
+                    _db.StandardAccounts.Update(bank);
+                    _db.SaveChanges();
+
                     return View("StatusSucceeded", "Deposit creation succeeded.");
                 }
                 else
@@ -348,10 +362,10 @@ namespace Bank.Controllers
                 return View("StatusFailed", "Deposit creation failed.");
             }
         }
-     
+
         private bool CheckOpenDate(DateTime openDate)
         {
-            return openDate.AddDays(1) >= _timeService.CurrentTime ;
+            return openDate.AddDays(1) >= _timeService.CurrentTime;
         }
 
         private bool CheckMoneyAmount(int currencyId, int depositGeneralId, int interestAccrualId, int accountSourceId, decimal moneyAmount)
@@ -370,7 +384,7 @@ namespace Bank.Controllers
                 }
 
                 return _depositDb.GetDepositVariables()
-                    .First(i => i.DepositGeneralId == depositGeneralId 
+                    .First(i => i.DepositGeneralId == depositGeneralId
                         && i.DepositCores.Any(i => i.InterestAccrualId == interestAccrualId)
                         && i.CurrencyId == currencyId).MinimalDeposit.Amount <= moneyAmount;
             }
@@ -380,28 +394,28 @@ namespace Bank.Controllers
             }
         }
 
-        // GET: Deposit/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
+        //// GET: Deposit/Edit/5
+        //public ActionResult Edit(int id)
+        //{
+        //    return View();
+        //}
 
-        // POST: Deposit/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
+        //// POST: Deposit/Edit/5
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Edit(int id, IFormCollection collection)
+        //{
+        //    try
+        //    {
+        //        // TODO: Add update logic here
 
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    catch
+        //    {
+        //        return View();
+        //    }
+        //}
 
         // GET: Deposit/Delete/5
         public ActionResult Delete(int id)

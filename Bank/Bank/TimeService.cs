@@ -31,11 +31,20 @@ namespace Bank
             {
                 throw new ArgumentNullException();
             }
-            if (CurrentTime == openDate)
+            if ((int)(CurrentTime - openDate).TotalDays == 0)
             {
                 return false;
             }    
-            return ((int)Math.Floor((CurrentTime - openDate).TotalDays) % 30 == 0);
+            var result = (int)(CurrentTime - openDate).TotalDays % 30 == 0;
+            if (result)
+            {
+
+            }
+            else
+            {
+
+            }
+            return result;
         }
 
         private void WriteToStorage()

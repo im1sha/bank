@@ -34,7 +34,15 @@ namespace Bank
                 + Path.DirectorySeparatorChar.ToString()
                 + "time";
 
-            var timeshiftData = File.ReadAllText(path);
+            string timeshiftData;
+            try
+            {
+                timeshiftData = File.ReadAllText(path);
+            }
+            catch
+            {
+                timeshiftData = "";
+            }
             DateTime date;
             //DeltaDays DeltaMonth 
             var strings = timeshiftData.Split(" ");
