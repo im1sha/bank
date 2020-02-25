@@ -93,6 +93,13 @@ namespace Bank.Controllers
                     deposit.Profit.Amount += profit;
                 }
             }
+            else
+            {
+                if (deposit.DepositCore.DepositVariable.DepositGeneral.WithCapitalization)
+                {
+                    deposit.Profit.Amount = 0;
+                }
+            }
 
             var totalMoney = deposit.Account.Money.Amount + deposit.Profit.Amount;
 
