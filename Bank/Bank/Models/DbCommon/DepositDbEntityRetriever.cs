@@ -98,10 +98,10 @@ namespace Bank.Models
         {
             return Db.Moneys
                 .Include(i => i.Currency)
-                .Include(i => i.Account)
-                .Include(i => i.DepositVariable)
-                .Include(i => i.Transaction)
-                .Include(i => i.DepositAccount)
+                //.Include(i => i.Account)
+                //.Include(i => i.DepositVariable)
+                //.Include(i => i.Transaction)
+                //.Include(i => i.DepositAccount)
                 .OrderBy(i => i.Id)
                 .ToList();
         }

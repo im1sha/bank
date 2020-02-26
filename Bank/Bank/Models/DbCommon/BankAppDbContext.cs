@@ -134,6 +134,11 @@ namespace Bank.Models
 
             #region deposit
 
+            modelBuilder.Entity<Money>()
+               .HasOne(p => p.Currency)
+               .WithMany(t => t.Moneys)
+               .OnDelete(DeleteBehavior.Restrict);
+
             #region m2m
 
             modelBuilder.Entity<DepositCore>()
@@ -197,29 +202,24 @@ namespace Bank.Models
                 .HasForeignKey(a => a.AccountId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Money>()
-                .HasOne(p => p.Currency)
-                .WithMany(t => t.Moneys)
+            modelBuilder.Entity<Account>()
+                .HasOne(p => p.Money)
+                .WithOne(t => t.Account)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Money>()
-                .HasOne(p => p.Account)
-                .WithOne(t => t.Money)
+            modelBuilder.Entity<DepositVariable>()
+                .HasOne(p => p.MinimalDeposit)
+                .WithOne(t => t.DepositVariable)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Money>()
-                .HasOne(p => p.DepositVariable)
-                .WithOne(t => t.MinimalDeposit)
+            modelBuilder.Entity<Transaction>()
+                .HasOne(p => p.Amount)
+                .WithOne(t => t.Transaction)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Money>()
-                .HasOne(p => p.Transaction)
-                .WithOne(t => t.Amount)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Money>()
-                .HasOne(p => p.DepositAccount)
-                .WithOne(t => t.Profit)
+            modelBuilder.Entity<DepositAccount>()
+                .HasOne(p => p.Profit)
+                .WithOne(t => t.DepositAccount)
                 .OnDelete(DeleteBehavior.Restrict);
 
             #endregion

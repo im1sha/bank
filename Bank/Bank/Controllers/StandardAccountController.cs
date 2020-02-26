@@ -141,26 +141,28 @@ namespace Bank.Controllers
                     _db.StandardAccounts.Add(standardAccount);
                     _db.SaveChanges();
 
+                    money = new Money
+                    {
+                        Currency = model.CurrencyList[model.CurrencyId - 1],
+                        Amount = decimal.Parse(model.Amount),
+                    };
+
+                    _db.Moneys.Add(money);
+                    _db.SaveChanges();
+
                     acc = new Account
                     {
                         Name = model.Name,
                         Number = DbRetrieverUtils.GenerateNewStandardAccountId(_depositDb),
                         OpenDate = _timeService.CurrentTime,
+                        Money = money,
                         StandardAccount = standardAccount,
                     };
 
                     _db.Accounts.Add(acc);
                     _db.SaveChanges();
 
-                    money = new Money
-                    {
-                        Currency = model.CurrencyList[model.CurrencyId - 1],
-                        Account = acc,
-                        Amount = decimal.Parse(model.Amount),
-                    };
-
-                    _db.Moneys.Add(money);
-                    _db.SaveChanges();
+                    
 
                     return View("StatusSucceeded", "Standard account create succeeded.");
                 }
@@ -259,7 +261,7 @@ namespace Bank.Controllers
                     _db.Accounts.Update(acc);
                     _db.SaveChanges();
 
-                    money = _depositDb.GetMoneys().First(i => i.Account == acc);
+                    money = _depositDb.GetAccounts().First(i => i == acc).Money;
                     money.Amount = decimal.Parse(model.Amount);
                     _db.Moneys.Update(money);
                     _db.SaveChanges();

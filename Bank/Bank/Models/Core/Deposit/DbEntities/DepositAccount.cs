@@ -10,6 +10,7 @@
 
         public Account Account { get; set; }
 
+        public int ProfitId { get; set; }
         public Money Profit { get; set; }
 
         public int DepositCoreId { get; set; }

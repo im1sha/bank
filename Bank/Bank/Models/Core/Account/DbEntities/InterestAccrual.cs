@@ -17,6 +17,8 @@ namespace Bank.Models
         public int? TermInDays { get; set; }
 
         public List<DepositCore> DepositCores { get; set; }
+
+        //public List<CreditCore> CreditCores { get; set; }
     }
 }
 

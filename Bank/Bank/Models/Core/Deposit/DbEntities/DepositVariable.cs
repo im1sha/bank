@@ -19,7 +19,7 @@ namespace Bank.Models
 
         public DepositGeneral DepositGeneral { get; set; }
 
+        public int MinimalDepositId { get; set; }
         public Money MinimalDeposit { get; set; }
-
     }
 }

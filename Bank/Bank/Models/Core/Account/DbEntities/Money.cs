@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Bank.Models 
+namespace Bank.Models
 {
-    
+
     public class Money
     {
         public int Id { get; set; }
@@ -18,18 +14,18 @@ namespace Bank.Models
         [Column(TypeName = "decimal(18, 2)")]
         public decimal Amount { get; set; }
 
-        #region should have 1 only referenced, others == null
-        public int? AccountId { get; set; }
+        //#region should have 1 only referenced, others == null
+
         public Account Account { get; set; }
 
-        public int? DepositVariableId { get; set; }
         public DepositVariable DepositVariable { get; set; }
+        public DepositAccount DepositAccount { get; set; }
 
-        public int? TransactionId { get; set; }
+        //public CreditVariable CreditVariable { get; set; }
+        //public CreditAccount CreditAccount { get; set; }
+
         public Transaction Transaction { get; set; }
 
-        public int? DepositAccountId { get; set; }
-        public DepositAccount DepositAccount { get; set; }
-        #endregion
+        //#endregion
     }
 }

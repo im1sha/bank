@@ -30,6 +30,8 @@ namespace Bank.Models
         /// </summary>
         //public bool? IsPassive { get; set; }
 
+        public int MoneyId { get; set; }
+
         /// <summary>
         /// Financial amount 
         /// </summary>
@@ -44,19 +46,21 @@ namespace Bank.Models
         [DataType(DataType.Date)]
         public DateTime? TerminationDate { get; set; }
 
+        #region must reference to single one
+
         public int? DepositAccountId { get; set; }
 
-        /// <summary>
-        /// Cannot reference both DepositAccount and StandardAccount
-        /// </summary>
         public DepositAccount DepositAccount { get; set; }
 
         public int? StandardAccountId { get; set; }
-
-        /// <summary>
-        /// Cannot reference both DepositAccount and StandardAccount
-        /// </summary>
+     
         public StandardAccount StandardAccount { get; set; }
+
+        public int? CreditAccountId { get; set; }
+
+        //public CreditAccount CreditAccount { get; set; }
+
+        #endregion
 
         public List<Transaction> Transactions { get; set; }
     }

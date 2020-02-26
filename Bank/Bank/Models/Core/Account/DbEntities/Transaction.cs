@@ -17,6 +17,8 @@ namespace Bank.Models
 
         public bool IsRecipient { get; set; }
 
+        public int AmountId { get; set; }
+
         public Money Amount { get; set; }
     }
 }

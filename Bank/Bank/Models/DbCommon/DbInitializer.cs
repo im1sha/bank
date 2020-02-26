@@ -478,6 +478,45 @@ namespace Bank.Models
                 context.Currencies.AddRange(currencies);
                 context.SaveChanges();
             }
+
+            var money = new[]
+            {
+                // deposit terms
+                new Money { Amount= 25m, Currency = currencies[0], },//DepositVariable = depositVariables[0], }, //0
+                new Money { Amount= 25m, Currency = currencies[0], },//DepositVariable = depositVariables[1], }, //1
+                new Money { Amount= 25m, Currency = currencies[1], },//DepositVariable = depositVariables[2], }, //2
+                new Money { Amount= 25m, Currency = currencies[1], },//DepositVariable = depositVariables[3], }, //3
+                new Money { Amount= 50m, Currency = currencies[2], },//DepositVariable = depositVariables[4], }, //4
+                new Money { Amount= 50m, Currency = currencies[2], },//DepositVariable = depositVariables[5], }, //5
+
+                // deposits
+                new Money { Amount = 100m, Currency = currencies[0], },//Account = accounts[0], },//6
+                new Money { Amount = 100m, Currency = currencies[1], },//Account = accounts[1], },//7
+                new Money { Amount = 100m, Currency = currencies[1], },//Account = accounts[2], },//8
+                new Money { Amount = 100m, Currency = currencies[2], },//Account = accounts[3], },//9
+
+                new Money { Amount = 0, Currency = currencies[0], },// DepositAccount = accounts[0].DepositAccount, },//10
+                new Money { Amount = 0, Currency = currencies[1], },//DepositAccount = accounts[1].DepositAccount, },//11
+                new Money { Amount = 0, Currency = currencies[1], },//DepositAccount = accounts[2].DepositAccount, },//12
+                new Money { Amount = 0, Currency = currencies[2], },//DepositAccount = accounts[3].DepositAccount, },//13
+
+                // standard -> dev fund
+                new Money { Amount = 10000000000m, Currency = currencies[0], },//Account = accounts[4], },//14
+                new Money { Amount = 20000000000m, Currency = currencies[1], },//Account = accounts[5], },//15
+                new Money { Amount = 30000000000m, Currency = currencies[2], },//Account = accounts[6], },//16
+
+                // standard
+                new Money { Amount = 50m,  Currency = currencies[0], },//Account = accounts[7], },//17
+                new Money { Amount = 100m, Currency = currencies[1], },//Account = accounts[8], },
+                new Money { Amount = 100m, Currency = currencies[2], },//Account = accounts[9], },
+                new Money { Amount = 100m, Currency = currencies[2], },//Account = accounts[10], },
+            };
+            if (!context.Moneys.Any())
+            {
+                context.Moneys.AddRange(money);
+                context.SaveChanges();
+            }
+
             var legalEntities = new[]
             {
                 new LegalEntity { Name = "Development fund BelAPB.by" },
@@ -510,37 +549,45 @@ namespace Bank.Models
                 context.DepositGenerals.AddRange(depositGenerals);
                 context.SaveChanges();
             }
+         
             var depositVariables = new[]
             {
                 new DepositVariable
                 {
                    Currency = currencies[0],
                    DepositGeneral = depositGenerals[0],
+                   MinimalDeposit = money[0],
                 },
                 new DepositVariable
                 {
                     Currency = currencies[0],
-                    DepositGeneral = depositGenerals[1],
+                    DepositGeneral = depositGenerals[1],        
+                    MinimalDeposit = money[1],
                 },
                 new DepositVariable
                 {
                    Currency = currencies[1],
                    DepositGeneral = depositGenerals[0],
+                   MinimalDeposit = money[2],
                 },
                 new DepositVariable
                 {
                     Currency = currencies[1],
                     DepositGeneral = depositGenerals[1],
+                    MinimalDeposit = money[3],
+
                 },
                 new DepositVariable
                 {
                    Currency = currencies[2],
                    DepositGeneral = depositGenerals[0],
+                   MinimalDeposit = money[4],
                 },
                 new DepositVariable
                 {
                     Currency = currencies[2],
                     DepositGeneral = depositGenerals[1],
+                    MinimalDeposit = money[5],
                 },
             };
             if (!context.DepositVariables.Any())
@@ -664,27 +711,32 @@ namespace Bank.Models
                 context.DepositCores.AddRange(depositCores);
                 context.SaveChanges();
             }
+
             var depositAccounts = new[]
             {
                 new DepositAccount
                 {
                     DepositCore = depositCores[0],
                     Person = people[0],
+                    Profit = money[10],
                 },
                 new DepositAccount
                 {
                     DepositCore = depositCores[8],
                     Person = people[0],
+                    Profit = money[11],
                 },
                 new DepositAccount
                 {
                     DepositCore = depositCores[7],
                     Person = people[1],
+                    Profit = money[12],
                 },
                 new DepositAccount
                 {
                     DepositCore = depositCores[17],
                     Person = people[2],
+                    Profit = money[13],
                 },
             };
             if (!context.DepositAccounts.Any())
@@ -728,7 +780,7 @@ namespace Bank.Models
                 context.StandardAccounts.AddRange(standardAccount);
                 context.SaveChanges();
             }
-
+         
             var accounts = new[]
             {
                 #region accounts for deposit accounts
@@ -739,6 +791,7 @@ namespace Bank.Models
                     Name = "dep acc#0",
                     Number = "3014000000008",
                     OpenDate = timeService.CurrentTime,
+                    Money = money[6],
                 },
                 new Account
                 {
@@ -746,6 +799,7 @@ namespace Bank.Models
                     Name = "dep acc#1",
                     Number = "3014000000007",
                     OpenDate = timeService.CurrentTime,
+                    Money = money[7],
                 },
                 new Account
                 {
@@ -753,6 +807,7 @@ namespace Bank.Models
                     Name = "dep acc#2",
                     Number = "3014000000006",
                     OpenDate = timeService.CurrentTime,
+                    Money = money[8],
                 },
                 new Account
                 {
@@ -760,6 +815,7 @@ namespace Bank.Models
                     Name = "dep acc#3",
                     Number = "3014000000005",
                     OpenDate = timeService.CurrentTime,
+                    Money = money[9],
                 },
 
                 #endregion
@@ -772,6 +828,7 @@ namespace Bank.Models
                     Name = "st acc#4 = fund",
                     Number = "7327000000009",
                     OpenDate = timeService.CurrentTime.AddDays(-500),
+                    Money = money[14],
                 },
                 new Account
                 {
@@ -779,6 +836,7 @@ namespace Bank.Models
                     Name = "st acc#5 = fund",
                     Number = "7327000000010",
                     OpenDate = timeService.CurrentTime.AddDays(-500),
+                    Money = money[15],
                 },
                 new Account
                 {
@@ -786,10 +844,15 @@ namespace Bank.Models
                     Name = "st acc#6 = fund",
                     Number = "7327000000011",
                     OpenDate = timeService.CurrentTime.AddDays(-500),
+                    Money = money[16],
                 },
 
                 #endregion   
-                
+                  // standard
+                //new Money { Amount = 50m,  Currency = currencies[0], },//Account = accounts[7], },//17
+                //new Money { Amount = 100m, Currency = currencies[1], },//Account = accounts[8], },
+                //new Money { Amount = 100m, Currency = currencies[2], },//Account = accounts[9], },
+                //new Money { Amount = 100m, Currency = currencies[2], },//Account = accounts[10], },
                 #region accs of person standard accounts
 
                 new Account
@@ -798,14 +861,15 @@ namespace Bank.Models
                     Name = "st acc#0",
                     Number = "9999000000004",
                     OpenDate = timeService.CurrentTime.AddDays(-500),
-                },
-             
+                    Money = money[17],
+                },            
                 new Account
                 {
                     StandardAccount = standardAccount[1],
                     Name = "st acc#1",
                     Number = "9999000000003",
                     OpenDate = timeService.CurrentTime.AddDays(-500),
+                    Money = money[18],
                 },
                 new Account
                 {
@@ -813,6 +877,7 @@ namespace Bank.Models
                     Name = "st acc#2",
                     Number = "9999000000002",
                     OpenDate = timeService.CurrentTime.AddDays(-1000),
+                    Money = money[19],
                 },
                 new Account
                 {
@@ -820,6 +885,7 @@ namespace Bank.Models
                     Name = "st acc#3",
                     Number = "9999000000001",
                     OpenDate = timeService.CurrentTime.AddDays(-1500),
+                    Money = money[20],
                 },
 
                 #endregion
@@ -830,43 +896,7 @@ namespace Bank.Models
                 context.SaveChanges();
             }
 
-            var money = new[]
-            {
-                // deposit terms
-                new Money { Amount= 25m, Currency = currencies[0], DepositVariable = depositVariables[0], },
-                new Money { Amount= 25m, Currency = currencies[0], DepositVariable = depositVariables[1], },
-                new Money { Amount= 25m, Currency = currencies[1], DepositVariable = depositVariables[2], },
-                new Money { Amount= 25m, Currency = currencies[1], DepositVariable = depositVariables[3], },
-                new Money { Amount= 50m, Currency = currencies[2], DepositVariable = depositVariables[4], },
-                new Money { Amount= 50m, Currency = currencies[2], DepositVariable = depositVariables[5], },
-
-                // deposits
-                new Money { Amount = 100m, Currency = currencies[0], Account = accounts[0], },
-                new Money { Amount = 100m, Currency = currencies[1], Account = accounts[1], },
-                new Money { Amount = 100m, Currency = currencies[1], Account = accounts[2], },
-                new Money { Amount = 100m, Currency = currencies[2], Account = accounts[3], },
-
-                new Money { Amount = 0, Currency = currencies[0], DepositAccount = accounts[0].DepositAccount, },
-                new Money { Amount = 0, Currency = currencies[1], DepositAccount = accounts[1].DepositAccount, },
-                new Money { Amount = 0, Currency = currencies[1], DepositAccount = accounts[2].DepositAccount, },
-                new Money { Amount = 0, Currency = currencies[2], DepositAccount = accounts[3].DepositAccount, },
-
-                // standard -> dev fund
-                new Money { Amount = 10000000000m, Currency = currencies[0], Account = accounts[4], },
-                new Money { Amount = 20000000000m, Currency = currencies[1], Account = accounts[5], },
-                new Money { Amount = 30000000000m, Currency = currencies[2], Account = accounts[6], },
-
-                // standard
-                new Money { Amount = 50m,  Currency = currencies[0], Account = accounts[7], },
-                new Money { Amount = 100m, Currency = currencies[1], Account = accounts[8], },
-                new Money { Amount = 100m, Currency = currencies[2], Account = accounts[9], },
-                new Money { Amount = 100m, Currency = currencies[2], Account = accounts[10], },              
-            };
-            if (!context.Moneys.Any())
-            {
-                context.Moneys.AddRange(money);
-                context.SaveChanges();
-            }
+           
         }
     }
 }

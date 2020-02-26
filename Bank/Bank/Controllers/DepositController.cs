@@ -121,24 +121,26 @@ namespace Bank.Controllers
             _db.StandardAccounts.Add(standardAccount);
             _db.SaveChanges();
 
+            var money = new Money
+            {
+                Currency = deposit.Account.Money.Currency,
+                Amount = totalMoney,
+            };
+            _db.Moneys.Add(money);
+            _db.SaveChanges();
+
             var acc = new Account
             {
                 Name = $"closed deposit {deposit.Account.Number}",
                 Number = DbRetrieverUtils.GenerateNewStandardAccountId(_depositDb),
                 OpenDate = _timeService.CurrentTime,
                 StandardAccount = standardAccount,
+                Money = money,
             };
             _db.Accounts.Add(acc);
             _db.SaveChanges();
 
-            var money = new Money
-            {
-                Currency = deposit.Account.Money.Currency,
-                Account = acc,
-                Amount = totalMoney,
-            };
-            _db.Moneys.Add(money);
-            _db.SaveChanges();
+            
         }
 
         // GET: Deposit
@@ -314,11 +316,29 @@ namespace Bank.Controllers
                     // use input data here, not vm
 
                     var sourceAccount = _depositDb.GetAccounts().First(i => i.Id == accountSourceId);
+
+                    var profit = new Money
+                    {
+                        Currency = _depositDb.GetCurrencies().First(i => i.Id == currencyId),
+                        Amount = 0,
+                    };
+                    _db.Moneys.Add(profit);
+                    _db.SaveChanges();
+
+                    var money = new Money
+                    {
+                        Currency = _depositDb.GetCurrencies().First(i => i.Id == currencyId),
+                        Amount = selectedMoney,
+                    };
+                    _db.Moneys.Add(money);
+                    _db.SaveChanges();
+
                     var deposit = new DepositAccount
                     {
                         Person = _personDb.GetPeople().First(i => i.Id == personId),
                         DepositCore = _depositDb.GetDepositCores().First(i => i.DepositVariable.DepositGeneralId == depositGeneralId
                             && i.DepositVariable.CurrencyId == currencyId && i.InterestAccrualId == interestAccrualId),
+                        Profit = profit,
                     };
                     _db.DepositAccounts.Add(deposit);
                     _db.SaveChanges();
@@ -330,27 +350,12 @@ namespace Bank.Controllers
                         Number = DbRetrieverUtils.GenerateNewDepositId(_depositDb),
                         OpenDate = openDate,
                         TerminationDate = null,
+                        Money = money,
                     };
                     _db.Accounts.Add(accForDeposit);
                     _db.SaveChanges();
 
-                    var profit = new Money
-                    {
-                        DepositAccount = deposit,
-                        Currency = _depositDb.GetCurrencies().First(i => i.Id == currencyId),
-                        Amount = 0,
-                    };
-                    _db.Moneys.Add(profit);
-                    _db.SaveChanges();
-
-                    var money = new Money
-                    {
-                        Account = accForDeposit,
-                        Currency = _depositDb.GetCurrencies().First(i => i.Id == currencyId),
-                        Amount = selectedMoney,
-                    };
-                    _db.Moneys.Add(money);
-                    _db.SaveChanges();
+                 
 
                     var source = _depositDb.GetAccounts().First(i => i.Id == accountSourceId);
                     source.Money.Amount -= selectedMoney;
