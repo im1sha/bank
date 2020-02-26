@@ -30,6 +30,10 @@ namespace Bank
 
             var path = Configuration.GetValue<string>(WebHostDefaults.ContentRootKey)
                 + Path.DirectorySeparatorChar.ToString()
+                + "Models"
+                + Path.DirectorySeparatorChar.ToString()
+                + "Services"
+                + Path.DirectorySeparatorChar.ToString()
                 + "TimeServiceData"
                 + Path.DirectorySeparatorChar.ToString()
                 + "time";

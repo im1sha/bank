@@ -49,6 +49,6 @@ namespace Bank.Models
 
         public List<DepositAccount> DepositAccounts { get; set; }
 
-        //public List<CreditAccount> CreditAccounts { get; set; }
+        public List<CreditAccount> CreditAccounts { get; set; }
     }
 }

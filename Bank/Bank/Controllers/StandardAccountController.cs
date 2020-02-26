@@ -9,13 +9,13 @@ namespace Bank.Controllers
 {
     public class StandardAccountController : Controller
     {
-        private readonly ILogger<PersonController> _logger;
+        private readonly ILogger<StandardAccountController> _logger;
         private readonly DepositDbEntityRetriever _depositDb;
         private readonly PersonDbEntityRetriever _personDb;
         private readonly BankAppDbContext _db;
         private readonly TimeService _timeService;
 
-        public StandardAccountController(BankAppDbContext context, ILogger<PersonController> logger, TimeService timeService)
+        public StandardAccountController(BankAppDbContext context, ILogger<StandardAccountController> logger, TimeService timeService)
         {
             _db = context;
             _depositDb = new DepositDbEntityRetriever(context);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Bank.Models
@@ -46,8 +47,19 @@ namespace Bank.Models
         }
 
         private void WriteToStorage()
-        { 
-            File.WriteAllText(_pathToStorage, $"{CurrentTime.Year} {CurrentTime.Month} {CurrentTime.Day}");
+        {
+            while (true)
+            {
+                try
+                {
+                    File.WriteAllText(_pathToStorage, $"{CurrentTime.Year} {CurrentTime.Month} {CurrentTime.Day}");
+                    break;
+                }
+                catch
+                {
+                    Thread.Sleep(100);
+                }
+            }
         }
 
         public bool IsActive(DateTime begin, DateTime? end) 

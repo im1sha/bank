@@ -14,18 +14,24 @@ namespace Bank.Models
         [Column(TypeName = "decimal(18, 2)")]
         public decimal Amount { get; set; }
 
-        //#region should have 1 only referenced, others == null
-
         public Account Account { get; set; }
 
         public DepositVariable DepositVariable { get; set; }
+
         public DepositAccount DepositAccount { get; set; }
 
-        //public CreditVariable CreditVariable { get; set; }
-        //public CreditAccount CreditAccount { get; set; }
+        public CreditAccount CreditAccountPaidMainPart { get; set; }
+
+        public CreditAccount CreditAccountPaidPercentagePart { get; set; }
+
+        public CreditAccount CreditAccountPaidFinePart { get; set; }
+
+        public CreditAccount CreditAccountFine { get; set; }
+
+        public CreditTerm CreditTermMinimalCredit { get; set; }
+
+        public CreditTerm CreditTermMaximalCredit { get; set; }
 
         public Transaction Transaction { get; set; }
-
-        //#endregion
     }
 }

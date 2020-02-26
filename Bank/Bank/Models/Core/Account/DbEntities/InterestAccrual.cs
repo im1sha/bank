@@ -18,7 +18,7 @@ namespace Bank.Models
 
         public List<DepositCore> DepositCores { get; set; }
 
-        //public List<CreditCore> CreditCores { get; set; }
+        public List<CreditTerm> CreditTerms { get; set; }
     }
 }
 

@@ -58,7 +58,7 @@ namespace Bank.Models
 
         public int? CreditAccountId { get; set; }
 
-        //public CreditAccount CreditAccount { get; set; }
+        public CreditAccount CreditAccount { get; set; }
 
         #endregion
 

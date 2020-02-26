@@ -1,19 +1,35 @@
-﻿//namespace Bank.Models
-//{
-//    public class CreditAccount
-//    {
-//        public int Id { get; set; }
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-//        public int PersonId { get; set; }
+namespace Bank.Models
+{
+    public class CreditAccount
+    {
+        public int Id { get; set; }
 
-//        public Person Person { get; set; }
+        public int PersonId { get; set; }
 
-//        public Account Account { get; set; }
+        public Person Person { get; set; }
 
-//        public Money Profit { get; set; }
+        public Account Account { get; set; }
 
-//        public int DepositCoreId { get; set; }
+        public int PaidMainPartId { get; set; }
 
-//        public DepositCore DepositCore { get; set; }
-//    }
-//}
+        public Money PaidMainPart { get; set; }
+
+        public int PaidPercentagePartId { get; set; }
+
+        public Money PaidPercentagePart { get; set; }
+
+        public int PaidFinePartId { get; set; }
+
+        public Money PaidFinePart { get; set; }
+
+        public int FineId { get; set; }
+
+        public Money Fine { get; set; }
+
+        public int CreditTermId { get; set; }
+
+        public CreditTerm CreditTerm { get; set; }
+    }
+}

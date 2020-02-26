@@ -11,7 +11,5 @@ namespace Bank.Models
         public List<Money> Moneys { get; set; }
 
         public List<DepositVariable> DepositVariables { get; set; }
-
-        //public List<CreditVariable> CreditVariables { get; set; }
     }
 }
