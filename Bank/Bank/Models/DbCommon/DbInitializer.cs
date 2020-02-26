@@ -1,11 +1,10 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 
 namespace Bank.Models
 {
     public static class DbInitializer
     {
-        public static void InitializePeopleAndRelatedEntities(BankAppDbContext context, TimeService timeService)
+        public static void Initialze(BankAppDbContext context, TimeService timeService)
         {
             var cities = new[]
             {
@@ -461,6 +460,9 @@ namespace Bank.Models
                 new InterestAccrual { TermInDays = 95, Name = "95 days" },
                 new InterestAccrual { TermInDays = 185, Name = "185 days" },
                 new InterestAccrual { TermInDays = 370, Name = "370 days" },
+                new InterestAccrual { TermInDays = 540, Name = "18 month (540 days)" },
+                new InterestAccrual { TermInDays = 1800, Name = "5 years (1800 days)" },
+                new InterestAccrual { TermInDays = 3600, Name = "10 years (3600 days)" },
             };
             if (!context.InterestAccruals.Any())
             {
@@ -481,7 +483,7 @@ namespace Bank.Models
 
             var money = new[]
             {
-                // deposit terms
+                // deposit terms min money amount : DepositVariable
                 new Money { Amount= 25m, Currency = currencies[0], },//DepositVariable = depositVariables[0], }, //0
                 new Money { Amount= 25m, Currency = currencies[0], },//DepositVariable = depositVariables[1], }, //1
                 new Money { Amount= 25m, Currency = currencies[1], },//DepositVariable = depositVariables[2], }, //2
@@ -489,7 +491,8 @@ namespace Bank.Models
                 new Money { Amount= 50m, Currency = currencies[2], },//DepositVariable = depositVariables[4], }, //4
                 new Money { Amount= 50m, Currency = currencies[2], },//DepositVariable = depositVariables[5], }, //5
 
-                // deposits
+
+                // deposits : Account + DepositAccount
                 new Money { Amount = 100m, Currency = currencies[0], },//Account = accounts[0], },//6
                 new Money { Amount = 100m, Currency = currencies[1], },//Account = accounts[1], },//7
                 new Money { Amount = 100m, Currency = currencies[1], },//Account = accounts[2], },//8
@@ -500,16 +503,52 @@ namespace Bank.Models
                 new Money { Amount = 0, Currency = currencies[1], },//DepositAccount = accounts[2].DepositAccount, },//12
                 new Money { Amount = 0, Currency = currencies[2], },//DepositAccount = accounts[3].DepositAccount, },//13
 
-                // standard -> dev fund
+
+                // standard'DevFund related : Account
                 new Money { Amount = 10000000000m, Currency = currencies[0], },//Account = accounts[4], },//14
                 new Money { Amount = 20000000000m, Currency = currencies[1], },//Account = accounts[5], },//15
                 new Money { Amount = 30000000000m, Currency = currencies[2], },//Account = accounts[6], },//16
-
-                // standard
+                // standard related : Account
                 new Money { Amount = 50m,  Currency = currencies[0], },//Account = accounts[7], },//17
                 new Money { Amount = 100m, Currency = currencies[1], },//Account = accounts[8], },
                 new Money { Amount = 100m, Currency = currencies[2], },//Account = accounts[9], },
                 new Money { Amount = 100m, Currency = currencies[2], },//Account = accounts[10], },
+              
+
+                // credits : CreditTerm.MinimalCredit
+                new Money { Amount = 1000m, Currency = currencies[2], }, //21
+                new Money { Amount = 1000m, Currency = currencies[2], },
+                new Money { Amount = 100m, Currency = currencies[2], },
+                //credits : CreditTerm.MaximalCredit
+                new Money { Amount = 1000000m, Currency = currencies[2], }, //24
+                new Money { Amount = 1000000m, Currency = currencies[2], },
+                new Money { Amount = 1000000m, Currency = currencies[2], },
+
+                // credits : Account
+                new Money { Amount = 1000m, Currency = currencies[2], }, //27
+                new Money { Amount = 2000m, Currency = currencies[2], },
+                new Money { Amount = 3000m, Currency = currencies[2], },
+
+                // credits : CreditAccount for Account with Money[27]
+                new Money {Amount = 0m, Currency = currencies[2], },//30
+                new Money {Amount = 0m, Currency = currencies[2], },
+                new Money {Amount = 0m, Currency = currencies[2], },
+                new Money {Amount = 0m, Currency = currencies[2], },
+                // credits : CreditAccount for Account with Money[28]
+                new Money {Amount = 0m, Currency = currencies[2], },//34
+                new Money {Amount = 0m, Currency = currencies[2], },
+                new Money {Amount = 0m, Currency = currencies[2], },
+                new Money {Amount = 0m, Currency = currencies[2], },
+                // credits : CreditAccount for Account with Money[29]
+                new Money {Amount = 0m, Currency = currencies[2], },//38
+                new Money {Amount = 0m, Currency = currencies[2], },
+                new Money {Amount = 0m, Currency = currencies[2], },
+                new Money {Amount = 0m, Currency = currencies[2], },
+                // credits : CreditAccount for Account with Money[30]
+                new Money {Amount = 0m, Currency = currencies[2], },//42
+                new Money {Amount = 0m, Currency = currencies[2], },
+                new Money {Amount = 0m, Currency = currencies[2], },
+                new Money {Amount = 0m, Currency = currencies[2], },
             };
             if (!context.Moneys.Any())
             {
@@ -549,7 +588,7 @@ namespace Bank.Models
                 context.DepositGenerals.AddRange(depositGenerals);
                 context.SaveChanges();
             }
-         
+
             var depositVariables = new[]
             {
                 new DepositVariable
@@ -561,7 +600,7 @@ namespace Bank.Models
                 new DepositVariable
                 {
                     Currency = currencies[0],
-                    DepositGeneral = depositGenerals[1],        
+                    DepositGeneral = depositGenerals[1],
                     MinimalDeposit = money[1],
                 },
                 new DepositVariable
@@ -780,7 +819,78 @@ namespace Bank.Models
                 context.StandardAccounts.AddRange(standardAccount);
                 context.SaveChanges();
             }
-         
+
+            var creditTerms = new[]
+            {
+                new CreditTerm
+                {
+                    Name = "Auto (18 month)",
+                    Currency = currencies[2],
+                    DailyFineRate = 0.15m,
+                    EarlyRepaymentAllowed = false,
+                    InterestAccrual = interestAccruals[3],
+                    InterestRate = 3.9m,
+                    IsAnnuity = true,
+                    MaximalCredit = money[24],
+                    MinimalCredit = money[21],
+                },
+                new CreditTerm
+                {
+                    Name = "Auto (10 years)",
+                    Currency = currencies[2],
+                    DailyFineRate = 0.15m,
+                    EarlyRepaymentAllowed = false,
+                    InterestAccrual = interestAccruals[5],
+                    InterestRate = 12.32m,
+                    IsAnnuity = true,
+                    MaximalCredit = money[25],
+                    MinimalCredit = money[22],
+                },
+                new CreditTerm
+                {
+                    Name = "Products",
+                    Currency = currencies[2],
+                    DailyFineRate = 0.15m,
+                    EarlyRepaymentAllowed = false,
+                    InterestAccrual = interestAccruals[4],
+                    InterestRate = 12.32m,
+                    IsAnnuity = false,
+                    MaximalCredit = money[26],
+                    MinimalCredit = money[23],
+                },
+            };
+
+            var creditAccounts = new[]
+            {
+                new CreditAccount
+                {
+                    CreditTerm = creditTerms[0],
+                    Fine = money[30],
+                    PaidFinePart=money[31],
+                    PaidMainPart=money[32],
+                    PaidPercentagePart=money[33],
+                    Person = people[0],
+                },
+                new CreditAccount
+                {
+                    CreditTerm = creditTerms[1],
+                    Fine = money[34],
+                    PaidFinePart=money[35],
+                    PaidMainPart=money[36],
+                    PaidPercentagePart=money[37],
+                    Person = people[1],
+                },
+                new CreditAccount
+                {
+                    CreditTerm = creditTerms[2],
+                    Fine = money[38],
+                    PaidFinePart=money[39],
+                    PaidMainPart=money[40],
+                    PaidPercentagePart=money[41],
+                    Person = people[2],
+                },
+            };
+
             var accounts = new[]
             {
                 #region accounts for deposit accounts
@@ -848,11 +958,7 @@ namespace Bank.Models
                 },
 
                 #endregion   
-                  // standard
-                //new Money { Amount = 50m,  Currency = currencies[0], },//Account = accounts[7], },//17
-                //new Money { Amount = 100m, Currency = currencies[1], },//Account = accounts[8], },
-                //new Money { Amount = 100m, Currency = currencies[2], },//Account = accounts[9], },
-                //new Money { Amount = 100m, Currency = currencies[2], },//Account = accounts[10], },
+
                 #region accs of person standard accounts
 
                 new Account
@@ -862,7 +968,7 @@ namespace Bank.Models
                     Number = "9999000000004",
                     OpenDate = timeService.CurrentTime.AddDays(-500),
                     Money = money[17],
-                },            
+                },
                 new Account
                 {
                     StandardAccount = standardAccount[1],
@@ -889,14 +995,43 @@ namespace Bank.Models
                 },
 
                 #endregion
+
+                #region accounts for credits
+
+                new Account
+                {
+                    CreditAccount = creditAccounts[0],
+                    Name = "credit acc#1",
+                    Number = "1111000000001",
+                    OpenDate = timeService.CurrentTime,
+                    Money = money[27],
+                },
+                new Account
+                {
+                    CreditAccount = creditAccounts[1],
+                    Name = "credit acc#2",
+                    Number = "1111000000002",
+                    OpenDate = timeService.CurrentTime,
+                    Money = money[28],
+                },
+                new Account
+                {
+                    CreditAccount = creditAccounts[2],
+                    Name = "credit acc#3",
+                    Number = "1111000000003",
+                    OpenDate = timeService.CurrentTime,
+                    Money = money[29],
+                }
+
+                #endregion
             };
             if (!context.Accounts.Any())
             {
                 context.Accounts.AddRange(accounts);
                 context.SaveChanges();
             }
-
-           
         }
     }
 }
+
+

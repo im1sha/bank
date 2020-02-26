@@ -20,7 +20,7 @@ namespace Bank
                 try
                 {
                     var context = services.GetRequiredService<BankAppDbContext>();
-                    DbInitializer.InitializePeopleAndRelatedEntities(context, services.GetRequiredService<TimeService>());
+                    DbInitializer.Initialze(context, services.GetRequiredService<TimeService>());
                 }
                 catch (Exception ex)
                 {
