@@ -38,10 +38,14 @@ namespace Bank.Models
                 .Include(i => i.Account).ThenInclude(i => i.Money)
                 .Include(i => i.Person).ThenInclude(i => i.Passport)
                 .Include(i => i.CreditTerm).ThenInclude(i => i.InterestAccrual)
+                .Include(i => i.CreditTerm).ThenInclude(i => i.Currency)
+                .Include(i => i.CreditTerm).ThenInclude(i => i.MaximalCredit)
+                .Include(i => i.CreditTerm).ThenInclude(i => i.MinimalCredit)
                 .Include(i => i.Fine)
                 .Include(i => i.PaidFinePart)
                 .Include(i => i.PaidMainPart)
                 .Include(i => i.PaidPercentagePart)
+                .Include(i => i.Percentage)
                 .OrderBy(i => i.Id)
                 .ToList();
         }
@@ -80,6 +84,7 @@ namespace Bank.Models
                 .Include(i => i.CreditAccountPaidFinePart)
                 .Include(i => i.CreditAccountPaidMainPart)
                 .Include(i => i.CreditAccountPaidPercentagePart)
+                .Include(i => i.CreditAccountPercentage)
                 .Include(i => i.CreditTermMaximalCredit)
                 .Include(i => i.CreditTermMinimalCredit)
                 .Include(i => i.Transaction)

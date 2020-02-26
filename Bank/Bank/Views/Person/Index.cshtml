@@ -46,8 +46,9 @@
                 @Html.ActionLink("Edit", "Edit", new { Id = item.Id }) |
                 @Html.ActionLink("Details", "Details", new { Id = item.Id }) |
                 @Html.ActionLink("Delete", "Delete", new { Id = item.Id }) |
-                @Html.ActionLink("Create standard account", "Create", "StandardAccount",  new { id = item.Id, isPerson = true }) |
-                @Html.ActionLink("Create deposit", "Create", "Deposit", new { personId = item.Id })
+                @Html.ActionLink("Create account", "Create", "StandardAccount",  new { id = item.Id, isPerson = true }) |
+                @Html.ActionLink("Create deposit", "Create", "Deposit", new { personId = item.Id }) |
+                @Html.ActionLink("Create credit", "Create", "Credit", new { personId = item.Id })
             </td>
         </tr>
 }

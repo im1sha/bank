@@ -27,6 +27,11 @@ namespace Bank.Models
 
         public bool IsAnnuity { get; set; }
 
+        /// <summary>
+        /// Fines calculated relatively 
+        /// to unpaid fines + unpaid percents 
+        /// + unpaid amount of main part
+        /// </summary>
         [Column(TypeName = "decimal(18, 2)")]
         public decimal DailyFineRate { get; set; }
 

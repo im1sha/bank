@@ -16,6 +16,10 @@ namespace Bank.Models
 
         public Money PaidMainPart { get; set; }
 
+        public int PercentageId { get; set; }
+
+        public Money Percentage { get; set; }
+
         public int PaidPercentagePartId { get; set; }
 
         public Money PaidPercentagePart { get; set; }

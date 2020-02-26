@@ -1,0 +1,91 @@
+﻿@model IEnumerable<Bank.Models.CreditIndexViewModel>
+@inject Bank.Models.TimeService Timer
+
+@{
+    ViewData["Title"] = "List of credits";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h3>
+    @Html.ActionLink("Skip day", "Skip", new { skipDay = true, skipMonth = false }) |
+    @Html.ActionLink("Skip 30 days", "Skip", new { skipDay = false, skipMonth = true }) |
+    Date: @Timer.CurrentTime.Date.ToShortDateString()
+</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+
+            <th>
+                @Html.DisplayNameFor(model => model.Owner)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Passport)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreditName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Currency)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MoneyAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NextPayment)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RequiredToCloseCredit)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsActive)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AccountNumber)
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Owner)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Passport)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreditName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Currency)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MoneyAmount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NextPayment)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RequiredToCloseCredit)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsActive)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AccountNumber)
+                </td>
+
+                <td>
+                    @Html.ActionLink("Details", "Details", new { Id = item.Id }) |
+                    @Html.ActionLink("Close", "Delete", new { Id = item.Id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

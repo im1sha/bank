@@ -544,7 +544,8 @@ namespace Bank.Models
                 new Money {Amount = 0m, Currency = currencies[2], },
                 new Money {Amount = 0m, Currency = currencies[2], },
                 new Money {Amount = 0m, Currency = currencies[2], },
-                // credits : CreditAccount for Account with Money[30]
+               
+                //credits : CreditAccount .Percentage
                 new Money {Amount = 0m, Currency = currencies[2], },//42
                 new Money {Amount = 0m, Currency = currencies[2], },
                 new Money {Amount = 0m, Currency = currencies[2], },
@@ -869,6 +870,7 @@ namespace Bank.Models
                     PaidFinePart=money[31],
                     PaidMainPart=money[32],
                     PaidPercentagePart=money[33],
+                    Percentage= money[42],
                     Person = people[0],
                 },
                 new CreditAccount
@@ -878,6 +880,7 @@ namespace Bank.Models
                     PaidFinePart=money[35],
                     PaidMainPart=money[36],
                     PaidPercentagePart=money[37],
+                    Percentage= money[43],
                     Person = people[1],
                 },
                 new CreditAccount
@@ -887,6 +890,7 @@ namespace Bank.Models
                     PaidFinePart=money[39],
                     PaidMainPart=money[40],
                     PaidPercentagePart=money[41],
+                    Percentage= money[44],
                     Person = people[2],
                 },
             };

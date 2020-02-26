@@ -27,6 +27,8 @@ namespace Bank.Models
         public CreditAccount CreditAccountPaidFinePart { get; set; }
 
         public CreditAccount CreditAccountFine { get; set; }
+    
+        public CreditAccount CreditAccountPercentage { get; set; }
 
         public CreditTerm CreditTermMinimalCredit { get; set; }
 
