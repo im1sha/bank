@@ -1,334 +1,248 @@
-﻿//using Bank.Models;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
+﻿using Bank.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-//namespace Bank
-//{
-//    public class CreditCreateViewModelConstructor
-//    {
-//        private readonly PersonDbEntityRetriever _personDb;
-//        private readonly DepositDbEntityRetriever _depositDb;
-//        private readonly TimeService _timeService;
+namespace Bank
+{
+    public class CreditCreateViewModelConstructor
+    {
+        private readonly PersonDbEntityRetriever _personDb;
+        private readonly CreditDbEntityRetriever _creditDb;
+        private readonly TimeService _timeService;
 
-//        public CreditCreateViewModelConstructor(DepositDbEntityRetriever depositDb, PersonDbEntityRetriever personDb, TimeService timeService)
-//        {
-//            if (depositDb == null || personDb == null || timeService == null)
-//            {
-//                throw new ArgumentNullException();
-//            }
-//            _timeService = timeService;
-//            _personDb = personDb;
-//            _depositDb = depositDb;
-//        }
-   
-//        //public DepositCreateViewModel CurrencyChanged(DepositCreateViewModel model)
-//        //{
-//        //    return Generate(
-//        //        model.OwnerId,
-//        //        outCurrencyId: model.CurrencyId,
-//        //        outDepositGeneralId: null,
-//        //        outAccountId: null,
-//        //        outInterestAccrualId: null,
-//        //        outOpenDate: model.OpenDate);
-//        //}
+        public CreditCreateViewModelConstructor(CreditDbEntityRetriever creditDb, PersonDbEntityRetriever personDb, TimeService timeService)
+        {
+            if (creditDb == null || personDb == null || timeService == null)
+            {
+                throw new ArgumentNullException();
+            }
+            _timeService = timeService;
+            _personDb = personDb;
+            _creditDb = creditDb;
+        }
 
-//        //public DepositCreateViewModel DepositChanged(DepositCreateViewModel model)
-//        //{
-//        //    return Generate(
-//        //        model.OwnerId,
-//        //        outCurrencyId: model.CurrencyId,
-//        //        outDepositGeneralId: model.DepositGeneralId,
-//        //        outAccountId: null,
-//        //        outInterestAccrualId: null,
-//        //        outOpenDate: model.OpenDate);
-//        //}
+        public CreditCreateViewModel GenerateNew(
+            int personId,
+            int? currencyId = null,
+            int? creditTermId = null,
+            int? accountId = null,
+            DateTime? openDate = null)
+        {
+            return Generate(personId, currencyId, creditTermId, accountId, openDate);
+        }
 
-//        public DepositCreateViewModel GenerateNew(
-//            int personId,
-//            int? currencyId = null,
-//            int? depositGeneralId = null,
-//            int? accountId = null,
-//            int? interestAccrualId = null,
-//            DateTime? openDate = null)
-//        {
-//            return Generate(personId, currencyId, depositGeneralId, accountId, interestAccrualId, openDate);
-//        }
+        public CreditCreateViewModel AccountChanged(CreditCreateViewModel model)
+        {
+            return Generate(
+                model.OwnerId,
+                outCurrencyId: model.CurrencyId,
+                outCreditTermId: model.CreditTermId,
+                outAccountId: model.AccountSourceId,
+                outOpenDate: model.OpenDate);
+        }
 
-//        public DepositCreateViewModel AccountChanged(DepositCreateViewModel model)
-//        {
-//            return Generate(
-//                model.OwnerId, 
-//                outCurrencyId: model.CurrencyId,
-//                outDepositGeneralId: model.DepositGeneralId,
-//                outAccountId: model.AccountSourceId,
-//                outInterestAccrualId: model.InterestAccrualId,
-//                outOpenDate: model.OpenDate);
-//        }
+        public DateTime DateChanged(CreditCreateViewModel model)
+        {
+            var result = model.OpenDate.AddDays((int)_creditDb.GetInterestAccruals().First(i => i.Id == model.InterestAccrualId).TermInDays);
 
-//        public DateTime DateChanged(DepositCreateViewModel model)
-//        {
-//            var result = model.OpenDate.AddDays((int)_depositDb.GetInterestAccruals().First(i => i.Id == model.InterestAccrualId).TermInDays);
+            return result;
+        }
 
-//            return result;
-//        }
+        public CreditCreateViewModel TermChanged(CreditCreateViewModel model)
+        {
+            return Generate(model.OwnerId,
+                outOpenDate: model.OpenDate);
+        }
 
-//        public DepositCreateViewModel TermChanged(DepositCreateViewModel model)
-//        {
-//            return Generate(model.OwnerId, 
-//                outInterestAccrualId: model.InterestAccrualId, 
-//                outOpenDate: model.OpenDate);
-//        }
-    
-//        // null for absence of changes in this component
-//        private DepositCreateViewModel Generate(
-//            int outPersonId,  
-//            int? outCurrencyId = null,    
-//            int? outDepositGeneralId = null,
-//            int? outAccountId = null, 
-//            int? outInterestAccrualId = null,
-//            DateTime? outOpenDate = null)
-//        {
-//            try
-//            {
-//                var person = GetPersonById(outPersonId);
-         
-//                var allStandardAccounts = GetStandardAccountsByPerson(person, activeOnly: true);
-//                var outCurrency = allStandardAccounts.FirstOrDefault(i => outCurrencyId == null
-//                    ? true : i?.Account?.Money?.Currency?.Id == outCurrencyId)?.Account?.Money?.Currency;
+        // null for absence of changes in this component
+        private CreditCreateViewModel Generate(
+            int outPersonId,
+            int? outCurrencyId = null,
+            int? outCreditTermId = null,
+            int? outAccountId = null,
+            DateTime? outOpenDate = null)
+        {
+            try
+            {
+                var person = GetPersonById(outPersonId);
 
-//                var accounts = GetAccountsByStandardAccountsAndCurrency(allStandardAccounts, outCurrency).ToList();
-//                var account = GetAccountByAccountsAndAccountId(accounts, outAccountId);
+                var allStandardAccounts = GetStandardAccountsByPersonAndAvailableCurrency(
+                    person, 
+                    _creditDb.GetCreditTerms().Select(i => i.Currency).Distinct(), 
+                    activeOnly: true);
+                var outCurrency = _creditDb.GetCreditTerms().FirstOrDefault(i => outCurrencyId == null ? true : i.CurrencyId == outCurrencyId)?.Currency
+                    ?? throw new CreditCreateException(CreditCreateExceptionType.CreditNotExist);
+                
+                var accounts = GetAccountsByStandardAccountsAndCurrency(allStandardAccounts, outCurrency).ToList();
+                var account = GetAccountByAccountsAndAccountId(accounts, outAccountId);
 
-//                var currencyList = GetCurrenciesByStandardAccounts(allStandardAccounts).ToList();
-//                var currency = GetCurrencyByStandardAccount(account.StandardAccount);
+                var currencyList = GetCurrenciesByStandardAccounts(allStandardAccounts).ToList();
+                var currency = GetCurrencyByStandardAccount(account.StandardAccount);
 
-//                var depositVariableList = GetDepositVariablesByCurrencyAndDepositGeneralId(currency, outDepositGeneralId).ToList();
-//                var depositVariable = depositVariableList.First();
+                var termsList = GetCreditTermsByCurrencies(new[] { currency }).ToList();
+                var term = termsList.FirstOrDefault(i => outCreditTermId == null ? true : i.Id == outCreditTermId)
+                    ?? throw new CreditCreateException(CreditCreateExceptionType.CreditNotExist);
 
-//                var depositGeneralList = GetDepositGeneralsByCurrencies(currencyList).ToList();
-//                var depsoitGeneral = depositGeneralList.First(i => i.DepositVariables.Contains(depositVariable));
+                var interestAccrual = term.InterestAccrual;
+                var requiredMoney = term.MinimalCredit.Amount;
+                var maxMoney = term.MaximalCredit.Amount;
 
-//                var coreList = SelectDepositCoresByInterestAccrualId(
-//                    GetDepositCoresByDepositVariables(depositVariableList),
-//                    outInterestAccrualId)
-//                    .ToList();
-//                var core = coreList.First(i => i.DepositVariable == depositVariable);
+                var vm = new CreditCreateViewModel
+                {
+                    CurrencyId = currency.Id,
+                    CurrencyList = currencyList,
+                    InterestAccrualId = interestAccrual.Id,
+                    InterestAccrualList = new List<InterestAccrual> { interestAccrual } ,
+                    OpenDate = outOpenDate == null ? _timeService.CurrentTime : (DateTime)outOpenDate,
+                    TerminationDate = outOpenDate == null
+                                          ? _timeService.CurrentTime.AddDays((int)interestAccrual.TermInDays)
+                                          : ((DateTime)outOpenDate).AddDays((int)interestAccrual.TermInDays),
+                    MinimalCredit = requiredMoney,
+                    CreditNumber = DbRetrieverUtils.GenerateNewCreditId(_creditDb),
+                    InterestRate = term.InterestRate,
+                    MoneyAmount = account.StandardAccount.Account.Money.Amount,
+                    Name = "Any user-defined name here",
+                    Owner = person.FirstName + " " + person.LastName,
+                    OwnerId = person.Id,
+                    Passport = person.Passport.Series + " " + person.Passport.Number,
+                    AccountSourceList = accounts,
+                    AccountSourceId = account.Id,
+                    CreditTermId = term.Id,
+                    CreditTermList = termsList,
+                    DailyFineRate = term.DailyFineRate,
+                    SelectedCredit = requiredMoney,
+                    MaximalCredit = maxMoney,
+                    EarlyRepaymentAllowed = OutputFormatUtils.ConvertBoolToYesNoFormat(term.EarlyRepaymentAllowed),
+                    IsAnnuity = OutputFormatUtils.ConvertBoolToYesNoFormat(term.IsAnnuity),
+                };
 
-//                var interestAccrualList = GetIntersestAccrualsByCores(coreList).ToList();           
-//                var interestAccrual = interestAccrualList.First(i => outInterestAccrualId == null ? true : i.Id == outInterestAccrualId);
+                return vm;
+            }
+            catch (CreditCreateException)
+            {
+                throw;
+            }
+        }
+        private Person GetPersonById(int id)
+        {
+            try
+            {
+                return _personDb.GetPeople().First(i => i.Id == id);
+            }
+            catch
+            {
+                throw new CreditCreateException(CreditCreateExceptionType.PersonNotExist);
+            }
+        }
 
-//                var requiredMoney = core.DepositVariable.MinimalDeposit.Amount;
+        private IEnumerable<StandardAccount> GetStandardAccountsByPersonAndAvailableCurrency(Person person, IEnumerable<Currency> currencies, bool activeOnly = true)
+        {
+            if (person == null)
+            {
+                throw new ArgumentNullException();
+            }
 
-//                var vm = new DepositCreateViewModel
-//                {
-//                    CurrencyId = currency.Id,
-//                    CurrencyList = currencyList.Select(i => new CurrencyViewModel { Id = i.Id, Name = i.Name, }).ToList(),
-//                    DepositGeneralId = depsoitGeneral.Id,
-//                    DepositGeneralList = depositGeneralList.Select(i => new DepositGeneralViewModel { Id = i.Id, Name = i.Name, }).ToList(),
-//                    InterestAccrualId = interestAccrual.Id,
-//                    InterestAccrualList = interestAccrualList.Select(i => new InterestAccrualViewModel { Id = i.Id, Name = i.Name, }).ToList(),
-//                    IsRevocable = OutputFormatUtils.ConvertBoolToYesNoFormat(depsoitGeneral.IsRevocable),
-//                    WithCapitalization = OutputFormatUtils.ConvertBoolToYesNoFormat(depsoitGeneral.WithCapitalization),
-//                    ReplenishmentAllowed = OutputFormatUtils.ConvertBoolToYesNoFormat(depsoitGeneral.ReplenishmentAllowed),
-//                    OpenDate = outOpenDate == null ? _timeService.CurrentTime : (DateTime) outOpenDate,
-//                    TerminationDate = outOpenDate == null 
-//                                          ? _timeService.CurrentTime.AddDays((int)interestAccrual.TermInDays)
-//                                          : ((DateTime)outOpenDate).AddDays((int)interestAccrual.TermInDays),
-//                    RequiredMoney = requiredMoney,
-//                    SelectedMoney = requiredMoney,
-//                    DepositNumber = DbRetrieverUtils.GenerateNewDepositId(_depositDb),
-//                    InterestRate = core.InterestRate,
-//                    MoneyAmount = account.StandardAccount.Account.Money.Amount,
-//                    Name = "Any user-defined name here",
-//                    Owner = person.FirstName + " " + person.LastName,
-//                    OwnerId = person.Id,
-//                    Passport = person.Passport.Series + " " + person.Passport.Number,
-//                    AccountSourceList = accounts.Select(i => new AccountViewModel { Id = i.Id, Number = i.Number, }).ToList(),
-//                    AccountSourceId = account.Id,
-//                };
+            var result = _creditDb.GetStandardAccounts().Where(i => i.Person == person && currencies.Contains(i.Account.Money.Currency)
+                && (!activeOnly || _timeService.CheckTerminationDate(i.Account.TerminationDate))).ToList();
 
-//                return vm;
-//            }
-//            catch (DepositCreateException)
-//            {
-//                throw;
-//            }
-//        }
-//        private Person GetPersonById(int id)
-//        {
-//            try
-//            {
-//                return _personDb.GetPeople().First(i => i.Id == id);
-//            }
-//            catch 
-//            {
-//                throw new DepositCreateException(DepositCreateExceptionType.PersonNotExist);
-//            }
-//        }
+            if (result.Count == 0)
+            {
+                throw new CreditCreateException(CreditCreateExceptionType.StandardAccountsNotExist);
+            }
 
-//        private IEnumerable<StandardAccount> GetStandardAccountsByPerson(Person person, bool activeOnly = true)
-//        {
-//            if (person == null)
-//            {
-//                throw new ArgumentNullException();
-//            }
+            return result;
+        }
 
-//            var result = _depositDb.GetStandardAccounts().Where(i => i.Person == person 
-//                && (!activeOnly || _timeService.CheckActive(i.Account.TerminationDate))).ToList();
+        private IEnumerable<Account> GetAccountsByStandardAccountsAndCurrency(
+            IEnumerable<StandardAccount> standardAccounts,
+            Currency currency)
+        {
+            if (standardAccounts == null)
+            {
+                throw new ArgumentNullException();
+            }
+            if (!standardAccounts.Any())
+            {
+                throw new ArgumentException();
+            }
+            if (currency == null)
+            {
+                throw new CreditCreateException(CreditCreateExceptionType.AccountsOfGivenCurrencyNotExist);
+            }
 
-//            if (result.Count == 0)
-//            {
-//                throw new DepositCreateException(DepositCreateExceptionType.StandardAccountsNotExist);
-//            }
+            try
+            {
+                return standardAccounts.Select(i => i.Account).GroupBy(i => i.Money.Currency).First(i => currency == i.Key).ToList();
+            }
+            catch
+            {
+                throw new CreditCreateException(CreditCreateExceptionType.AccountsOfGivenCurrencyNotExist);
+            }
+        }
 
-//            return result;
-//        }
+        private Account GetAccountByAccountsAndAccountId(IEnumerable<Account> accounts, int? outAccountId)
+        {
+            try
+            {
+                return accounts.First(i => outAccountId == null ? true : outAccountId == i.Id);
+            }
+            catch
+            {
+                throw new CreditCreateException(CreditCreateExceptionType.StandardAccountsNotExist);
+            }
+        }
 
-//        private IEnumerable<Account> GetAccountsByStandardAccountsAndCurrency(
-//            IEnumerable<StandardAccount> standardAccounts,
-//            Currency currency)
-//        {
-//            if (standardAccounts == null)
-//            {
-//                throw new ArgumentNullException();
-//            }
-//            if (!standardAccounts.Any())
-//            {
-//                throw new ArgumentException();
-//            }
-//            if (currency == null)
-//            {
-//                throw new DepositCreateException(DepositCreateExceptionType.AccountsOfGivenCurrencyNotExist);
-//            }
+        private IEnumerable<Currency> GetCurrenciesByStandardAccounts(IEnumerable<StandardAccount> standardAccounts)
+        {
+            if (standardAccounts == null)
+            {
+                throw new ArgumentNullException();
+            }
+            if (!standardAccounts.Any())
+            {
+                throw new ArgumentException();
+            }
 
-//            try
-//            {
-//                return standardAccounts.Select(i => i.Account).GroupBy(i => i.Money.Currency).First(i => currency == i.Key).ToList();
-//            }
-//            catch 
-//            {
-//                throw new DepositCreateException(DepositCreateExceptionType.AccountsOfGivenCurrencyNotExist);
-//            }
-//        }
+            return _creditDb.GetCurrencies()
+                .Where(i => standardAccounts.Any(j => i == j.Account.Money.Currency))
+                .ToList();
+        }
 
-//        private Account GetAccountByAccountsAndAccountId(IEnumerable<Account> accounts, int? outAccountId)
-//        {
-//            try
-//            {
-//                return accounts.First(i => outAccountId == null ? true : outAccountId == i.Id);
-//            }
-//            catch 
-//            {
-//                throw new DepositCreateException(DepositCreateExceptionType.StandardAccountsNotExist);
-//            }
-//        }
+        private Currency GetCurrencyByStandardAccount(StandardAccount standardAccount)
+        {
+            if (standardAccount == null)
+            {
+                throw new ArgumentNullException();
+            }
+            return standardAccount.Account.Money.Currency;
+        }
 
-//        private IEnumerable<Currency> GetCurrenciesByStandardAccounts(IEnumerable<StandardAccount> standardAccounts)
-//        {
-//            if (standardAccounts == null)
-//            {
-//                throw new ArgumentNullException();
-//            }
-//            if (!standardAccounts.Any())
-//            {
-//                throw new ArgumentException();
-//            }
+        private IEnumerable<CreditTerm> GetCreditTermsByCurrencies(IEnumerable<Currency> currencies)
+        {
+            var result = _creditDb.GetCreditTerms().Where(i => currencies.Contains(i.MaximalCredit.Currency)).ToList();
+            if (result.Count == 0)
+            {
+                throw new CreditCreateException(CreditCreateExceptionType.CreditNotExist);
+            }
+            return result;
+        }
 
-//            return _depositDb.GetCurrencies()
-//                .Where(i => i.DepositVariables.Any() && standardAccounts.Any(j => i == j.Account.Money.Currency))
-//                .ToList();
-//        }
+        private IEnumerable<CreditTerm> SelectCreditTermsByInterestAccrualId(IEnumerable<CreditTerm> terms, int? outInterestAccrualId)
+        {
+            if (terms == null)
+            {
+                throw new ArgumentNullException();
+            }
+            var result = terms.Where(i => outInterestAccrualId == null ? true : i.InterestAccrualId == outInterestAccrualId).ToList();
 
-//        private Currency GetCurrencyByStandardAccount(StandardAccount standardAccount)
-//        {
-//            if (standardAccount == null)
-//            {
-//                throw new ArgumentNullException();
-//            }
-//            return standardAccount.Account.Money.Currency;
-//        }
-
-//        private IEnumerable<DepositVariable> GetDepositVariablesByCurrencyAndDepositGeneralId(Currency currency, int? depsoitGeneralId)
-//        {
-//            if (currency == null)
-//            {
-//                throw new ArgumentNullException();
-//            }
-//            var result = _depositDb.GetDepositVariables().Where(i => i.CurrencyId == currency.Id
-//                && (depsoitGeneralId == null || i.DepositGeneralId == depsoitGeneralId)).ToList();
-
-//            if (result.Count == 0)
-//            {
-//                throw new DepositCreateException(DepositCreateExceptionType.DepositNotExist);
-//            }
-
-//            return result;
-//        }
-
-//        private IEnumerable<DepositGeneral> GetDepositGeneralsByCurrencies(IEnumerable<Currency> currencies)
-//        {
-//            var result = _depositDb.GetDepositGenerals().Where(i => i.DepositVariables.Any(j => currencies.Contains(j.Currency))).ToList();
-//            if (result.Count == 0)
-//            {
-//                throw new DepositCreateException(DepositCreateExceptionType.DepositNotExist);
-//            }
-//            return result;
-//        }
-
-//        private IEnumerable<DepositCore> SelectDepositCoresByInterestAccrualId(IEnumerable<DepositCore> cores, int? outInterestAccrualId) 
-//        {
-//            if (cores == null)
-//            {
-//                throw new ArgumentNullException();
-//            }
-//            var result = cores.Where(i => outInterestAccrualId == null ? true : i.InterestAccrualId == outInterestAccrualId).ToList();
-
-//            if (result.Count == 0)
-//            {
-//                throw new DepositCreateException(DepositCreateExceptionType.InterestAccrualNotFound);
-//            }
-//            return result;
-//        }
-
-//        private IEnumerable<DepositCore> GetDepositCoresByDepositVariables(IEnumerable<DepositVariable> depositVariableList)
-//        {
-//            var result = _depositDb.GetDepositCores().Where(i => depositVariableList.Contains(i.DepositVariable)).ToList();
-//            if (result.Count == 0)
-//            {
-//                throw new DepositCreateException(DepositCreateExceptionType.DepositNotExist);
-//            }
-//            return result;
-//        }
-
-//        private IEnumerable<InterestAccrual> GetIntersestAccrualsByCores(
-//            IEnumerable<DepositCore> coreList)
-//        {
-//            if (coreList == null)
-//            {
-//                throw new ArgumentNullException();
-//            }
-//            if (!coreList.Any())
-//            {
-//                throw new ArgumentException();
-//            }
-
-//            return coreList.Select(i => i.InterestAccrual).Distinct().ToList();
-//        }
-
-//        private void ChangeAccountsUsingRequiredMoneyAmount(ref List<Account> accounts, ref Account account, decimal requiredMoney, int? outAccountId)
-//        {
-//            accounts = accounts.Where(i => i.Money.Amount >= requiredMoney).ToList();
-//            if (!accounts.Contains(account) && outAccountId != null)
-//            {
-//                throw new DepositCreateException(DepositCreateExceptionType.NotEnoughOfMoney);
-//            }
-//            else
-//            {
-//                account = GetAccountByAccountsAndAccountId(accounts, outAccountId);
-//            }
-//        }
-//    }
-//}
+            if (result.Count == 0)
+            {
+                throw new CreditCreateException(CreditCreateExceptionType.InterestAccrualNotFound);
+            }
+            return result;
+        }
+    }
+}
 
 

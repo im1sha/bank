@@ -1,0 +1,210 @@
+﻿@model Bank.Models.CreditCreateViewModel
+
+@{
+    ViewData["Title"] = "Create credit";
+}
+
+<h1>@ViewData["Title"]</h1>
+<h4>@Model.Owner</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <input asp-for="Id" class="form-control" hidden="hidden" disabled="disabled" />
+            <input asp-for="CreditNumber" class="form-control" disabled="disabled" hidden="hidden" />
+            <input asp-for="OwnerId" class="form-control" hidden="hidden" />
+
+            <div class="form-group">
+                <label asp-for="Owner" class="control-label"></label>
+                <input asp-for="Owner" class="form-control" disabled="disabled" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Passport" class="control-label"></label>
+                <input asp-for="Passport" class="form-control" disabled="disabled" />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CurrencyList" class="control-label"></label>
+                <select asp-for="CurrencyId" asp-items="@(new SelectList(Model.CurrencyList, "Id", "Name"))"
+                        onchange="currencyChanged()" class="form-control">
+                </select>
+                <span asp-validation-for="CurrencyId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="AccountSourceList" class="control-label"></label>
+                <select asp-for="AccountSourceId" asp-items="@(new SelectList(Model.AccountSourceList, "Id", "Number"))"
+                        class="form-control" onchange="accountChanged()">
+                </select>
+                <span asp-validation-for="AccountSourceId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="MoneyAmount" class="control-label"></label>
+                <input asp-for="MoneyAmount" class="form-control" disabled="disabled" />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CreditTermList" class="control-label"></label>
+                <select asp-for="CreditTermId" asp-items="@(new SelectList(Model.CreditTermList, "Id", "Name"))"
+                        onchange="creditChanged()" class="form-control">
+                </select>
+                <span asp-validation-for="CreditTermId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="InterestAccrualList" class="control-label"></label>
+                <select asp-for="InterestAccrualId" asp-items="@(new SelectList(Model.InterestAccrualList, "Id", "Name"))"
+                        onchange="termChanged()" class="form-control">
+                </select>
+                <span asp-validation-for="InterestAccrualId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="InterestRate" class="control-label"></label>
+                <input asp-for="InterestRate" class="form-control" disabled="disabled" />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="OpenDate" class="control-label"></label>
+                <input asp-for="OpenDate" class="form-control" onchange="dateChanged()" />
+                <span asp-validation-for="OpenDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TerminationDate" class="control-label"></label>
+                <input asp-for="TerminationDate" class="form-control" disabled="disabled" />
+            </div>
+            <div class="form-group">
+                <label asp-for="EarlyRepaymentAllowed" class="control-label"></label>
+                <input asp-for="EarlyRepaymentAllowed" class="form-control" disabled="disabled" />
+            </div>
+            <div class="form-group">
+                <label asp-for="IsAnnuity" class="control-label"></label>
+                <input asp-for="IsAnnuity" class="form-control" disabled="disabled" />
+            </div>
+            <div class="form-group">
+                <label asp-for="DailyFineRate" class="control-label"></label>
+                <input asp-for="DailyFineRate" class="form-control" disabled="disabled" />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="MinimalCredit" class="control-label"></label>
+                <input asp-for="MinimalCredit" class="form-control" disabled="disabled" />
+            </div>
+            <div class="form-group">
+                <label asp-for="MaximalCredit" class="control-label"></label>
+                <input asp-for="MaximalCredit" class="form-control" disabled="disabled" />
+            </div>
+            <div class="form-group">
+                <label asp-for="SelectedCredit" class="control-label"></label>
+                <input asp-for="SelectedCredit" class="form-control" onchange="moneyChanged()" />
+                <span asp-validation-for="SelectedCredit" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+
+@section Scripts {
+
+    <script type="text/javascript">
+    function accountChanged()
+    {
+        console.log("accountChanged");
+        // Find disabled inputs, and remove the "disabled" attribute
+        var disabled = $('form').find(':input:disabled').removeAttr('disabled');
+
+        var url = '@Url.Action("AccountChanged", "Credit")';
+        $.post(url, $('form').serialize(), function (view)
+        {
+            console.log(view);
+            $("#MoneyAmount").val(view);
+        });
+
+         // re-disabled the set of inputs that you previously enabled
+        disabled.attr('disabled','disabled');
+        }
+
+    var baseurl = "@Url.Action("Create", "Credit")";
+
+    function currencyChanged()
+    {
+        console.log("currencyChanged");
+        window.location.href = baseurl + "?" 
+            + "personId="           + $("#OwnerId").val()               + "&"
+            + "currencyId="         + $("#CurrencyId").val()            + "&"
+            + "openDate="           + $("#OpenDate").val()
+            ;
+
+    }
+
+    function creditChanged()
+    {
+        console.log("creditChanged");
+
+        window.location.href = baseurl + "?" 
+            + "personId="           + $("#OwnerId").val()               + "&"
+            + "currencyId="         + $("#CurrencyId").val()            + "&"
+            + "creditTermId="       + $("#CreditTermId").val()      + "&"
+            + "openDate="           + $("#OpenDate").val()
+            ;
+    }
+
+    function termChanged()
+    {
+        console.log("termChanged");
+
+        var disabled = $('form').find(':input:disabled').removeAttr('disabled');
+        var url = '@Url.Action("TermChanged", "Credit")';
+        $.post(url, $('form').serialize(), function (view)
+        {
+            console.log(view);
+            $("#OpenDate").val(view.openDate.substring(0, 10));
+            $("#TerminationDate").val(view.terminationDate.substring(0, 10));
+            $("#InterestRate").val(view.interestRate);
+        });
+        
+        disabled.attr('disabled','disabled');
+    }
+
+    function dateChanged()
+    {
+        console.log("dateChanged");
+
+        var disabled = $('form').find(':input:disabled').removeAttr('disabled');
+        var url = '@Url.Action("DateChanged", "Credit")';
+        $.post(url, $('form').serialize(), function (view)
+        {
+            // view should return string of date
+            $("#TerminationDate").val(view.substring(0, 10));
+        });
+
+        disabled.attr('disabled','disabled');
+    }
+
+    function moneyChanged()
+    {
+        console.log("moneyChanged");
+    }
+
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

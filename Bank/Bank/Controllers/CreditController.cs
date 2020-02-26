@@ -233,209 +233,208 @@ namespace Bank.Controllers
             return View(model);
         }
 
-        //#region api of interaction with form of deposit creation
+        #region api of interaction with form of deposit creation
 
-        //[HttpPost]
-        //public ActionResult AccountChanged(DepositCreateViewModel model)
-        //{
-        //    var result = new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService).AccountChanged(model);
+        [HttpPost]
+        public ActionResult AccountChanged(CreditCreateViewModel model)
+        {
+            var result = new CreditCreateViewModelConstructor(_creditDb, _personDb, _timeService).AccountChanged(model);
 
-        //    return Json(result.MoneyAmount);
-        //}
+            return Json(result.MoneyAmount);
+        }
 
-        //[HttpPost]
-        //public ActionResult DateChanged(DepositCreateViewModel model)
-        //{
-        //    return Json(new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService).DateChanged(model));
-        //}
+        [HttpPost]
+        public ActionResult DateChanged(CreditCreateViewModel model)
+        {
+            return Json(new CreditCreateViewModelConstructor(_creditDb, _personDb, _timeService).DateChanged(model));
+        }
 
-        //[HttpPost]
-        //public ActionResult TermChanged(DepositCreateViewModel model)
-        //{
-        //    var result = new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService).TermChanged(model);
+        [HttpPost]
+        public ActionResult TermChanged(CreditCreateViewModel model)
+        {
+            var result = new CreditCreateViewModelConstructor(_creditDb, _personDb, _timeService).TermChanged(model);
 
-        //    return Json(new { openDate = result.OpenDate, terminationDate = result.TerminationDate, interestRate = result.InterestRate, });
-        //}
+            return Json(new { openDate = result.OpenDate, terminationDate = result.TerminationDate, interestRate = result.InterestRate, });
+        }
 
-        //#endregion
+        #endregion
 
-        //// GET: Deposit/Create?personId=5&currencyId=1
-        //public ActionResult Create(
-        //    [FromQuery]int? personId,
-        //    [FromQuery]int? currencyId = null,
-        //    [FromQuery]int? depositGeneralId = null,
-        //    // [FromQuery]int? accountId = null,
-        //    // [FromQuery]int? interestAccrualId = null,
-        //    [FromQuery]DateTime? openDate = null)
-        //{
-        //    if (personId == null)
-        //    {
-        //        return View("StatusNotFound");
-        //    }
-        //    try
-        //    {
-        //        var result = new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService)
-        //            .GenerateNew((int)personId, currencyId, depositGeneralId, null, null, /*accountId, interestAccrualId,*/ openDate);
-        //        return View(result);
-        //    }
-        //    catch (DepositCreateException e)
-        //    {
-        //        switch (e.Reason)
-        //        {
-        //            case DepositCreateExceptionType.StandardAccountsNotExist:
-        //                return View(
-        //                    "StatusStandardAccountsNotFound",
-        //                    _linkGenerator.GetUriByAction(
-        //                        HttpContext,
-        //                        nameof(StandardAccountController.Create),
-        //                        "StandardAccount",
-        //                        new { id = personId, isPerson = true }));
-        //            case DepositCreateExceptionType.PersonNotExist:
-        //            case DepositCreateExceptionType.AccountsOfGivenCurrencyNotExist:
-        //            case DepositCreateExceptionType.DepositNotExist:
-        //            case DepositCreateExceptionType.InterestAccrualNotFound:
-        //            default:
-        //                return View("StatusNotFound");
-        //        }
-        //    }
-        //}
+        // GET: Deposit/Create?personId=5&currencyId=1
+        public ActionResult Create(
+            [FromQuery]int? personId,
+            [FromQuery]int? currencyId = null,
+            [FromQuery]int? creditTermId = null,
+            // [FromQuery]int? accountId = null,
+            // [FromQuery]int? interestAccrualId = null,
+            [FromQuery]DateTime? openDate = null)
+        {
+            if (personId == null)
+            {
+                return View("StatusNotFound");
+            }
+            try
+            {
+                var result = new CreditCreateViewModelConstructor(_creditDb, _personDb, _timeService)
+                    .GenerateNew((int)personId, currencyId, creditTermId, null, openDate);
+                return View(result);
+            }
+            catch (CreditCreateException e)
+            {
+                switch (e.Reason)
+                {
+                    case CreditCreateExceptionType.StandardAccountsNotExist:       
+                    case CreditCreateExceptionType.AccountsOfGivenCurrencyNotExist:
+                        return View(
+                            "StatusStandardAccountsNotFound",
+                            _linkGenerator.GetUriByAction(
+                                HttpContext,
+                                nameof(StandardAccountController.Create),
+                                "StandardAccount",
+                                new { id = personId, isPerson = true }));
+                    case CreditCreateExceptionType.PersonNotExist:
+                    case CreditCreateExceptionType.CreditNotExist:
+                    case CreditCreateExceptionType.InterestAccrualNotFound:
+                    default:
+                        return View("StatusNotFound");
+                }
+            }
+        }
 
-        //// POST: Deposit/Create
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Create(DepositCreateViewModel input)
-        //{
-        //    var personId = input.OwnerId;
-        //    var currencyId = input.CurrencyId;
-        //    var depositGeneralId = input.DepositGeneralId;
-        //    var accountSourceId = input.AccountSourceId;
-        //    var interestAccrualId = input.InterestAccrualId;
-        //    var openDate = input.OpenDate;
-        //    var selectedMoney = input.SelectedMoney;
-        //    var accName = input.Name;
+        // POST: Deposit/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(CreditCreateViewModel input)
+        {
+            return Content("OK");
 
-        //    //
-        //    // add money transfer check later
-        //    //
-        //    //
-        //    // bool moneyTransfer = false;
+            var personId = input.OwnerId;
+            var currencyId = input.CurrencyId;
+            var termId = input.CreditTermId;
+            var accountSourceId = input.AccountSourceId;
+            var interestAccrualId = input.InterestAccrualId;
+            var openDate = input.OpenDate;
+            var selectedMoneyAmount = input.SelectedCredit;
+            var accName = input.Name;
 
-        //    try
-        //    {
-        //        if (!CheckMoneyAmount(currencyId, depositGeneralId, interestAccrualId, accountSourceId, selectedMoney))
-        //        {
-        //            ModelState.TryAddModelError("Money is out of bounds", "You should enter amount of money that exceeds " +
-        //                "required amount of money and less than amount of money on your account.");
-        //        }
-        //        if (!CheckOpenDate(openDate))
-        //        {
-        //            ModelState.TryAddModelError("Open date in the past", "Deposit open date should be not less than current date.");
-        //        }
+            try
+            {
+                if (!CheckMoneyAmount(currencyId, termId, accountSourceId, selectedMoneyAmount))
+                {
+                    ModelState.TryAddModelError("Money is out of bounds", "You should enter amount of money that exceeds " +
+                        "required amount of money and less than amount of money on your account.");
+                }
+                if (!CheckOpenDate(openDate))
+                {
+                    ModelState.TryAddModelError("Open date in the past", "Deposit open date should be not less than current date.");
+                }
 
-        //        // use on else condition
-        //        var vm = new DepositCreateViewModelConstructor(_depositDb, _personDb, _timeService)
-        //            .GenerateNew(personId, currencyId, depositGeneralId, accountSourceId, interestAccrualId, openDate);
+                // use on else condition
+                var vm = new CreditCreateViewModelConstructor(_creditDb, _personDb, _timeService)
+                    .GenerateNew(personId, currencyId, termId, accountSourceId, openDate);
 
-        //        if (ModelState.IsValid)
-        //        {
-        //            // use input data here, not vm
+                if (ModelState.IsValid)
+                {
+                    // use input data here, not vm
 
-        //            var sourceAccount = _depositDb.GetAccounts().First(i => i.Id == accountSourceId);
+                    var sourceAccount = _creditDb.GetAccounts().First(i => i.Id == accountSourceId);
 
-        //            var profit = new Money
-        //            {
-        //                Currency = _depositDb.GetCurrencies().First(i => i.Id == currencyId),
-        //                Amount = 0,
-        //            };
-        //            _db.Moneys.Add(profit);
-        //            _db.SaveChanges();
+                    // credit account all the money instances
+                    var moneys = Enumerable.Repeat(
+                        new Money
+                        {
+                            Currency = _creditDb.GetCurrencies().First(i => i.Id == currencyId),
+                            Amount = 0,
+                        }, 
+                        5).ToList();
 
-        //            var money = new Money
-        //            {
-        //                Currency = _depositDb.GetCurrencies().First(i => i.Id == currencyId),
-        //                Amount = selectedMoney,
-        //            };
-        //            _db.Moneys.Add(money);
-        //            _db.SaveChanges();
+                    _db.Moneys.AddRange(moneys);
+                    _db.SaveChanges();
 
-        //            var deposit = new DepositAccount
-        //            {
-        //                Person = _personDb.GetPeople().First(i => i.Id == personId),
-        //                DepositCore = _depositDb.GetDepositCores().First(i => i.DepositVariable.DepositGeneralId == depositGeneralId
-        //                    && i.DepositVariable.CurrencyId == currencyId && i.InterestAccrualId == interestAccrualId),
-        //                Profit = profit,
-        //            };
-        //            _db.DepositAccounts.Add(deposit);
-        //            _db.SaveChanges();
+                    var selectMoney = new Money
+                    {
+                        Currency = _creditDb.GetCurrencies().First(i => i.Id == currencyId),
+                        Amount = selectedMoneyAmount,
+                    };
+                    _db.Moneys.Add(selectMoney);
+                    _db.SaveChanges();
 
-        //            var accForDeposit = new Account
-        //            {
-        //                DepositAccount = deposit,
-        //                Name = accName,
-        //                Number = DbRetrieverUtils.GenerateNewDepositId(_depositDb),
-        //                OpenDate = openDate,
-        //                TerminationDate = null,
-        //                Money = money,
-        //            };
-        //            _db.Accounts.Add(accForDeposit);
-        //            _db.SaveChanges();
+                    var credit = new CreditAccount
+                    {
+                        Person = _personDb.GetPeople().First(i => i.Id == personId),
+                        CreditTerm = _creditDb.GetCreditTerms().First(i => i.Id == termId),
+                        Fine = moneys[0],
+                        Percentage= moneys[1],
+                        PaidFinePart= moneys[2],
+                        PaidMainPart= moneys[3],
+                        PaidPercentagePart= moneys[4],
+                    };
+                    _db.CreditAccounts.Add(credit);
+                    _db.SaveChanges();
 
+                    var accForCredit = new Account
+                    {
+                        CreditAccount = credit,
+                        Name = accName,
+                        Number = DbRetrieverUtils.GenerateNewCreditId(_creditDb),
+                        OpenDate = openDate,
+                        TerminationDate = null,
+                        Money = selectMoney,
+                    };
+                    _db.Accounts.Add(accForCredit);
+                    _db.SaveChanges();
 
+                    var source = _creditDb.GetAccounts().First(i => i.Id == accountSourceId);
+                    source.Money.Amount -= selectedMoneyAmount;
+                    _db.Accounts.Update(source);
+                    _db.SaveChanges();
 
-        //            var source = _depositDb.GetAccounts().First(i => i.Id == accountSourceId);
-        //            source.Money.Amount -= selectedMoney;
-        //            _db.Accounts.Update(source);
-        //            _db.SaveChanges();
+                    var bank = _creditDb.GetStandardAccounts().First(i => i.LegalEntity == _creditDb.GetLegalEntities().First()
+                        && i.Account.Money.CurrencyId == currencyId);
+                    bank.Account.Money.Amount += selectedMoneyAmount;
+                    _db.StandardAccounts.Update(bank);
+                    _db.SaveChanges();
 
-        //            var bank = _depositDb.GetStandardAccounts().First(i => i.LegalEntity == _depositDb.GetLegalEntities().First()
-        //                && i.Account.Money.CurrencyId == currencyId);
-        //            bank.Account.Money.Amount += selectedMoney;
-        //            _db.StandardAccounts.Update(bank);
-        //            _db.SaveChanges();
+                    return View("StatusSucceeded", "Deposit creation succeeded.");
+                }
+                else
+                {
+                    return View(vm);
+                }
+            }
+            catch
+            {
+                return View("StatusFailed", "Deposit creation failed.");
+            }
+        }
 
-        //            return View("StatusSucceeded", "Deposit creation succeeded.");
-        //        }
-        //        else
-        //        {
-        //            return View(vm);
-        //        }
-        //    }
-        //    catch
-        //    {
-        //        return View("StatusFailed", "Deposit creation failed.");
-        //    }
-        //}
+        private bool CheckOpenDate(DateTime openDate)
+        {
+            return openDate >= _timeService.CurrentTime;
+        }
 
-        //private bool CheckOpenDate(DateTime openDate)
-        //{
-        //    return openDate >= _timeService.CurrentTime;
-        //}
+        private bool CheckMoneyAmount(int currencyId, int creditTermId, int accountSourceId, decimal moneyAmount)
+        {
+            try
+            {
+                var account = _creditDb.GetAccounts().First(i => i.Id == accountSourceId);
 
-        //private bool CheckMoneyAmount(int currencyId, int depositGeneralId, int interestAccrualId, int accountSourceId, decimal moneyAmount)
-        //{
-        //    try
-        //    {
-        //        var account = _depositDb.GetAccounts().First(i => i.Id == accountSourceId);
+                if (account.Money.CurrencyId != currencyId)
+                {
+                    return false;
+                }
+                if (account.Money.Amount < moneyAmount)
+                {
+                    return false;
+                }
 
-        //        if (account.Money.CurrencyId != currencyId)
-        //        {
-        //            return false;
-        //        }
-        //        if (account.Money.Amount < moneyAmount)
-        //        {
-        //            return false;
-        //        }
-
-        //        return _depositDb.GetDepositVariables()
-        //            .First(i => i.DepositGeneralId == depositGeneralId
-        //                && i.DepositCores.Any(i => i.InterestAccrualId == interestAccrualId)
-        //                && i.CurrencyId == currencyId).MinimalDeposit.Amount <= moneyAmount;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return false;
-        //    }
-        //}
+                return _creditDb.GetCreditTerms().First(i => i.Id == creditTermId).MinimalCredit.Amount <= moneyAmount 
+                    && _creditDb.GetCreditTerms().First(i => i.Id == creditTermId).MaximalCredit.Amount >= moneyAmount;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
         ////// GET: Deposit/Edit/5
         ////public ActionResult Edit(int id)

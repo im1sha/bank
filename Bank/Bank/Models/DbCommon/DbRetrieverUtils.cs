@@ -30,5 +30,18 @@ namespace Bank.Models
                 .Select(i => decimal.Parse(string.Join("", i.Number.TakeLast(i.Number.Count() - depositAccountDefaultPartLength))))
                 .Aggregate((val, i) => Math.Max(i, val)) + 1).ToString().PadLeft(otherPartLength, '0');
         }
+
+        internal static string GenerateNewCreditId(CreditDbEntityRetriever creditDbEntityRetriever)
+        {
+            const int otherPartLength = 9;
+            var creditAccountDefaultPart = "1111";
+            var creditAccountDefaultPartLength = 4;
+
+            return creditAccountDefaultPart
+                + (creditDbEntityRetriever.GetAccounts()
+                .Select(i => decimal.Parse(string.Join("", i.Number.TakeLast(i.Number.Count() - creditAccountDefaultPartLength))))
+                .Aggregate((val, i) => Math.Max(i, val)) + 1).ToString().PadLeft(otherPartLength, '0');
+        }
     }
+    
 }
