@@ -13,7 +13,7 @@
             _db = db;
         }
 
-        public void Close(Account source, bool closedInTime)
+        public void Close(int sourceId, bool closedInTime)
         {
         }
 

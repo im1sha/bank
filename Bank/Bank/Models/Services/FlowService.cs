@@ -20,9 +20,9 @@ namespace Bank.Models
             }
         }
 
-        public void Close<T>(Account account, bool closedInTime)
+        public void Close<T>(int accountId, bool closedInTime)
         {
-            _skippables.FirstOrDefault(i => i.GetType() == typeof(T))?.Close(account, closedInTime);
+            _skippables.FirstOrDefault(i => i.GetType() == typeof(T))?.Close(accountId, closedInTime);
         }
     }
 }

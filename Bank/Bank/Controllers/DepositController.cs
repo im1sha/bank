@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -55,11 +56,6 @@ namespace Bank.Controllers
             _flowService.SkipDay();
         }
 
-        private void CloseDeposit(DepositAccount deposit, bool closedInTime)
-        {
-            _flowService.Close<DepositFlowHandler>(deposit.Account, closedInTime);
-        }
-     
         // GET: Deposit
         //      Deposit/index/5
         // id == person id
@@ -405,17 +401,19 @@ namespace Bank.Controllers
         {
             try
             {
-                var dep = _depositDb.GetDepositAccounts().First(i => i.Id == model.Id);
+                // shouldn't track 'cause _flowService will operate deposit account instance
+                var dep = _db.DepositAccounts.Include(i => i.Account).AsNoTracking().First(i => i.Id == model.Id);
+
                 if (!_timeService.CheckTerminationDate(dep.Account.TerminationDate))
                 {
                     return View("StatusFailed", "Account is closed.");
                 }
 
-                CloseDeposit(dep, false);
+                _flowService.Close<DepositFlowHandler>(dep.Account.Id, false);
 
                 return View("StatusSucceeded", "Deposit close succeeded.");
             }
-            catch
+            catch (Exception e)
             {
                 return View("StatusFailed", "Deposit delete failed.");
             }

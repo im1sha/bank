@@ -18,9 +18,9 @@ namespace Bank.Models
             _db = db;
         }
 
-        public void Close(Account source, bool closedInTime)
+        public void Close(int accountId, bool closedInTime)
         {
-            var deposit = source.DepositAccount;
+            var deposit = _depositDb.GetDepositAccounts().First(i => i.Account.Id == accountId);
 
             if (closedInTime)
             {
@@ -109,7 +109,7 @@ namespace Bank.Models
                     // termination date is now
                     if (_timeService.CountElapsedDays(deposit.Account.OpenDate) == (deposit.DepositCore.InterestAccrual.TermInDays ?? 365))
                     {
-                        Close(deposit.Account, true);
+                        Close(deposit.Account.Id, true);
                     }
                 }
             }
