@@ -17,7 +17,7 @@ namespace Bank.Controllers
         private readonly BankAppDbContext _db;
         private readonly TimeService _timeService;
 
-        public CreditController(BankAppDbContext context, ILogger<CreditController> logger, LinkGenerator linkGenerator, TimeService timeService)
+        public CreditController(BankAppDbContext context, ILogger<CreditController> logger, LinkGenerator linkGenerator, TimeService timeService/*, CreditDbEntityRetriever creditDb, PersonDbEntityRetriever personDb*/)
         {
             _db = context;
             _creditDb = new CreditDbEntityRetriever(context);

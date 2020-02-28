@@ -62,6 +62,25 @@ namespace Bank
             }
             
             services.AddSingleton(new TimeService(path, date));
+
+            var sp = services.BuildServiceProvider();
+
+            var db = sp.GetRequiredService<BankAppDbContext>();
+            var timeService = sp.GetRequiredService<TimeService>();
+
+            var depositDb = new DepositDbEntityRetriever(db);
+            var creditDb = new CreditDbEntityRetriever(db);
+
+            var fs = new FlowService(
+                new ISkippable[]
+                {
+                    new CreditFlowHandler(creditDb, timeService, db),
+                    new DepositFlowHandler(depositDb, timeService, db)
+                });
+            //services.AddSingleton(new PersonDbEntityRetriever(db));
+            //services.AddSingleton(depositDb);
+            //services.AddSingleton(creditDb);
+            services.AddSingleton(fs);
         } 
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

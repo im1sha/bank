@@ -64,7 +64,7 @@ namespace Bank.Models
 
         public bool IsActive(DateTime begin, DateTime? end) 
         {
-            return CurrentTime > begin && (end == null || end > CurrentTime);
+            return CurrentTime >= begin && (end == null || end > CurrentTime);
         }
 
         public bool CheckTerminationDate(DateTime? termination)

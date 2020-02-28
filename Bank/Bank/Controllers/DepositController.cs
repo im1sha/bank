@@ -16,16 +16,21 @@ namespace Bank.Controllers
         private readonly PersonDbEntityRetriever _personDb;
         private readonly BankAppDbContext _db;
         private readonly TimeService _timeService;
+        private readonly FlowService _flowService;
 
-        public DepositController(BankAppDbContext context, ILogger<DepositController> logger, LinkGenerator linkGenerator, TimeService timeService)
+        public DepositController(BankAppDbContext context, ILogger<DepositController> logger, LinkGenerator linkGenerator, TimeService timeService, FlowService flowService/*, DepositDbEntityRetriever depositDb, PersonDbEntityRetriever personDb*/)
         {
             _db = context;
             _depositDb = new DepositDbEntityRetriever(context);
             _personDb = new PersonDbEntityRetriever(context);
+            //_depositDb = depositDb;
+            //_personDb = personDb;
             _logger = logger;
             _linkGenerator = linkGenerator;
             _timeService = timeService;
+            _flowService = flowService;
         }
+
 
         // here month is 30 days
         public ActionResult Skip([FromQuery]bool skipDay, [FromQuery]bool skipMonth)
@@ -47,102 +52,14 @@ namespace Bank.Controllers
 
         private void SkipDay()
         {
-            _timeService.AddDays(1);
-
-            foreach (var deposit in _depositDb.GetDepositAccounts())
-            {
-                if (_timeService.IsActive(deposit.Account.OpenDate, deposit.Account.TerminationDate))
-                {
-                    // month elapsed (for deposit with capitalization)
-                    if (deposit.DepositCore.DepositVariable.DepositGeneral.WithCapitalization
-                        && _timeService.IsMultipleOfMonth(deposit.Account.OpenDate))
-                    {
-                        var profit =  (30.0m / 365.0m)
-                            * (deposit.DepositCore.InterestRate / 100.0m) 
-                            * (deposit.Account.Money.Amount + deposit.Profit.Amount);
-                        deposit.Profit.Amount += profit;
-                        _db.DepositAccounts.Update(deposit);
-                        _db.SaveChanges();
-                    }
-                    // termination date is now
-                    if (_timeService.CountElapsedDays(deposit.Account.OpenDate) == (deposit.DepositCore.InterestAccrual.TermInDays ?? 365))
-                    {                        
-                        CloseDeposit(deposit, true);
-                    }
-                }
-            }
+            _flowService.SkipDay();
         }
 
-     
-        private void CloseDeposit(DepositAccount deposit, bool saveProfit)
+        private void CloseDeposit(DepositAccount deposit, bool closedInTime)
         {
-            if (saveProfit)
-            {            
-                if (deposit.DepositCore.DepositVariable.DepositGeneral.WithCapitalization)
-                {
-                    var profit = (_timeService.CountElapsedDays(deposit.Account.OpenDate) % 30) / 365.0m
-                        * (deposit.DepositCore.InterestRate / 100.0m)
-                        * (deposit.Account.Money.Amount + deposit.Profit.Amount);
-                    deposit.Profit.Amount += profit;
-                }
-                else if (!deposit.DepositCore.DepositVariable.DepositGeneral.WithCapitalization)
-                {
-                    var profit = (int)deposit.DepositCore.InterestAccrual.TermInDays / 365.0m
-                        * (deposit.DepositCore.InterestRate / 100.0m)
-                        * (deposit.Account.Money.Amount + deposit.Profit.Amount);
-                    deposit.Profit.Amount += profit;
-                }
-            }
-            else
-            {
-                if (deposit.DepositCore.DepositVariable.DepositGeneral.WithCapitalization)
-                {
-                    deposit.Profit.Amount = 0;
-                }
-            }
-
-            var totalMoney = deposit.Account.Money.Amount + deposit.Profit.Amount;
-
-            deposit.Account.TerminationDate = _timeService.CurrentTime;
-            _db.DepositAccounts.Update(deposit);
-            _db.SaveChanges();
-
-            var bank = _depositDb.GetStandardAccounts().First(i => i.LegalEntity == _depositDb.GetLegalEntities().First()
-                && i.Account.Money.Currency == deposit.Account.Money.Currency);
-            bank.Account.Money.Amount -= totalMoney;
-            _db.StandardAccounts.Update(bank);
-            _db.SaveChanges();
-
-            // create standard account with equal amount of money
-            var standardAccount = new StandardAccount
-            {
-                Person = deposit.Person,
-            };
-            _db.StandardAccounts.Add(standardAccount);
-            _db.SaveChanges();
-
-            var money = new Money
-            {
-                Currency = deposit.Account.Money.Currency,
-                Amount = totalMoney,
-            };
-            _db.Moneys.Add(money);
-            _db.SaveChanges();
-
-            var acc = new Account
-            {
-                Name = $"closed deposit {deposit.Account.Number}",
-                Number = DbRetrieverUtils.GenerateNewStandardAccountId(_depositDb),
-                OpenDate = _timeService.CurrentTime,
-                StandardAccount = standardAccount,
-                Money = money,
-            };
-            _db.Accounts.Add(acc);
-            _db.SaveChanges();
-
-            
+            _flowService.Close<DepositFlowHandler>(deposit.Account, closedInTime);
         }
-
+     
         // GET: Deposit
         //      Deposit/index/5
         // id == person id
