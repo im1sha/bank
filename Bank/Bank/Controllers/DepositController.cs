@@ -402,7 +402,9 @@ namespace Bank.Controllers
             try
             {
                 // shouldn't track 'cause _flowService will operate deposit account instance
-                var dep = _db.DepositAccounts.Include(i => i.Account).AsNoTracking().First(i => i.Id == model.Id);
+                var dep = _db.DepositAccounts.Include(i => i.Account)
+                    .AsNoTracking()
+                    .First(i => i.Id == model.Id);
 
                 if (!_timeService.CheckTerminationDate(dep.Account.TerminationDate))
                 {

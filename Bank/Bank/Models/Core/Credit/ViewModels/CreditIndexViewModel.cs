@@ -82,6 +82,9 @@ namespace Bank.Models
         public string IsAnnuity { get; set; }
 
         [DisplayName("Daily fine rate")]
-        public decimal DailyFineRate { get; set; }    
+        public decimal DailyFineRate { get; set; }
+
+        [DisplayName("Source account")]
+        public string AccountNumberOfSourceStandardAccount { get; set; }
     }
 }

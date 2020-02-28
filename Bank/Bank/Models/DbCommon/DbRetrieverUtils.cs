@@ -19,6 +19,18 @@ namespace Bank.Models
                 .Aggregate((val, i) => Math.Max(i, val)) + 1).ToString().PadLeft(otherPartLength, '0');
         }
 
+        public static string GenerateNewStandardAccountId(CreditDbEntityRetriever cteditDb)
+        {
+            const int otherPartLength = 9;
+            var standardAccountDefaultPart = "9999";
+            var standardAccountDefaultPartLength = 4;
+
+            return standardAccountDefaultPart
+                + (cteditDb.GetAccounts()
+                .Select(i => decimal.Parse(string.Join("", i.Number.TakeLast(i.Number.Count() - standardAccountDefaultPartLength))))
+                .Aggregate((val, i) => Math.Max(i, val)) + 1).ToString().PadLeft(otherPartLength, '0');
+        }
+
         public static string GenerateNewDepositId(DepositDbEntityRetriever depositDbEntityRetriever)
         {
             const int otherPartLength = 9;

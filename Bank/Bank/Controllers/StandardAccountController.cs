@@ -162,8 +162,6 @@ namespace Bank.Controllers
                     _db.Accounts.Add(acc);
                     _db.SaveChanges();
 
-                    
-
                     return View("StatusSucceeded", "Standard account create succeeded.");
                 }
                 return View(model);

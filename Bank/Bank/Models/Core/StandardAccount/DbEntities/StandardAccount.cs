@@ -1,4 +1,6 @@
-﻿namespace Bank.Models
+﻿using System.Collections.Generic;
+
+namespace Bank.Models
 {
     /// <summary>
     /// Stores financials
@@ -23,5 +25,10 @@
         public LegalEntity LegalEntity { get; set; }
 
         public Account Account { get; set; }
+
+        /// <summary>
+        /// Destinations
+        /// </summary>
+        public List<CreditAccount> CreditAccountDestinations { get; set; }
     }
 }

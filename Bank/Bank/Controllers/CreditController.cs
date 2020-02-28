@@ -1,5 +1,4 @@
 ﻿using Bank.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
@@ -143,8 +142,8 @@ namespace Bank.Controllers
 
         //}
 
-        // GET: Deposit
-        //      Deposit/index/5
+        // GET: Credit
+        //      Credit/index/5
         // id == person id
         public ActionResult Index(int? id)
         {
@@ -172,19 +171,19 @@ namespace Bank.Controllers
                 Fine = i.Fine.Amount,
                 IsAnnuity = OutputFormatUtils.ConvertBoolToYesNoFormat(i.CreditTerm.IsAnnuity),
                 MaximalCredit = i.CreditTerm.MaximalCredit.Amount,
-                MinimalCredit =i.CreditTerm.MinimalCredit.Amount,
+                MinimalCredit = i.CreditTerm.MinimalCredit.Amount,
                 PaidFinePart = i.PaidFinePart.Amount,
                 PaidMainPart = i.PaidMainPart.Amount,
                 PaidPercentagePart = i.PaidPercentagePart.Amount,
                 Percentage = i.Percentage.Amount,
                 NextPayment = CalculateNextPayment(i),
-                RequiredToCloseCredit = CalculateAmountRequiredToCloseCredit(i),                
+                RequiredToCloseCredit = CalculateAmountRequiredToCloseCredit(i),
             }).ToList();
 
             return View(models);
         }
 
-        private decimal CalculateNextPayment(CreditAccount creditAccount) 
+        private decimal CalculateNextPayment(CreditAccount creditAccount)
         {
             return 0m;
         }
@@ -194,7 +193,7 @@ namespace Bank.Controllers
             return 0m;
         }
 
-        // GET: Deposit/Details/5
+        // GET: Credit/Details/5
         public ActionResult Details(int id)
         {
             var creditAcc = _creditDb.GetCreditAccounts().First(j => j.Id == id);
@@ -228,12 +227,13 @@ namespace Bank.Controllers
                 Percentage = creditAcc.Percentage.Amount,
                 NextPayment = CalculateNextPayment(creditAcc),
                 RequiredToCloseCredit = CalculateAmountRequiredToCloseCredit(creditAcc),
+                AccountNumberOfSourceStandardAccount = creditAcc.SourceStandardAccount.Account.Number,
             };
 
             return View(model);
         }
 
-        #region api of interaction with form of deposit creation
+        #region api of interaction with form of credit creation
 
         [HttpPost]
         public ActionResult AccountChanged(CreditCreateViewModel model)
@@ -259,7 +259,7 @@ namespace Bank.Controllers
 
         #endregion
 
-        // GET: Deposit/Create?personId=5&currencyId=1
+        // GET: Credit/Create?personId=5&currencyId=1
         public ActionResult Create(
             [FromQuery]int? personId,
             [FromQuery]int? currencyId = null,
@@ -282,7 +282,7 @@ namespace Bank.Controllers
             {
                 switch (e.Reason)
                 {
-                    case CreditCreateExceptionType.StandardAccountsNotExist:       
+                    case CreditCreateExceptionType.StandardAccountsNotExist:
                     case CreditCreateExceptionType.AccountsOfGivenCurrencyNotExist:
                         return View(
                             "StatusStandardAccountsNotFound",
@@ -300,28 +300,31 @@ namespace Bank.Controllers
             }
         }
 
-        // POST: Deposit/Create
+        // POST: Credit/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(CreditCreateViewModel input)
         {
-            return Content("OK");
-
             var personId = input.OwnerId;
             var currencyId = input.CurrencyId;
             var termId = input.CreditTermId;
             var accountSourceId = input.AccountSourceId;
-            var interestAccrualId = input.InterestAccrualId;
             var openDate = input.OpenDate;
             var selectedMoneyAmount = input.SelectedCredit;
             var accName = input.Name;
+            var bankAccount = _creditDb.GetLegalEntities().First().StandardAccounts.First(j => j.Account.Money.CurrencyId == currencyId).Account;
 
             try
             {
-                if (!CheckMoneyAmount(currencyId, termId, accountSourceId, selectedMoneyAmount))
+                if (!CheckMoneyAmountUsingBankAccount(
+                        currencyId,
+                        termId,
+                        bankAccount.Id,
+                        bankAccount.StandardAccount.Account.Money.Amount,
+                        selectedMoneyAmount))
                 {
-                    ModelState.TryAddModelError("Money is out of bounds", "You should enter amount of money that exceeds " +
-                        "required amount of money and less than amount of money on your account.");
+                    ModelState.TryAddModelError("Money is out of bounds", "You should enter amount of money" +
+                        " that is less than max amount and not less than min possible amount.");
                 }
                 if (!CheckOpenDate(openDate))
                 {
@@ -334,7 +337,9 @@ namespace Bank.Controllers
 
                 if (ModelState.IsValid)
                 {
+                    //
                     // use input data here, not vm
+                    //
 
                     var sourceAccount = _creditDb.GetAccounts().First(i => i.Id == accountSourceId);
 
@@ -344,7 +349,7 @@ namespace Bank.Controllers
                         {
                             Currency = _creditDb.GetCurrencies().First(i => i.Id == currencyId),
                             Amount = 0,
-                        }, 
+                        },
                         5).ToList();
 
                     _db.Moneys.AddRange(moneys);
@@ -358,15 +363,17 @@ namespace Bank.Controllers
                     _db.Moneys.Add(selectMoney);
                     _db.SaveChanges();
 
+                    // create ctedit
                     var credit = new CreditAccount
                     {
                         Person = _personDb.GetPeople().First(i => i.Id == personId),
                         CreditTerm = _creditDb.GetCreditTerms().First(i => i.Id == termId),
                         Fine = moneys[0],
-                        Percentage= moneys[1],
-                        PaidFinePart= moneys[2],
-                        PaidMainPart= moneys[3],
-                        PaidPercentagePart= moneys[4],
+                        Percentage = moneys[1],
+                        PaidFinePart = moneys[2],
+                        PaidMainPart = moneys[3],
+                        PaidPercentagePart = moneys[4],
+                        SourceStandardAccount = sourceAccount.StandardAccount,
                     };
                     _db.CreditAccounts.Add(credit);
                     _db.SaveChanges();
@@ -383,18 +390,40 @@ namespace Bank.Controllers
                     _db.Accounts.Add(accForCredit);
                     _db.SaveChanges();
 
-                    var source = _creditDb.GetAccounts().First(i => i.Id == accountSourceId);
-                    source.Money.Amount -= selectedMoneyAmount;
-                    _db.Accounts.Update(source);
+                    // decrease amount of money at bank account
+                    bankAccount.StandardAccount.Account.Money.Amount -= selectedMoneyAmount;
+                    _db.Accounts.Update(bankAccount);
                     _db.SaveChanges();
 
-                    var bank = _creditDb.GetStandardAccounts().First(i => i.LegalEntity == _creditDb.GetLegalEntities().First()
-                        && i.Account.Money.CurrencyId == currencyId);
-                    bank.Account.Money.Amount += selectedMoneyAmount;
-                    _db.StandardAccounts.Update(bank);
+
+                    // create standard account with required amount of money
+                    var standardAccount = new StandardAccount
+                    {
+                        Person = _personDb.GetPeople().First(i => i.Id == personId),
+                    };
+                    _db.StandardAccounts.Add(standardAccount);
                     _db.SaveChanges();
 
-                    return View("StatusSucceeded", "Deposit creation succeeded.");
+                    var standardAccountMoney = new Money
+                    {
+                        Currency = _creditDb.GetCurrencies().First(i => i.Id == currencyId),
+                        Amount = selectedMoneyAmount,
+                    };
+                    _db.Moneys.Add(standardAccountMoney);
+                    _db.SaveChanges();
+
+                    var acc = new Account
+                    {
+                        Name = accName,
+                        Number = DbRetrieverUtils.GenerateNewStandardAccountId(_creditDb),
+                        OpenDate = _timeService.CurrentTime,
+                        Money = standardAccountMoney,
+                        StandardAccount = standardAccount,
+                    };
+                    _db.Accounts.Add(acc);
+                    _db.SaveChanges();
+
+                    return View("StatusSucceeded", "Credit creation succeeded.");
                 }
                 else
                 {
@@ -403,7 +432,7 @@ namespace Bank.Controllers
             }
             catch
             {
-                return View("StatusFailed", "Deposit creation failed.");
+                return View("StatusFailed", "Credit creation failed.");
             }
         }
 
@@ -412,7 +441,7 @@ namespace Bank.Controllers
             return openDate >= _timeService.CurrentTime;
         }
 
-        private bool CheckMoneyAmount(int currencyId, int creditTermId, int accountSourceId, decimal moneyAmount)
+        private bool CheckMoneyAmountUsingBankAccount(int currencyId, int creditTermId, int accountSourceId, decimal moneyAmountAtBank, decimal moneyAmountRequired)
         {
             try
             {
@@ -422,13 +451,13 @@ namespace Bank.Controllers
                 {
                     return false;
                 }
-                if (account.Money.Amount < moneyAmount)
+                if (account.Money.Amount < moneyAmountAtBank)
                 {
                     return false;
                 }
 
-                return _creditDb.GetCreditTerms().First(i => i.Id == creditTermId).MinimalCredit.Amount <= moneyAmount 
-                    && _creditDb.GetCreditTerms().First(i => i.Id == creditTermId).MaximalCredit.Amount >= moneyAmount;
+                return _creditDb.GetCreditTerms().First(i => i.Id == creditTermId).MinimalCredit.Amount <= moneyAmountRequired
+                    && _creditDb.GetCreditTerms().First(i => i.Id == creditTermId).MaximalCredit.Amount >= moneyAmountRequired;
             }
             catch
             {

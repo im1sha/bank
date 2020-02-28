@@ -509,8 +509,8 @@ namespace Bank.Models
                 new Money { Amount = 20000000000m, Currency = currencies[1], },//Account = accounts[5], },//15
                 new Money { Amount = 30000000000m, Currency = currencies[2], },//Account = accounts[6], },//16
                 // standard related : Account
-                new Money { Amount = 50m,  Currency = currencies[0], },//Account = accounts[7], },//17
-                new Money { Amount = 100m, Currency = currencies[1], },//Account = accounts[8], },
+                new Money { Amount = 50m,  Currency = currencies[2], },//Account = accounts[7], },//17
+                new Money { Amount = 100m, Currency = currencies[2], },//Account = accounts[8], },
                 new Money { Amount = 100m, Currency = currencies[2], },//Account = accounts[9], },
                 new Money { Amount = 100m, Currency = currencies[2], },//Account = accounts[10], },
               
@@ -784,7 +784,7 @@ namespace Bank.Models
                 context.DepositAccounts.AddRange(depositAccounts);
                 context.SaveChanges();
             }
-            var standardAccount = new[]
+            var standardAccounts = new[]
             {
                 new StandardAccount
                 {
@@ -817,7 +817,7 @@ namespace Bank.Models
             };
             if (!context.StandardAccounts.Any())
             {
-                context.StandardAccounts.AddRange(standardAccount);
+                context.StandardAccounts.AddRange(standardAccounts);
                 context.SaveChanges();
             }
 
@@ -860,11 +860,16 @@ namespace Bank.Models
                     MinimalCredit = money[23],
                 },
             };
-
+            if (!context.CreditTerms.Any())
+            {
+                context.CreditTerms.AddRange(creditTerms);
+                context.SaveChanges();
+            }
             var creditAccounts = new[]
             {
                 new CreditAccount
                 {
+                    SourceStandardAccount = standardAccounts[0],
                     CreditTerm = creditTerms[0],
                     Fine = money[30],
                     PaidFinePart=money[31],
@@ -875,6 +880,7 @@ namespace Bank.Models
                 },
                 new CreditAccount
                 {
+                    SourceStandardAccount = standardAccounts[1],
                     CreditTerm = creditTerms[1],
                     Fine = money[34],
                     PaidFinePart=money[35],
@@ -885,6 +891,7 @@ namespace Bank.Models
                 },
                 new CreditAccount
                 {
+                    SourceStandardAccount  = standardAccounts[2],
                     CreditTerm = creditTerms[2],
                     Fine = money[38],
                     PaidFinePart=money[39],
@@ -894,7 +901,11 @@ namespace Bank.Models
                     Person = people[2],
                 },
             };
-
+            if (!context.CreditAccounts.Any())
+            {
+                context.CreditAccounts.AddRange(creditAccounts);
+                context.SaveChanges();
+            }
             var accounts = new[]
             {
                 #region accounts for deposit accounts
@@ -938,7 +949,7 @@ namespace Bank.Models
 
                 new Account
                 {
-                    StandardAccount = standardAccount[4],
+                    StandardAccount = standardAccounts[4],
                     Name = "st acc#4 = fund",
                     Number = "7327000000009",
                     OpenDate = timeService.CurrentTime.AddDays(-500),
@@ -946,7 +957,7 @@ namespace Bank.Models
                 },
                 new Account
                 {
-                    StandardAccount = standardAccount[5],
+                    StandardAccount = standardAccounts[5],
                     Name = "st acc#5 = fund",
                     Number = "7327000000010",
                     OpenDate = timeService.CurrentTime.AddDays(-500),
@@ -954,7 +965,7 @@ namespace Bank.Models
                 },
                 new Account
                 {
-                    StandardAccount = standardAccount[6],
+                    StandardAccount = standardAccounts[6],
                     Name = "st acc#6 = fund",
                     Number = "7327000000011",
                     OpenDate = timeService.CurrentTime.AddDays(-500),
@@ -967,7 +978,7 @@ namespace Bank.Models
 
                 new Account
                 {
-                    StandardAccount = standardAccount[0],
+                    StandardAccount = standardAccounts[0],
                     Name = "st acc#0",
                     Number = "9999000000004",
                     OpenDate = timeService.CurrentTime.AddDays(-500),
@@ -975,7 +986,7 @@ namespace Bank.Models
                 },
                 new Account
                 {
-                    StandardAccount = standardAccount[1],
+                    StandardAccount = standardAccounts[1],
                     Name = "st acc#1",
                     Number = "9999000000003",
                     OpenDate = timeService.CurrentTime.AddDays(-500),
@@ -983,7 +994,7 @@ namespace Bank.Models
                 },
                 new Account
                 {
-                    StandardAccount = standardAccount[2],
+                    StandardAccount = standardAccounts[2],
                     Name = "st acc#2",
                     Number = "9999000000002",
                     OpenDate = timeService.CurrentTime.AddDays(-1000),
@@ -991,7 +1002,7 @@ namespace Bank.Models
                 },
                 new Account
                 {
-                    StandardAccount = standardAccount[3],
+                    StandardAccount = standardAccounts[3],
                     Name = "st acc#3",
                     Number = "9999000000001",
                     OpenDate = timeService.CurrentTime.AddDays(-1500),

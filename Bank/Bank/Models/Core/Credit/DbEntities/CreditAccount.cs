@@ -12,6 +12,9 @@ namespace Bank.Models
 
         public Account Account { get; set; }
 
+        public int SourceStandardAccountId { get; set; }
+        public StandardAccount SourceStandardAccount { get; set; }
+
         public int PaidMainPartId { get; set; }
 
         public Money PaidMainPart { get; set; }

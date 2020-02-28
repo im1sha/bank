@@ -41,6 +41,7 @@ namespace Bank.Models
                 .Include(i => i.CreditTerm).ThenInclude(i => i.Currency)
                 .Include(i => i.CreditTerm).ThenInclude(i => i.MaximalCredit)
                 .Include(i => i.CreditTerm).ThenInclude(i => i.MinimalCredit)
+                .Include(i => i.SourceStandardAccount).ThenInclude(i => i.Account)
                 .Include(i => i.Fine)
                 .Include(i => i.PaidFinePart)
                 .Include(i => i.PaidMainPart)
@@ -55,6 +56,8 @@ namespace Bank.Models
             return Db.CreditTerms
                 .Include(i => i.InterestAccrual)
                 .Include(i => i.CreditAccounts)
+                .Include(i => i.MinimalCredit)
+                .Include(i => i.MaximalCredit)
                 .OrderBy(i => i.Id)
                 .ToList();
         }
@@ -70,7 +73,7 @@ namespace Bank.Models
         public List<LegalEntity> GetLegalEntities()
         {
             return Db.LegalEntities
-                .Include(i => i.StandardAccounts)
+                .Include(i => i.StandardAccounts).ThenInclude(i => i.Account).ThenInclude(i => i.Money)
                 .OrderBy(i => i.Id)
                 .ToList();
         }
