@@ -18,7 +18,7 @@ namespace Bank.Models
             _db = db;
         }
 
-        public void Close(int accountId, bool closedInTime)
+        public bool Close(int accountId, bool closedInTime)
         {
             var deposit = _depositDb.GetDepositAccounts().First(i => i.Account.Id == accountId);
 
@@ -85,12 +85,12 @@ namespace Bank.Models
             };
             _db.Accounts.Add(acc);
             _db.SaveChanges();
+
+            return true;
         }
 
         public void SkipDay()
         {
-            _timeService.AddDays(1);
-
             foreach (var deposit in _depositDb.GetDepositAccounts())
             {
                 if (_timeService.IsActive(deposit.Account.OpenDate, deposit.Account.TerminationDate))

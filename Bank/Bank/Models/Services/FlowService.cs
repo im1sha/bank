@@ -6,14 +6,18 @@ namespace Bank.Models
     public class FlowService
     {
         private readonly IEnumerable<ISkippable> _skippables;
+        private readonly TimeService _timeService;
 
-        public FlowService(IEnumerable<ISkippable> skippables)
+        public FlowService(IEnumerable<ISkippable> skippables, TimeService timeService)
         {
             _skippables = skippables;
+            _timeService = timeService;
         }
 
         public void SkipDay()
-        {
+        {         
+            _timeService.AddDays(1);
+
             foreach (var item in _skippables)
             {
                 item.SkipDay();

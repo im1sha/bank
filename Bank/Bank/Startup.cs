@@ -48,20 +48,20 @@ namespace Bank
                 timeshiftData = "";
             }
             DateTime date;
-            //DeltaDays DeltaMonth 
-            var strings = timeshiftData.Split(" ");
-            if (strings.Length != 3 || !int.TryParse(strings[0], out _) 
-                || !int.TryParse(strings[1], out _)
-                || !int.TryParse(strings[2], out _))
-            {
+            ////DeltaDays DeltaMonth 
+            //var strings = timeshiftData.Split(" ");
+            //if (strings.Length != 3 || !int.TryParse(strings[0], out _) 
+            //    || !int.TryParse(strings[1], out _)
+            //    || !int.TryParse(strings[2], out _))
+            //{
                 date = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
-            }
-            else
-            {
-                date = new DateTime(int.Parse(strings[0]), int.Parse(strings[1]), int.Parse(strings[2]));
-            }
-            
-            services.AddSingleton(new TimeService(path, date));
+            //}
+            //else
+            //{
+            //    date = new DateTime(int.Parse(strings[0]), int.Parse(strings[1]), int.Parse(strings[2]));
+            //}
+            var ts = new TimeService(path, date);
+            services.AddSingleton(ts);
 
             var sp = services.BuildServiceProvider();
 
@@ -76,7 +76,7 @@ namespace Bank
                 {
                     new CreditFlowHandler(creditDb, timeService, db),
                     new DepositFlowHandler(depositDb, timeService, db)
-                });
+                }, ts);
             //services.AddSingleton(new PersonDbEntityRetriever(db));
             //services.AddSingleton(depositDb);
             //services.AddSingleton(creditDb);

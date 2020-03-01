@@ -30,6 +30,8 @@ namespace Bank.Models
     
         public CreditAccount CreditAccountPercentage { get; set; }
 
+        public CreditAccount CreditAccountMain { get; set; }
+
         public CreditTerm CreditTermMinimalCredit { get; set; }
 
         public CreditTerm CreditTermMaximalCredit { get; set; }

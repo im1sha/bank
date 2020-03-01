@@ -549,6 +549,10 @@ namespace Bank.Models
                 new Money {Amount = 0m, Currency = currencies[2], },//42
                 new Money {Amount = 0m, Currency = currencies[2], },
                 new Money {Amount = 0m, Currency = currencies[2], },
+
+                 //credits : CreditAccount .Main
+                new Money {Amount = 0m, Currency = currencies[2], },//45
+                new Money {Amount = 0m, Currency = currencies[2], },
                 new Money {Amount = 0m, Currency = currencies[2], },
             };
             if (!context.Moneys.Any())
@@ -876,6 +880,7 @@ namespace Bank.Models
                     PaidMainPart=money[32],
                     PaidPercentagePart=money[33],
                     Percentage= money[42],
+                    Main= money[45],
                     Person = people[0],
                 },
                 new CreditAccount
@@ -887,6 +892,7 @@ namespace Bank.Models
                     PaidMainPart=money[36],
                     PaidPercentagePart=money[37],
                     Percentage= money[43],
+                    Main= money[46],
                     Person = people[1],
                 },
                 new CreditAccount
@@ -898,6 +904,7 @@ namespace Bank.Models
                     PaidMainPart=money[40],
                     PaidPercentagePart=money[41],
                     Percentage= money[44],
+                    Main= money[47],
                     Person = people[2],
                 },
             };

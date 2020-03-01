@@ -11,6 +11,10 @@ namespace Bank.Models
     {
         private readonly string _pathToStorage;
 
+        public static int DaysInMonth { get; } = 30;
+
+        public static int DaysInYear { get; } = 365;
+
         public DateTime CurrentTime { get; private set; }
 
         public TimeService(string pathToShiftStorage, DateTime dateTime)
@@ -30,6 +34,7 @@ namespace Bank.Models
         {
             if (CurrentTime < openDate)
             {
+                return false;
                 throw new ArgumentNullException();
             }
             if (CountElapsedDays(openDate) == 0)

@@ -1,6 +1,7 @@
 ﻿using Bank.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -31,6 +32,8 @@ namespace Bank.Controllers
         // here month is 30 days
         public ActionResult Skip([FromQuery]bool skipDay, [FromQuery]bool skipMonth)
         {
+            //_db.DetachAllEntities();
+
             if (skipDay)
             {
                 _flowService.SkipDay();
@@ -41,10 +44,47 @@ namespace Bank.Controllers
                 {
                     _flowService.SkipDay();
                 }
+            }           
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        public ActionResult Skip29()
+        {
+            //_db.DetachAllEntities();
+
+            for (int i = 0; i < 29; i++)
+            {
+                _flowService.SkipDay();
             }
 
             return RedirectToAction(nameof(Index));
         }
+
+        public ActionResult Skip90()
+        {
+            //_db.DetachAllEntities();
+
+            for (int i = 0; i < 90; i++)
+            {
+                _flowService.SkipDay();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        public ActionResult Skip180()
+        {
+            //_db.DetachAllEntities();
+
+            for (int i = 0; i < 180; i++)
+            {
+                _flowService.SkipDay();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
 
         // GET: Credit
         //      Credit/index/5
@@ -78,23 +118,28 @@ namespace Bank.Controllers
                 MinimalCredit = i.CreditTerm.MinimalCredit.Amount,
                 PaidFinePart = i.PaidFinePart.Amount,
                 PaidMainPart = i.PaidMainPart.Amount,
+                Main = i.Main.Amount,
                 PaidPercentagePart = i.PaidPercentagePart.Amount,
                 Percentage = i.Percentage.Amount,
-                NextPayment = CalculateNextPayment(i),
-                RequiredToCloseCredit = CalculateAmountRequiredToCloseCredit(i),
+                CurrentPayment = GetCurrentPayment(i),
+                RequiredToCloseCredit = RequiredToCloseCredit(i),
             }).ToList();
 
             return View(models);
         }
 
-        private decimal CalculateNextPayment(CreditAccount creditAccount)
+        private decimal GetCurrentPayment(CreditAccount creditAccount)
         {
-            return 0m;
+            var res = new CreditPaymentCalculator(creditAccount, _timeService).GetPayment();
+
+            return res.Fines + res.Main + res.Percents;
         }
 
-        private decimal CalculateAmountRequiredToCloseCredit(CreditAccount creditAccount)
+        private decimal RequiredToCloseCredit(CreditAccount creditAccount)
         {
-            return 0m;
+            var res = new CreditPaymentCalculator(creditAccount, _timeService).RequiredToCloseCreditPrediction();
+
+            return res.Fines + res.Main + res.Percents;
         }
 
         // GET: Credit/Details/5
@@ -126,11 +171,12 @@ namespace Bank.Controllers
                 MaximalCredit = creditAcc.CreditTerm.MaximalCredit.Amount,
                 MinimalCredit = creditAcc.CreditTerm.MinimalCredit.Amount,
                 PaidFinePart = creditAcc.PaidFinePart.Amount,
+                Main = creditAcc.Main.Amount,
                 PaidMainPart = creditAcc.PaidMainPart.Amount,
                 PaidPercentagePart = creditAcc.PaidPercentagePart.Amount,
                 Percentage = creditAcc.Percentage.Amount,
-                NextPayment = CalculateNextPayment(creditAcc),
-                RequiredToCloseCredit = CalculateAmountRequiredToCloseCredit(creditAcc),
+                CurrentPayment = GetCurrentPayment(creditAcc),
+                RequiredToCloseCredit = RequiredToCloseCredit(creditAcc),
                 AccountNumberOfSourceStandardAccount = creditAcc.SourceStandardAccount.Account.Number,
             };
 
@@ -168,8 +214,6 @@ namespace Bank.Controllers
             [FromQuery]int? personId,
             [FromQuery]int? currencyId = null,
             [FromQuery]int? creditTermId = null,
-            // [FromQuery]int? accountId = null,
-            // [FromQuery]int? interestAccrualId = null,
             [FromQuery]DateTime? openDate = null)
         {
             if (personId == null)
@@ -254,7 +298,7 @@ namespace Bank.Controllers
                             Currency = _creditDb.GetCurrencies().First(i => i.Id == currencyId),
                             Amount = 0,
                         },
-                        5).ToList();
+                        6).ToList();
 
                     _db.Moneys.AddRange(moneys);
                     _db.SaveChanges();
@@ -277,6 +321,7 @@ namespace Bank.Controllers
                         PaidFinePart = moneys[2],
                         PaidMainPart = moneys[3],
                         PaidPercentagePart = moneys[4],
+                        Main = moneys[5],
                         SourceStandardAccount = sourceAccount.StandardAccount,
                     };
                     _db.CreditAccounts.Add(credit);
@@ -411,10 +456,11 @@ namespace Bank.Controllers
                     MinimalCredit = creditAcc.CreditTerm.MinimalCredit.Amount,
                     PaidFinePart = creditAcc.PaidFinePart.Amount,
                     PaidMainPart = creditAcc.PaidMainPart.Amount,
+                    Main = creditAcc.Main.Amount,
                     PaidPercentagePart = creditAcc.PaidPercentagePart.Amount,
                     Percentage = creditAcc.Percentage.Amount,
-                    NextPayment = CalculateNextPayment(creditAcc),
-                    RequiredToCloseCredit = CalculateAmountRequiredToCloseCredit(creditAcc),
+                    CurrentPayment = GetCurrentPayment(creditAcc),
+                    RequiredToCloseCredit = RequiredToCloseCredit(creditAcc),
                     AccountNumberOfSourceStandardAccount = creditAcc.SourceStandardAccount.Account.Number,
                 };
 
@@ -433,13 +479,14 @@ namespace Bank.Controllers
         {
             try
             {
-                //var dep = _depositDb.GetDepositAccounts().First(i => i.Id == model.Id);
-                //if (!_timeService.CheckTerminationDate(dep.Account.TerminationDate))
-                //{
-                //    return View("StatusFailed", "Account is closed.");
-                //}
+                var cr = _db.CreditAccounts.AsNoTracking().Include(i => i.Account).First(i => i.Id == model.Id);
 
-                //CloseDeposit(dep, false);
+                if (!_timeService.CheckTerminationDate(cr.Account.TerminationDate))
+                {
+                    return View("StatusFailed", "Account is closed.");
+                }
+
+                _flowService.Close<CreditFlowHandler>(cr.Account.Id, false);
 
                 return View("StatusSucceeded", "Credit close succeeded.");
             }

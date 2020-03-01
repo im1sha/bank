@@ -46,6 +46,12 @@
             @Html.DisplayFor(model => model.MoneyAmount)
         </dd>
         <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Main)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Main)
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Percentage)
         </dt>
         <dd class="col-sm-10">
@@ -76,10 +82,10 @@
             @Html.DisplayFor(model => model.PaidFinePart)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.NextPayment)
+            @Html.DisplayNameFor(model => model.CurrentPayment)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.NextPayment)
+            @Html.DisplayFor(model => model.CurrentPayment)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.RequiredToCloseCredit)

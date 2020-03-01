@@ -7,11 +7,14 @@
 
 <h1>@ViewData["Title"]</h1>
 
-<h3>
-    @Html.ActionLink("Skip day", "Skip", new { skipDay = true, skipMonth = false }) |
-    @Html.ActionLink("Skip 30 days", "Skip", new { skipDay = false, skipMonth = true }) |
+<h4>
+    @Html.ActionLink("Skip day", "Skip", new { skipDay = true, skipMonth = false, skipYear = false }) |
+    @Html.ActionLink("Skip 30 days", "Skip", new { skipDay = false, skipMonth = true, skipYear = false }) |
+    @Html.ActionLink("Skip 29 days", "Skip29") |
+    @Html.ActionLink("Skip 90 days", "Skip90") |
+    @Html.ActionLink("Skip 180 days", "Skip180") |
     Date: @Timer.CurrentTime.Date.ToShortDateString()
-</h3>
+</h4>
 
 <table class="table">
     <thead>
@@ -33,7 +36,7 @@
                 @Html.DisplayNameFor(model => model.MoneyAmount)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.NextPayment)
+                @Html.DisplayNameFor(model => model.CurrentPayment)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.RequiredToCloseCredit)
@@ -69,7 +72,7 @@
                     @Html.DisplayFor(modelItem => item.MoneyAmount)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.NextPayment)
+                    @Html.DisplayFor(modelItem => item.CurrentPayment)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.RequiredToCloseCredit)

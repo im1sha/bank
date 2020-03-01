@@ -4,6 +4,6 @@
     {
         void SkipDay();
 
-        void Close(int accountId, bool closeInTime);
+        bool Close(int accountId, bool closeInTime);
     }
 }

@@ -239,6 +239,12 @@ namespace Bank.Models
                 .HasForeignKey<CreditAccount>(pt => pt.PaidMainPartId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<CreditAccount>()
+              .HasOne(p => p.Main)
+              .WithOne(t => t.CreditAccountMain)
+              .HasForeignKey<CreditAccount>(pt => pt.MainId)
+              .OnDelete(DeleteBehavior.Restrict);
+
             //CreditTerm
             modelBuilder.Entity<CreditTerm>()
                 .HasOne(pt => pt.MaximalCredit)

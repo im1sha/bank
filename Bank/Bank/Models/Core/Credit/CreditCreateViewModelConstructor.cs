@@ -227,21 +227,6 @@ namespace Bank
             }
             return result;
         }
-
-        private IEnumerable<CreditTerm> SelectCreditTermsByInterestAccrualId(IEnumerable<CreditTerm> terms, int? outInterestAccrualId)
-        {
-            if (terms == null)
-            {
-                throw new ArgumentNullException();
-            }
-            var result = terms.Where(i => outInterestAccrualId == null ? true : i.InterestAccrualId == outInterestAccrualId).ToList();
-
-            if (result.Count == 0)
-            {
-                throw new CreditCreateException(CreditCreateExceptionType.InterestAccrualNotFound);
-            }
-            return result;
-        }
     }
 }
 

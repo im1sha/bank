@@ -32,6 +32,9 @@ namespace Bank.Models
         [DisplayName("Fines")]
         public decimal Fine { get; set; }
 
+        [DisplayName("Main")]
+        public decimal Main { get; set; }
+
         [DisplayName("Paid main part")]
         public decimal PaidMainPart { get; set; }
 
@@ -41,8 +44,8 @@ namespace Bank.Models
         [DisplayName("Paid fines")]
         public decimal PaidFinePart { get; set; }
 
-        [DisplayName("Next payment")]
-        public decimal NextPayment { get; set; }
+        [DisplayName("Current payment")]
+        public decimal CurrentPayment { get; set; }
 
         [DisplayName("Left")]
         public decimal RequiredToCloseCredit { get; set; }
