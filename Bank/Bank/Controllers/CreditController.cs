@@ -486,7 +486,10 @@ namespace Bank.Controllers
                     return View("StatusFailed", "Account is closed.");
                 }
 
-                _flowService.Close<CreditFlowHandler>(cr.Account.Id, false);
+                if (!_flowService.Close<CreditFlowHandler>(cr.Account.Id, false))
+                {
+                    return View("StatusFailed", "Credit close failed.");
+                }
 
                 return View("StatusSucceeded", "Credit close succeeded.");
             }

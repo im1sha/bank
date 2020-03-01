@@ -27,9 +27,9 @@ namespace Bank.Models
             GC.Collect();
         }
 
-        public void Close<T>(int accountId, bool closedInTime)
+        public bool Close<T>(int accountId, bool closedInTime)
         {
-            _skippables.FirstOrDefault(i => i.GetType() == typeof(T))?.Close(accountId, closedInTime);
+            return _skippables.FirstOrDefault(i => i.GetType() == typeof(T))?.Close(accountId, closedInTime) ?? false;
         }
 
         public T GetSkippable<T>() where T : class
