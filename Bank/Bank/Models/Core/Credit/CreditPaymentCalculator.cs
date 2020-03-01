@@ -16,6 +16,11 @@ namespace Bank.Models
 
         public (decimal Main, decimal Percents, decimal Fines) RequiredToCloseCreditPrediction()
         {
+            if (!_timeService.CheckTerminationDate(_creditAccount.Account.TerminationDate))
+            {
+                return (0, 0, 0);
+            }
+
             decimal finesUnpaid = _creditAccount.Fine.Amount - _creditAccount.PaidFinePart.Amount;
 
             decimal percentsOverallUnpaid =

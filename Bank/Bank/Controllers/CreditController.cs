@@ -18,7 +18,8 @@ namespace Bank.Controllers
         private readonly TimeService _timeService;
         private readonly FlowService _flowService;
 
-        public CreditController(BankAppDbContext context, ILogger<CreditController> logger, LinkGenerator linkGenerator, TimeService timeService, FlowService flowService/*, CreditDbEntityRetriever creditDb, PersonDbEntityRetriever personDb*/)
+        public CreditController(BankAppDbContext context, ILogger<CreditController> logger, LinkGenerator linkGenerator,
+            TimeService timeService, FlowService flowService)
         {
             _db = context;
             _creditDb = new CreditDbEntityRetriever(context);
@@ -44,7 +45,7 @@ namespace Bank.Controllers
                 {
                     _flowService.SkipDay();
                 }
-            }           
+            }
 
             return RedirectToAction(nameof(Index));
         }

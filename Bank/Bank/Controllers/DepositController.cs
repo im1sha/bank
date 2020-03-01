@@ -1,5 +1,4 @@
 ﻿using Bank.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +18,8 @@ namespace Bank.Controllers
         private readonly TimeService _timeService;
         private readonly FlowService _flowService;
 
-        public DepositController(BankAppDbContext context, ILogger<DepositController> logger, LinkGenerator linkGenerator, TimeService timeService, FlowService flowService/*, DepositDbEntityRetriever depositDb, PersonDbEntityRetriever personDb*/)
+        public DepositController(BankAppDbContext context, ILogger<DepositController> logger, LinkGenerator linkGenerator,
+            TimeService timeService, FlowService flowService/*, DepositDbEntityRetriever depositDb, PersonDbEntityRetriever personDb*/)
         {
             _db = context;
             _depositDb = new DepositDbEntityRetriever(context);
@@ -44,7 +44,7 @@ namespace Bank.Controllers
             {
                 for (int i = 0; i < 30; i++)
                 {
-                    SkipDay();      
+                    SkipDay();
                 }
             }
 
@@ -268,7 +268,7 @@ namespace Bank.Controllers
                     _db.Accounts.Add(accForDeposit);
                     _db.SaveChanges();
 
-                 
+
 
                     var source = _depositDb.GetAccounts().First(i => i.Id == accountSourceId);
                     source.Money.Amount -= selectedMoney;
@@ -415,7 +415,7 @@ namespace Bank.Controllers
 
                 return View("StatusSucceeded", "Deposit close succeeded.");
             }
-            catch (Exception e)
+            catch
             {
                 return View("StatusFailed", "Deposit delete failed.");
             }

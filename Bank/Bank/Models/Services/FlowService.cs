@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Bank.Models
@@ -15,18 +16,25 @@ namespace Bank.Models
         }
 
         public void SkipDay()
-        {         
+        {
             _timeService.AddDays(1);
 
             foreach (var item in _skippables)
             {
                 item.SkipDay();
             }
+
+            GC.Collect();
         }
 
         public void Close<T>(int accountId, bool closedInTime)
         {
             _skippables.FirstOrDefault(i => i.GetType() == typeof(T))?.Close(accountId, closedInTime);
+        }
+
+        public T GetSkippable<T>() where T : class
+        {
+            return _skippables.FirstOrDefault(i => i.GetType() == typeof(T)) as T;
         }
     }
 }

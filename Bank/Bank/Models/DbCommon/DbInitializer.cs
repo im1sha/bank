@@ -509,10 +509,10 @@ namespace Bank.Models
                 new Money { Amount = 20000000000m, Currency = currencies[1], },//Account = accounts[5], },//15
                 new Money { Amount = 30000000000m, Currency = currencies[2], },//Account = accounts[6], },//16
                 // standard related : Account
-                new Money { Amount = 50m,  Currency = currencies[2], },//Account = accounts[7], },//17
-                new Money { Amount = 100m, Currency = currencies[2], },//Account = accounts[8], },
-                new Money { Amount = 100m, Currency = currencies[2], },//Account = accounts[9], },
-                new Money { Amount = 100m, Currency = currencies[2], },//Account = accounts[10], },
+                new Money { Amount = 100000m,  Currency = currencies[2], },//Account = accounts[7], },//17
+                new Money { Amount = 100000m, Currency = currencies[2], },//Account = accounts[8], },
+                new Money { Amount = 100000m, Currency = currencies[2], },//Account = accounts[9], },
+                new Money { Amount = 100000m, Currency = currencies[2], },//Account = accounts[10], },
               
 
                 // credits : CreditTerm.MinimalCredit

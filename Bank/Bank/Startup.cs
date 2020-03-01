@@ -25,8 +25,10 @@ namespace Bank
         public void ConfigureServices(IServiceCollection services)
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<BankAppDbContext>(options => options.UseSqlServer(connection));
+            services.AddDbContext<BankAppDbContext>(options => options.UseSqlServer(connection), ServiceLifetime.Scoped);
             services.AddControllersWithViews();
+
+            #region time service
 
             var path = Configuration.GetValue<string>(WebHostDefaults.ContentRootKey)
                 + Path.DirectorySeparatorChar.ToString()
@@ -48,39 +50,33 @@ namespace Bank
                 timeshiftData = "";
             }
             DateTime date;
-            ////DeltaDays DeltaMonth 
-            //var strings = timeshiftData.Split(" ");
-            //if (strings.Length != 3 || !int.TryParse(strings[0], out _) 
-            //    || !int.TryParse(strings[1], out _)
-            //    || !int.TryParse(strings[2], out _))
-            //{
+            var strings = timeshiftData.Split(" ");
+            if (strings.Length != 3 || !int.TryParse(strings[0], out _)
+                || !int.TryParse(strings[1], out _)
+                || !int.TryParse(strings[2], out _))
+            {
                 date = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
-            //}
-            //else
-            //{
-            //    date = new DateTime(int.Parse(strings[0]), int.Parse(strings[1]), int.Parse(strings[2]));
-            //}
+            }
+            else
+            {
+                date = new DateTime(int.Parse(strings[0]), int.Parse(strings[1]), int.Parse(strings[2]));
+            }
             var ts = new TimeService(path, date);
             services.AddSingleton(ts);
 
-            var sp = services.BuildServiceProvider();
+            #endregion
 
-            var db = sp.GetRequiredService<BankAppDbContext>();
-            var timeService = sp.GetRequiredService<TimeService>();
-
-            var depositDb = new DepositDbEntityRetriever(db);
-            var creditDb = new CreditDbEntityRetriever(db);
-
-            var fs = new FlowService(
-                new ISkippable[]
+            services.AddScoped(
+                (IServiceProvider sp) =>
                 {
-                    new CreditFlowHandler(creditDb, timeService, db),
-                    new DepositFlowHandler(depositDb, timeService, db)
-                }, ts);
-            //services.AddSingleton(new PersonDbEntityRetriever(db));
-            //services.AddSingleton(depositDb);
-            //services.AddSingleton(creditDb);
-            services.AddSingleton(fs);
+                    var db = sp.GetRequiredService<BankAppDbContext>();
+                    var timeService = sp.GetRequiredService<TimeService>();
+                    return new FlowService(new ISkippable[]
+                    {
+                        new CreditFlowHandler(new CreditDbEntityRetriever(db), timeService, db),
+                        new DepositFlowHandler(new DepositDbEntityRetriever(db), timeService, db)
+                    }, timeService);
+                });
         } 
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

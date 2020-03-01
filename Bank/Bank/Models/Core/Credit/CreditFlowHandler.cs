@@ -30,6 +30,7 @@ namespace Bank.Models
                     if (credit.SourceStandardAccount.Account.Money.Amount >= requiredMoney.Fines + requiredMoney.Main + requiredMoney.Percents)
                     {
                         SubtractMoney(credit, requiredMoney);
+                        credit.Account.TerminationDate = _timeService.CurrentTime;
                         return true;
                     }
                 }
@@ -42,6 +43,7 @@ namespace Bank.Models
                     if (credit.SourceStandardAccount.Account.Money.Amount >= requiredMoney.Fines + requiredMoney.Main + requiredMoney.Percents)
                     {
                         SubtractMoney(credit, requiredMoney);
+                        credit.Account.TerminationDate = _timeService.CurrentTime;
                         return true;
                     }
                 }

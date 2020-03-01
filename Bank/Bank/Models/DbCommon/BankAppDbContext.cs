@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System;
 
 namespace Bank.Models
 {
@@ -52,10 +54,12 @@ namespace Bank.Models
 
         public DbSet<CreditAccount> CreditAccounts { get; set; }
 
-        public BankAppDbContext(DbContextOptions<BankAppDbContext> options)
+        public BankAppDbContext(DbContextOptions<BankAppDbContext> options, ILogger<BankAppDbContext> logger)
             : base(options)
         {
-           // Database.EnsureDeleted();
+            //logger.LogInformation($"Created {nameof(BankAppDbContext)}");
+
+            // Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
