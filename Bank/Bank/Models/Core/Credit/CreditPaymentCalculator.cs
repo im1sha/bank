@@ -74,7 +74,7 @@ namespace Bank.Models
             List<(decimal MainMoneyLeft, int SegmentLengthInDays)> ConvertToSegments(List<(decimal MainMoneyLeft, int DaysLeft)> left)
             {
                 var result = new List<(decimal MainMoneyLeft, int SegmentLengthInDays)>();
-                var terms = SplitTermOnMonths(left.First().DaysLeft);
+                var terms = SplitTermOnMonths(left.FirstOrDefault().DaysLeft);
 
                 for (int i = 0; i < left.Count; i++)
                 {
@@ -105,8 +105,8 @@ namespace Bank.Models
         private decimal CalculatePercentsForSegment(int segmentLength, decimal mainMoneyLeftForDifferencial = 0)
         {
             return _creditAccount.CreditTerm.IsAnnuity
-                 ? CalculateOverallAnnuityPercentagePayments().First(i => i.SegmentLengthInDays == segmentLength).PercentagePayment
-                 : CalculateOverallDifferencialPercentagePayments().First(i => i.MainMoneyLeft == mainMoneyLeftForDifferencial).PercentagePayment;
+                 ? CalculateOverallAnnuityPercentagePayments().FirstOrDefault(i => i.SegmentLengthInDays == segmentLength).PercentagePayment
+                 : CalculateOverallDifferencialPercentagePayments().FirstOrDefault(i => i.MainMoneyLeft == mainMoneyLeftForDifferencial).PercentagePayment;
         }
      
         public bool CheckClosePossibilityByDate(bool prediction)
@@ -161,14 +161,8 @@ namespace Bank.Models
                 {
                     var listOfAllPaymentsAndDays = GetListOfLeftMoneyAndDays();
                     (decimal MainMoneyLeft, int DaysLeft) leftPart;
-                    //try
-                    //{
-                    leftPart = listOfAllPaymentsAndDays.First(i => i.MainMoneyLeft == _creditAccount.Account.Money.Amount - _creditAccount.PaidMainPart.Amount);
-                    //}
-                    //catch 
-                    //{
-                    //    leftPart = listOfAllPaymentsAndDays.First();
-                    //}
+                   
+                    leftPart = listOfAllPaymentsAndDays.FirstOrDefault(i => i.MainMoneyLeft == _creditAccount.Account.Money.Amount - _creditAccount.PaidMainPart.Amount);
 
                     int index = listOfAllPaymentsAndDays.FindIndex(i => i == leftPart);
                     decimal mainPart = index == listOfAllPaymentsAndDays.Count - 1
