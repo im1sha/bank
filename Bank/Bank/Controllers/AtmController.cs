@@ -1,5 +1,6 @@
 ﻿using Bank.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -18,7 +19,7 @@ namespace Bank.Controllers
         private readonly BankAppDbContext _db;
         private readonly TimeService _timeService;
         private readonly FlowService _flowService;
-      
+
         public AtmController(BankAppDbContext context, ILogger<AtmController> logger, LinkGenerator linkGenerator,
             TimeService timeService, FlowService flowService)
         {
@@ -32,22 +33,12 @@ namespace Bank.Controllers
         }
 
         private static readonly Dictionary<int, int> _wrongPins = new Dictionary<int, int>();
-        private static int _currentAccountId;
-
-        public ActionResult Login()
+        private static int? _currentAccountId;
+    
+        public void CheckAccountAndPin(ModelStateDictionary ModelState, int accountIdOut, string pinOut)
         {
-            return View(
-                new AtmLoginViewModel 
-                { 
-                    AccountList = _creditDb.GetAccounts().Where(i => _timeService.CheckTerminationDate(i.TerminationDate)).ToList(),
-                });
-        }
+            var acc = _db.Accounts.AsNoTracking().FirstOrDefault(i => i.Id == accountIdOut);
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Login(AtmLoginViewModel input)
-        {
-            var acc = _db.Accounts.AsNoTracking().FirstOrDefault(i => i.Id == input.AccountId);
             var accId = acc?.Id ?? -1;
             if (acc == null)
             {
@@ -61,7 +52,7 @@ namespace Bank.Controllers
                 }
                 else
                 {
-                    if (input.PinCode != "1234")
+                    if (pinOut != "1234")
                     {
                         if (_wrongPins.ContainsKey(accId))
                         {
@@ -85,22 +76,131 @@ namespace Bank.Controllers
                     {
                         _wrongPins[accId] = 0;
                     }
-                }             
+                }
             }
+        }
+
+        private List<Account> GetActualAccounts()
+        {
+            return _creditDb.GetAccounts().Where(i =>
+                _timeService.CheckTerminationDate(i.TerminationDate) && i.StandardAccount != null && i.StandardAccount.Person != null)
+                .ToList();
+        }
+
+        public ActionResult Login()
+        {
+            _currentAccountId = null;
+
+            return View(
+                new AtmLoginViewModel
+                {
+                    AccountList = GetActualAccounts(),
+                });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Login(AtmLoginViewModel input)
+        {
+            CheckAccountAndPin(ModelState, input.AccountId, input.PinCode);
 
             if (ModelState.IsValid)
             {
-                _currentAccountId = accId;
-                return Content("OK");
+                _currentAccountId = input.AccountId;
+                return RedirectToAction(nameof(ListOfActions));
             }
             else
             {
                 return View(
                     new AtmLoginViewModel
                     {
-                        AccountList = _creditDb.GetAccounts().Where(i => _timeService.CheckTerminationDate(i.TerminationDate)).ToList(),
+                        AccountList = GetActualAccounts(),
                     });
             }
+        }
+
+        private ActionResult ListOfActions()
+        {
+            if (_currentAccountId == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            return View();
+        }
+
+        public ActionResult Status()
+        {
+            if (_currentAccountId == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            throw new NotImplementedException();
+        }
+
+        public ActionResult Withdraw()
+        {
+            if (_currentAccountId == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            return View(
+                new AtmWithdrawViewModel
+                {
+                    AccountId = (int)_currentAccountId,
+                    Money = _db.Accounts.FirstOrDefault(i => i.Id == _currentAccountId)?.Money?.Amount ?? 0m,
+                    AmountToWithdraw = 0m,
+                });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Withdraw(AtmWithdrawViewModel input)
+        {
+            if (_currentAccountId == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            CheckAccountAndPin(ModelState, input.AccountId, input.PinCode);
+
+            //check amount here
+
+            if (ModelState.IsValid)
+            {
+
+
+
+                return Content("OK");
+                //return View("Info", "");
+            }
+            else
+            {
+                return View(
+                    new AtmLoginViewModel
+                    {
+                        AccountList = GetActualAccounts(),
+                    });
+            }
+        }
+
+        public ActionResult Pay()
+        {
+            throw new NotImplementedException();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Pay(AtmWithdrawViewModel input)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ActionResult Logout()
+        {
+            return RedirectToAction(nameof(Login));
         }
     }
 }
