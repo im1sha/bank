@@ -88,7 +88,9 @@ namespace Bank
                 ShortDatePattern = "dd/MM/yyyy",
                 LongDatePattern = "dd/MM/yyyy hh:mm:ss tt"
             };
+
             culture.DateTimeFormat = dateFormat;
+            //culture.NumberFormat = new NumberFormatInfo { NumberDecimalDigits = 2 };
 
             var supportedCultures = new[]
             {

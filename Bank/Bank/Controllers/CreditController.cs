@@ -138,7 +138,7 @@ namespace Bank.Controllers
 
         private decimal RequiredToCloseCredit(CreditAccount creditAccount)
         {
-            var res = new CreditPaymentCalculator(creditAccount, _timeService).RequiredToCloseCreditPrediction();
+            var res = new CreditPaymentCalculator(creditAccount, _timeService).RequiredToCloseCredit();
 
             return res.Fines + res.Main + res.Percents;
         }
@@ -293,13 +293,12 @@ namespace Bank.Controllers
                     var sourceAccount = _creditDb.GetAccounts().First(i => i.Id == accountSourceId);
 
                     // credit account all the money instances
-                    var moneys = Enumerable.Repeat(
+                    var moneys = new object[6].Select(i =>
                         new Money
                         {
                             Currency = _creditDb.GetCurrencies().First(i => i.Id == currencyId),
                             Amount = 0,
-                        },
-                        6).ToList();
+                        }).ToList();
 
                     _db.Moneys.AddRange(moneys);
                     _db.SaveChanges();
