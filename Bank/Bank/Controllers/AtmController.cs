@@ -32,23 +32,75 @@ namespace Bank.Controllers
             _flowService = flowService;
         }
 
+        private const string A1_CELLULAR = "a1";
+        private const string LIFE_CELLULAR = "life";
+        private const string MTC_CELLULAR = "mtc";
+        private const string WITHDRAW_ACTION = "withdraw";
+
         private static readonly Dictionary<int, int> _wrongPins = new Dictionary<int, int>();
         private static int? _currentAccountId;
-    
-        private void CheckAccountAndPin(ModelStateDictionary ModelState, int accountIdOut, string pinOut)
+        private static string _phoneNumber;
+        private static string _cellular;
+        //private static string _action;
+
+        private bool IsCellular(string cellular)
+        {
+            switch (cellular?.ToLower())
+            {
+                case A1_CELLULAR:
+                case LIFE_CELLULAR:
+                case MTC_CELLULAR:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        private bool IsNumber(string number)
+        {
+            return number.Length == 9 && long.TryParse(number, out _);
+        }
+
+        private bool IsConfirmAction(string action)
+        {
+            return IsSelectMoneyAction(action) || action?.ToLower() == nameof(AccountStatus).ToLower();
+        }
+
+        private bool IsSelectMoneyAction(string action)
+        {
+            return new[]
+            {
+                WITHDRAW_ACTION, 
+                nameof(PhoneNumber).ToLower() 
+            }.Contains(action?.ToLower());
+        }
+
+        private void CheckCellularAndNumber(ModelStateDictionary modelState, string cellular, string number)
+        {
+            if (!IsNumber(number))
+            {
+                modelState.TryAddModelError("Phone number", "Phone number has invalid format.");
+            }
+            if (!IsCellular(cellular))
+            {
+                modelState.TryAddModelError("Cellular", "This cellular is absent.");
+            }
+        }
+
+        private void CheckAccountAndPin(ModelStateDictionary modelState, int accountIdOut, string pinOut)
         {
             var acc = _db.Accounts.AsNoTracking().FirstOrDefault(i => i.Id == accountIdOut);
 
             var accId = acc?.Id ?? -1;
             if (acc == null)
             {
-                ModelState.TryAddModelError("Account check", "Account is not found.");
+                modelState.TryAddModelError("Account check", "Account is not found.");
             }
             else
             {
                 if (_wrongPins.ContainsKey(accId) && _wrongPins[accId] > 2)
                 {
-                    ModelState.TryAddModelError("Pin code failure", "Your card is lock because you enter wrong pin code 3 times.");
+                    modelState.TryAddModelError("Pin code failure", "Your card is lock because you enter wrong pin code 3 times.");
                 }
                 else
                 {
@@ -65,11 +117,11 @@ namespace Bank.Controllers
 
                         if (_wrongPins[accId] > 2)
                         {
-                            ModelState.TryAddModelError("Pin code failure", "Your card is lock because you enter wrong pin code 3 times.");
+                            modelState.TryAddModelError("Pin code failure", "Your card is lock because you enter wrong pin code 3 times.");
                         }
                         else
                         {
-                            ModelState.TryAddModelError("Pin code check", "Please enter correct pin.");
+                            modelState.TryAddModelError("Pin code check", "Please enter correct pin.");
                         }
                     }
                     else
@@ -80,11 +132,47 @@ namespace Bank.Controllers
             }
         }
 
+        private void CheckConfirmAction(ModelStateDictionary modelState, string action)
+        {
+            if (!IsConfirmAction(action))
+            {
+                modelState.TryAddModelError("Action", "Action not found.");
+            }
+        }
+
         private List<Account> GetActualAccounts()
         {
             return _creditDb.GetAccounts().Where(i =>
                 _timeService.CheckTerminationDate(i.TerminationDate) && i.StandardAccount != null && i.StandardAccount.Person != null)
                 .ToList();
+        }
+
+        private string GetActualActionString(string action, out string additionalData)
+        {
+            var actionCasted = action?.ToLower();
+            additionalData = null;
+            if (actionCasted == WITHDRAW_ACTION || actionCasted == nameof(PhoneNumber).ToLower())
+            {
+                if (actionCasted == WITHDRAW_ACTION)
+                {
+                    additionalData = WITHDRAW_ACTION;
+                }
+                else
+                {
+                    additionalData = nameof(PhoneNumber).ToLower();
+                }
+                return nameof(SelectMoney);
+            }
+            else if (actionCasted == nameof(AccountStatus).ToLower())
+            {
+                return nameof(AccountStatus);
+            }
+            return null;
+        }
+
+        public ActionResult Logout()
+        {
+            return RedirectToAction(nameof(Login));
         }
 
         public ActionResult Login()
@@ -129,96 +217,219 @@ namespace Bank.Controllers
             return View();
         }
 
-        public ActionResult Confirm(string action)
-        {
-            return Content("OK");
-
-            //switch (action)
-            //{
-            //    case nameof(Pay):
-            //        RedirectToAction(nameof(Login));
-            //        break;
-            //    case nameof(Pay):
-            //        RedirectToAction(nameof(Login));
-            //        break;
-            //    case nameof(Pay):
-            //        RedirectToAction(nameof(Login));
-            //        break;
-            //    case nameof(Logout):
-            //        RedirectToAction(nameof(Login));
-            //        break;
-            //    default:
-            //        RedirectToAction(nameof(Login));
-            //        break;
-            //}
-        }
-
-        public ActionResult Status()
+        public ActionResult AccountList()
         {
             if (_currentAccountId == null)
             {
                 return RedirectToAction(nameof(Login));
             }
 
-            throw new NotImplementedException();
+            return View();
         }
 
-        public ActionResult Withdraw()
+        public ActionResult CellularList()
         {
             if (_currentAccountId == null)
             {
                 return RedirectToAction(nameof(Login));
             }
 
-            return View(new AtmDecimalInputViewModel());
+            return View();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Withdraw(AtmDecimalInputViewModel input)
+        public ActionResult PhoneNumber(string action)
         {
             if (_currentAccountId == null)
             {
                 return RedirectToAction(nameof(Login));
             }
 
-            //CheckAccountAndPin(ModelState, _currentAccountId, input.PinCode);
-
-            //check amount here
-
-            if (ModelState.IsValid)
+            if (IsCellular(action))
             {
-
-
-
-                return Content("OK");
-                //return View("Info", "");
+                return View(new AtmCellularInputViewModel { Cellular = action });
             }
             else
             {
-                return View(
-                    new AtmLoginViewModel
-                    {
-                        AccountList = GetActualAccounts(),
-                    });
+                return RedirectToAction(nameof(CellularList));
             }
-        }
-
-        public ActionResult Pay()
-        {
-            throw new NotImplementedException();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Pay(AtmDecimalInputViewModel input)
+        public ActionResult PhoneNumber(AtmCellularInputViewModel input)
         {
-            throw new NotImplementedException();
+            if (_currentAccountId == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            CheckCellularAndNumber(ModelState, input?.Cellular, input?.Number);
+
+            if (ModelState.IsValid)
+            {
+                _phoneNumber = input.Number;
+                _cellular = input.Cellular;
+                return RedirectToAction(nameof(Confirm), "Atm", new { action = nameof(PhoneNumber), });
+            }
+            else
+            {
+                return View(input);
+            }
         }
 
-        public ActionResult Logout()
+        public ActionResult Confirm(string action)
         {
-            return RedirectToAction(nameof(Login));
+            if (_currentAccountId == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            if (IsConfirmAction(action))
+            {
+                return View(new AtmConfirmViewModel { Action = action.ToLower(), });
+            }
+            else
+            {
+                return RedirectToAction(nameof(ListOfActions));
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Confirm(AtmConfirmViewModel input)
+        {
+            if (_currentAccountId == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            CheckAccountAndPin(ModelState, _currentAccountId == null ? -1 : (int)_currentAccountId, input.PinCode);
+            CheckConfirmAction(ModelState, input.Action);
+
+            if (ModelState.IsValid)
+            {
+                return RedirectToAction(GetActualActionString(
+                    input.Action, out string additionalData),
+                    "Atm",
+                    additionalData == null ? null : new { action = additionalData });
+            }
+            else
+            {
+                return View(input);
+            }
+        }
+
+        public ActionResult AddMoney()
+        {
+            if (_currentAccountId == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            return View(new AtmDecimalInputViewModel { });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddMoney(AtmDecimalInputViewModel input)
+        {
+            if (_currentAccountId == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (decimal.TryParse(input.Amount, out decimal result) && result > 0)
+                    {
+                        var acc = _db.Accounts.Include(i => i.Money).FirstOrDefault(i => i.Id == _currentAccountId);
+                        acc.Money.Amount += result;
+                        _db.Update(acc);
+                        _db.SaveChanges();
+                    }
+                }
+                catch
+                {
+                    return View("StatusFailed", "Server error happened while processing request.");
+                }
+
+                return RedirectToAction(nameof(AccountStatus));
+            }
+            else
+            {
+                return View(input);
+            }
+        }
+
+        public ActionResult AccountStatus()
+        {
+            if (_currentAccountId == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            return View(_db.Accounts.Include(i => i.Money).AsNoTracking().FirstOrDefault(i => i.Id == _currentAccountId)?.Money?.Amount.ToString());
+        }
+
+        public ActionResult SelectMoney(string action)
+        {
+            if (_currentAccountId == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+            if (!IsConfirmAction(action))
+            {
+                return RedirectToAction(nameof(ListOfActions));
+            }
+
+            return View(new AtmDecimalInputViewModel {Action = action, });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult SelectMoney(AtmDecimalInputViewModel input)
+        {
+            if (_currentAccountId == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            if (!IsSelectMoneyAction(input.Action))
+            {
+                return RedirectToAction(nameof(ListOfActions));
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (decimal.TryParse(input.Amount, out decimal result) && result > 0)
+                    {
+                        var acc = _db.Accounts.Include(i => i.Money).FirstOrDefault(i => i.Id == _currentAccountId);
+                        acc.Money.Amount += result;
+                        _db.Update(acc);
+                        _db.SaveChanges();
+                        throw new NotImplementedException();
+                        //return RedirectToAction(nameof());
+                    }
+                    else
+                    {
+                        throw new NotImplementedException();
+
+                        //return RedirectToAction(nameof());
+                    }
+                }
+                catch
+                {
+                    return View("StatusFailed", "Server error happened while processing request.");
+                }
+            }
+            else
+            {
+                return View(input);
+            }
         }
     }
 }

@@ -9,6 +9,8 @@ namespace Bank.Models
 {
     public class AtmConfirmViewModel
     {
+        public string Action { get; set; }
+
         [RegularExpression(@"^([0-9])+$", ErrorMessage = "PIN code should contain digits only.")]
         [StringLength(4)]
         [DisplayName("PIN")]

@@ -12,8 +12,8 @@ namespace Bank.Models
         public string Cellular { get; set; }
 
         [DisplayName("Number")]
-        [RegularExpression(@"^([0-9])+$", ErrorMessage = "PIN code should contain digits only.")]
+        [RegularExpression(@"^([0-9])+$", ErrorMessage = "Number should contain digits only.")]
         [StringLength(9)]
-        public decimal Number { get; set; }
+        public string Number { get; set; }
     }
 }

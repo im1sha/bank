@@ -9,6 +9,8 @@ namespace Bank.Models
 {
     public class AtmDecimalInputViewModel
     {
+        public string Action { get; set; }
+
         [DisplayName("Enter amount")]      
         [Currency(true)]
         [Required]

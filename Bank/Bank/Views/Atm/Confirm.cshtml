@@ -12,6 +12,8 @@
         <form asp-action="Confirm">
             <div asp-validation-summary="All" class="text-danger"></div>
 
+            <input asp-for="Action" class="form-control" hidden="hidden"/>
+
             <div class="form-group">
                 <label asp-for="PinCode" class="control-label"></label>
                 <input asp-for="PinCode" class="form-control" />
