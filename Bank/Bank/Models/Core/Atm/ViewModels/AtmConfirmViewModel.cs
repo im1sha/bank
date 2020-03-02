@@ -7,17 +7,8 @@ using System.Threading.Tasks;
 
 namespace Bank.Models
 {
-    public class AtmWithdrawViewModel
+    public class AtmConfirmViewModel
     {
-        [DisplayName("Account")]
-        public int AccountId { get; set; }
-
-        [DisplayName("Money")]
-        public decimal Money { get; set; } 
-
-        [DisplayName("Enter amount")]
-        public decimal AmountToWithdraw { get; set; }
-
         [RegularExpression(@"^([0-9])+$", ErrorMessage = "PIN code should contain digits only.")]
         [StringLength(4)]
         [DisplayName("PIN")]

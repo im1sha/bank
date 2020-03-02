@@ -1,21 +1,20 @@
 ﻿
 @{
-    ViewData["Title"] = "ListOfActions";
+    ViewData["Title"] = "Select action";
 }
 
-<h1>ListOfActions</h1>
-<hr/>
+<h1>@ViewData["Title"]</h1>
+<hr />
 <h2>
-    @Html.ActionLink("Withdraw money", "Withdraw")) 
+    @Html.ActionLink("Account", "AccountList")
 </h2>
+<br />
 <h2>
-    @Html.ActionLink("Get money amount", "Status") 
+    @Html.ActionLink("Pay cellular", "CellularList")
 </h2>
+<br />
 <h2>
-    @Html.ActionLink("Pay cellular ", "Pay") 
-</h2>
-<h2>
-    @Html.ActionLink("Log out", "Logout") 
+    @Html.ActionLink("Log out", "Logout")
 </h2>
 
 

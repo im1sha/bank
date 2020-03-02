@@ -550,8 +550,13 @@ namespace Bank.Models
                 new Money {Amount = 0m, Currency = currencies[2], },
                 new Money {Amount = 0m, Currency = currencies[2], },
 
-                 //credits : CreditAccount .Main
+                //credits : CreditAccount .Main
                 new Money {Amount = 0m, Currency = currencies[2], },//45
+                new Money {Amount = 0m, Currency = currencies[2], },
+                new Money {Amount = 0m, Currency = currencies[2], },
+
+                //legal entities: operators
+                new Money {Amount = 0m, Currency = currencies[2], },//48
                 new Money {Amount = 0m, Currency = currencies[2], },
                 new Money {Amount = 0m, Currency = currencies[2], },
             };
@@ -564,6 +569,9 @@ namespace Bank.Models
             var legalEntities = new[]
             {
                 new LegalEntity { Name = "Development fund BelAPB.by" },
+                new LegalEntity { Name = "A1" },
+                new LegalEntity { Name = "life" },
+                new LegalEntity { Name = "MTC" },
             };
             if (!context.LegalEntities.Any())
             {
@@ -816,7 +824,19 @@ namespace Bank.Models
                 },
                 new StandardAccount
                 {
-                    LegalEntity = legalEntities[0],
+                    LegalEntity = legalEntities[0],//6
+                },
+                new StandardAccount
+                {
+                    LegalEntity = legalEntities[1],
+                },
+                new StandardAccount
+                {
+                    LegalEntity = legalEntities[2],
+                },
+                new StandardAccount
+                {
+                    LegalEntity = legalEntities[3],
                 },
             };
             if (!context.StandardAccounts.Any())
@@ -1043,7 +1063,36 @@ namespace Bank.Models
                     Number = "1111000000003",
                     OpenDate = timeService.CurrentTime,
                     Money = money[29],
-                }
+                },
+
+                #endregion
+
+                #region operators
+                
+                new Account
+                {
+                    StandardAccount = standardAccounts[7],
+                    Name = "a1 account",
+                    Number = "9999000000012",
+                    OpenDate = timeService.CurrentTime,
+                    Money = money[48],
+                },
+                new Account
+                {
+                    StandardAccount = standardAccounts[8],
+                    Name = "life account",
+                    Number = "9999000000013",
+                    OpenDate = timeService.CurrentTime,
+                    Money = money[49],
+                },
+                new Account
+                {
+                    StandardAccount = standardAccounts[9],
+                    Name = "MTC account",
+                    Number = "9999000000014",
+                    OpenDate = timeService.CurrentTime,
+                    Money = money[50],
+                },
 
                 #endregion
             };

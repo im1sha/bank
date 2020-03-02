@@ -35,7 +35,7 @@ namespace Bank.Controllers
         private static readonly Dictionary<int, int> _wrongPins = new Dictionary<int, int>();
         private static int? _currentAccountId;
     
-        public void CheckAccountAndPin(ModelStateDictionary ModelState, int accountIdOut, string pinOut)
+        private void CheckAccountAndPin(ModelStateDictionary ModelState, int accountIdOut, string pinOut)
         {
             var acc = _db.Accounts.AsNoTracking().FirstOrDefault(i => i.Id == accountIdOut);
 
@@ -119,7 +119,7 @@ namespace Bank.Controllers
             }
         }
 
-        private ActionResult ListOfActions()
+        public ActionResult ListOfActions()
         {
             if (_currentAccountId == null)
             {
@@ -127,6 +127,30 @@ namespace Bank.Controllers
             }
 
             return View();
+        }
+
+        public ActionResult Confirm(string action)
+        {
+            return Content("OK");
+
+            //switch (action)
+            //{
+            //    case nameof(Pay):
+            //        RedirectToAction(nameof(Login));
+            //        break;
+            //    case nameof(Pay):
+            //        RedirectToAction(nameof(Login));
+            //        break;
+            //    case nameof(Pay):
+            //        RedirectToAction(nameof(Login));
+            //        break;
+            //    case nameof(Logout):
+            //        RedirectToAction(nameof(Login));
+            //        break;
+            //    default:
+            //        RedirectToAction(nameof(Login));
+            //        break;
+            //}
         }
 
         public ActionResult Status()
@@ -146,25 +170,19 @@ namespace Bank.Controllers
                 return RedirectToAction(nameof(Login));
             }
 
-            return View(
-                new AtmWithdrawViewModel
-                {
-                    AccountId = (int)_currentAccountId,
-                    Money = _db.Accounts.FirstOrDefault(i => i.Id == _currentAccountId)?.Money?.Amount ?? 0m,
-                    AmountToWithdraw = 0m,
-                });
+            return View(new AtmDecimalInputViewModel());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Withdraw(AtmWithdrawViewModel input)
+        public ActionResult Withdraw(AtmDecimalInputViewModel input)
         {
             if (_currentAccountId == null)
             {
                 return RedirectToAction(nameof(Login));
             }
 
-            CheckAccountAndPin(ModelState, input.AccountId, input.PinCode);
+            //CheckAccountAndPin(ModelState, _currentAccountId, input.PinCode);
 
             //check amount here
 
@@ -193,7 +211,7 @@ namespace Bank.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Pay(AtmWithdrawViewModel input)
+        public ActionResult Pay(AtmDecimalInputViewModel input)
         {
             throw new NotImplementedException();
         }

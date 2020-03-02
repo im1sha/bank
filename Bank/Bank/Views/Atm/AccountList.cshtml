@@ -1,0 +1,23 @@
+﻿
+@{
+    ViewData["Title"] = "Account";
+}
+
+<h1>@ViewData["Title"]</h1>
+<hr />
+<h2>
+    @Html.ActionLink("Add money", "AddMoney")
+</h2>
+<br />
+<h2>
+    @Html.ActionLink("Account state", "Confirm", new { action = "AccountState" })
+</h2>
+<br />
+<h2>
+    @Html.ActionLink("Withdraw", "Confirm", new { action = "Withdraw" })
+</h2>
+<br />
+<h2>
+    @Html.ActionLink("Back", "ListOfActions")
+</h2>
+

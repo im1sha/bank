@@ -1,0 +1,35 @@
+﻿@model Bank.Models.AtmTransactionViewModel
+
+@{
+    ViewData["Title"] = "Transaction info";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Target)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Target)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Amount)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Amount)
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-action="ListOfActions">OK</a>
+</div>
