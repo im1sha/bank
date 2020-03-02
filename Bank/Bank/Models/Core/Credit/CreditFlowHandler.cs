@@ -55,7 +55,7 @@ namespace Bank.Models
             credit.Main.Amount = credit.PaidMainPart.Amount;
             _db.Update(credit);
             _db.SaveChanges();
-            StandardAccount bankStandardAcc = _creditDb.GetLegalEntities().First().StandardAccounts
+            StandardAccount bankStandardAcc = _creditDb.GetLegalEntities().First(j => j.Name.Contains("BelAPB.by")).StandardAccounts
                 .First(i => i.Account.Money.Currency == credit.Account.Money.Currency);
             bankStandardAcc.Account.Money.Amount += (requiredMoney.Fines + requiredMoney.Main + requiredMoney.Percents);
             _db.Update(bankStandardAcc);

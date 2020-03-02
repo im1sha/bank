@@ -275,7 +275,7 @@ namespace Bank.Controllers
                     _db.Accounts.Update(source);
                     _db.SaveChanges();
 
-                    var bank = _depositDb.GetStandardAccounts().First(i => i.LegalEntity == _depositDb.GetLegalEntities().First()
+                    var bank = _depositDb.GetStandardAccounts().First(i => i.LegalEntity == _depositDb.GetLegalEntities().First(j => j.Name.Contains("BelAPB.by"))
                         && i.Account.Money.CurrencyId == currencyId);
                     bank.Account.Money.Amount += selectedMoney;
                     _db.StandardAccounts.Update(bank);

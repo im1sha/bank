@@ -53,7 +53,7 @@ namespace Bank.Models
             _db.DepositAccounts.Update(deposit);
             _db.SaveChanges();
 
-            var bank = _depositDb.GetStandardAccounts().First(i => i.LegalEntity == _depositDb.GetLegalEntities().First()
+            var bank = _depositDb.GetStandardAccounts().First(i => i.LegalEntity == _depositDb.GetLegalEntities().First(j => j.Name.Contains("BelAPB.by"))
                 && i.Account.Money.Currency == deposit.Account.Money.Currency);
             bank.Account.Money.Amount -= totalMoney;
             _db.StandardAccounts.Update(bank);
