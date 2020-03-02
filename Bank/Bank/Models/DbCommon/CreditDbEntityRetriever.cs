@@ -20,6 +20,7 @@ namespace Bank.Models
                 .Include(i => i.CreditAccount).ThenInclude(i => i.Person).ThenInclude(i => i.Passport)
                 .Include(i => i.CreditAccount).ThenInclude(i => i.CreditTerm)
                 .Include(i => i.StandardAccount).ThenInclude(i => i.Person)
+                .Include(i => i.StandardAccount).ThenInclude(i => i.LegalEntity)
                 .OrderBy(i => i.Id)
                 .ToList();
         }

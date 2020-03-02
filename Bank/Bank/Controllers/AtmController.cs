@@ -41,7 +41,17 @@ namespace Bank.Controllers
         private static int? _currentAccountId;
         private static string _phoneNumber;
         private static string _cellular;
-        //private static string _action;
+        private static AtmTransactionViewModel _lastTransaction;
+
+        private bool IsActionOfWithdraw(string input) 
+        {
+            return input?.ToLower() == WITHDRAW_ACTION;
+        }
+
+        private bool IsActionOfCellularPayment(string input)
+        {
+            return input?.ToLower() == nameof(PhoneNumber).ToLower();
+        }
 
         private bool IsCellular(string cellular)
         {
@@ -61,18 +71,18 @@ namespace Bank.Controllers
             return number.Length == 9 && long.TryParse(number, out _);
         }
 
-        private bool IsConfirmAction(string action)
+        private bool IsConfirmAction(string id)
         {
-            return IsSelectMoneyAction(action) || action?.ToLower() == nameof(AccountStatus).ToLower();
+            return IsSelectMoneyAction(id) || id?.ToLower() == nameof(AccountStatus).ToLower();
         }
 
-        private bool IsSelectMoneyAction(string action)
+        private bool IsSelectMoneyAction(string id)
         {
             return new[]
             {
                 WITHDRAW_ACTION, 
                 nameof(PhoneNumber).ToLower() 
-            }.Contains(action?.ToLower());
+            }.Contains(id?.ToLower());
         }
 
         private void CheckCellularAndNumber(ModelStateDictionary modelState, string cellular, string number)
@@ -132,9 +142,9 @@ namespace Bank.Controllers
             }
         }
 
-        private void CheckConfirmAction(ModelStateDictionary modelState, string action)
+        private void CheckConfirmAction(ModelStateDictionary modelState, string id)
         {
-            if (!IsConfirmAction(action))
+            if (!IsConfirmAction(id))
             {
                 modelState.TryAddModelError("Action", "Action not found.");
             }
@@ -147,9 +157,9 @@ namespace Bank.Controllers
                 .ToList();
         }
 
-        private string GetActualActionString(string action, out string additionalData)
+        private string GetActualActionString(string id, out string additionalData)
         {
-            var actionCasted = action?.ToLower();
+            var actionCasted = id?.ToLower();
             additionalData = null;
             if (actionCasted == WITHDRAW_ACTION || actionCasted == nameof(PhoneNumber).ToLower())
             {
@@ -237,16 +247,16 @@ namespace Bank.Controllers
             return View();
         }
 
-        public ActionResult PhoneNumber(string action)
+        public ActionResult PhoneNumber(string id)
         {
             if (_currentAccountId == null)
             {
                 return RedirectToAction(nameof(Login));
             }
 
-            if (IsCellular(action))
+            if (IsCellular(id))
             {
-                return View(new AtmCellularInputViewModel { Cellular = action });
+                return View(new AtmCellularInputViewModel { Cellular = id });
             }
             else
             {
@@ -268,8 +278,8 @@ namespace Bank.Controllers
             if (ModelState.IsValid)
             {
                 _phoneNumber = input.Number;
-                _cellular = input.Cellular;
-                return RedirectToAction(nameof(Confirm), "Atm", new { action = nameof(PhoneNumber), });
+                _cellular = input.Cellular.ToLower();
+                return RedirectToAction(nameof(Confirm), "Atm", new { id = nameof(PhoneNumber), });
             }
             else
             {
@@ -277,16 +287,16 @@ namespace Bank.Controllers
             }
         }
 
-        public ActionResult Confirm(string action)
+        public ActionResult Confirm(string id)
         {
             if (_currentAccountId == null)
             {
                 return RedirectToAction(nameof(Login));
             }
 
-            if (IsConfirmAction(action))
+            if (IsConfirmAction(id))
             {
-                return View(new AtmConfirmViewModel { Action = action.ToLower(), });
+                return View(new AtmConfirmViewModel { Action = id.ToLower(), });
             }
             else
             {
@@ -311,7 +321,7 @@ namespace Bank.Controllers
                 return RedirectToAction(GetActualActionString(
                     input.Action, out string additionalData),
                     "Atm",
-                    additionalData == null ? null : new { action = additionalData });
+                    additionalData == null ? null : new { id = additionalData });
             }
             else
             {
@@ -326,7 +336,7 @@ namespace Bank.Controllers
                 return RedirectToAction(nameof(Login));
             }
 
-            return View(new AtmDecimalInputViewModel { });
+            return View(nameof(AddMoney), new AtmDecimalInputViewModel { });
         }
 
         [HttpPost]
@@ -344,7 +354,7 @@ namespace Bank.Controllers
                 {
                     if (decimal.TryParse(input.Amount, out decimal result) && result > 0)
                     {
-                        var acc = _db.Accounts.Include(i => i.Money).FirstOrDefault(i => i.Id == _currentAccountId);
+                        var acc = _creditDb.GetAccounts().FirstOrDefault(i => i.Id == _currentAccountId);
                         acc.Money.Amount += result;
                         _db.Update(acc);
                         _db.SaveChanges();
@@ -356,10 +366,11 @@ namespace Bank.Controllers
                 }
 
                 return RedirectToAction(nameof(AccountStatus));
+                //return View(_db.Accounts.Include(i => i.Money).AsNoTracking().FirstOrDefault(i => i.Id == _currentAccountId)?.Money?.Amount.ToString());
             }
             else
             {
-                return View(input);
+                return View(nameof(AddMoney), input);
             }
         }
 
@@ -370,21 +381,21 @@ namespace Bank.Controllers
                 return RedirectToAction(nameof(Login));
             }
 
-            return View(_db.Accounts.Include(i => i.Money).AsNoTracking().FirstOrDefault(i => i.Id == _currentAccountId)?.Money?.Amount.ToString());
+            return View(nameof(AccountStatus), _db.Accounts.Include(i => i.Money).AsNoTracking().FirstOrDefault(i => i.Id == _currentAccountId)?.Money?.Amount.ToString());
         }
 
-        public ActionResult SelectMoney(string action)
+        public ActionResult SelectMoney(string id)
         {
             if (_currentAccountId == null)
             {
                 return RedirectToAction(nameof(Login));
             }
-            if (!IsConfirmAction(action))
+            if (!IsConfirmAction(id))
             {
                 return RedirectToAction(nameof(ListOfActions));
             }
 
-            return View(new AtmDecimalInputViewModel {Action = action, });
+            return View(nameof(SelectMoney), new AtmDecimalInputViewModel {Action = id, });
         }
 
         [HttpPost]
@@ -407,18 +418,76 @@ namespace Bank.Controllers
                 {
                     if (decimal.TryParse(input.Amount, out decimal result) && result > 0)
                     {
-                        var acc = _db.Accounts.Include(i => i.Money).FirstOrDefault(i => i.Id == _currentAccountId);
-                        acc.Money.Amount += result;
-                        _db.Update(acc);
-                        _db.SaveChanges();
-                        throw new NotImplementedException();
-                        //return RedirectToAction(nameof());
+                        var acc = _creditDb.GetAccounts().FirstOrDefault(i => i.Id == _currentAccountId);
+
+                        if (acc.Money.Amount >= result)
+                        {
+                            if (IsActionOfCellularPayment(input.Action))
+                            {
+                                var cellularAcc = _creditDb.GetAccounts().FirstOrDefault(i => i?.StandardAccount?.LegalEntity?.Name.ToLower() == _cellular);
+
+                                if (cellularAcc != null)
+                                {
+                                    cellularAcc.Money.Amount += result;
+                                    _db.Accounts.Update(cellularAcc);
+                                    _db.SaveChanges();
+
+                                    acc.Money.Amount -= result;
+                                    _db.Accounts.Update(acc);
+                                    _db.SaveChanges();
+                                    _lastTransaction = new AtmTransactionViewModel 
+                                    {
+                                        Amount = result.ToString(), 
+                                        Date = _timeService.CurrentTime.ToShortDateString(),
+                                        Target = _cellular, 
+                                    };
+
+                                    return RedirectToAction(nameof(PrintConfirm), "Atm", input.Action);
+                                }
+                                else
+                                {
+                                    return View("StatusFailed", "Server error happened while processing request.");
+                                }
+                            }
+                            else if (IsActionOfWithdraw(input.Action))
+                            {
+                                acc.Money.Amount -= result;
+                                _db.Accounts.Update(acc);
+                                _db.SaveChanges();
+
+                                _lastTransaction = new AtmTransactionViewModel
+                                {
+                                    Amount = result.ToString(),
+                                    Date = _timeService.CurrentTime.ToShortDateString(),
+                                    Target = WITHDRAW_ACTION,
+                                };
+
+                                return RedirectToAction(nameof(PrintConfirm), "Atm", input.Action);
+                            }
+                            else
+                            {
+                                return View("StatusFailed", "Server error happened while processing request.");
+                            }                           
+                        }
+                        else
+                        {
+                            if (IsActionOfCellularPayment(input.Action))
+                            {
+                                return View("CellularPayFailed");
+                            }
+                            else if (IsActionOfWithdraw(input.Action))
+                            {
+                                return View("AccountWithdrawFailed");
+                            }
+                            else
+                            {
+                                return View("StatusFailed", "Server error happened while processing request.");
+                            }
+                        }
                     }
                     else
                     {
-                        throw new NotImplementedException();
-
-                        //return RedirectToAction(nameof());
+                        return View("IncorrectInput");
                     }
                 }
                 catch
@@ -428,9 +497,28 @@ namespace Bank.Controllers
             }
             else
             {
-                return View(input);
+                return View(nameof(SelectMoney), input);
             }
         }
+
+        public ActionResult PrintConfirm(string id)
+        {
+            if (_currentAccountId == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+            return View();
+        }
+
+        public ActionResult Print()
+        {
+            if (_currentAccountId == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+            return View(nameof(Print), _lastTransaction ?? new AtmTransactionViewModel());
+        }
+
     }
 }
 

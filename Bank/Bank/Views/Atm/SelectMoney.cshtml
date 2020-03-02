@@ -8,9 +8,12 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="AddMoney">
+        <form asp-action="SelectMoney">
             <div asp-validation-summary="All" class="text-danger"></div>
-            
+
+            <input asp-for="Action" class="form-control" hidden="hidden" />
+
+
             <div class="form-group">
                 <label asp-for="Amount" class="control-label"></label>
                 <input asp-for="Amount" class="form-control" />
@@ -21,13 +24,15 @@
                 <input type="submit" value="Submit" class="btn btn-primary" />
             </div>
         </form>
-        <div>
-            <a asp-action="CellularList">Back</a>
-        </div>
+        
     </div>
 </div>
+<br />
+<h2>
+    @Html.ActionLink("Back", "CellularList")
+</h2>
 
-@section Scripts 
+@section Scripts
 {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

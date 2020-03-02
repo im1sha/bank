@@ -5,7 +5,6 @@
 }
 
 <h1>@ViewData["Title"]</h1>
-
 <div>
     <hr />
     <dl class="row">
@@ -30,6 +29,7 @@
     </dl>
 </div>
 
-<div>
-    <a asp-action="ListOfActions">OK</a>
-</div>
+<br />
+<h2>
+    @Html.ActionLink("Back", "ListOfActions")
+</h2>

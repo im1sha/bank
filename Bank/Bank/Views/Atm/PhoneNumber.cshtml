@@ -24,14 +24,18 @@
             <div class="form-group">
                 <input type="submit" value="Submit" class="btn btn-primary" />
             </div>
-        </form> 
-        <div>
-            <a asp-action="CellularList">Back</a>
-        </div>
+        </form>
     </div>
 </div>
 
-@section Scripts 
+<br />
+<h2>
+    @Html.ActionLink("Back", "CellularList")
+</h2>
+
+
+
+@section Scripts
 {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
